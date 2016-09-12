@@ -1,0 +1,165 @@
+<metal:block
+	xmlns:tal="http://xml.zope.org/namespaces/tal"
+	xmlns:metal="http://xml.zope.org/namespaces/metal"
+	tal:define="options view/options">
+
+	<tal:block tal:condition="python: options['has_video_data']">
+		<para style="normal" spaceAfter=".5in" >
+			This document presents an overview of videos related events created in <u>${options/course_names}</u> from <strong>${context/start_date}</strong> through <strong>${context/end_date}</strong>.
+		</para>
+	</tal:block>	
+	<hr width="100%" />
+
+	<tal:block tal:condition="python: options['has_video_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Video Events
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="video_events options/data/video_events">
+			<illustration width="5in" height="3in"
+					  	  tal:define="event video_events/event_video_events_per_types;
+					  	  			  user_event video_events/user_video_events_per_types;
+								      ratio_event video_events/ratio_video_events_per_types"
+					      metal:use-macro="macro:three_plots_event">
+			</illustration>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_video_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Videos Watched
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="videos_watched options/data/videos_watched">
+			<illustration width="5in" height="3in"
+					  	  tal:define="event videos_watched/event_video_events;
+					  	  			  user_event videos_watched/user_video_events;
+								      ratio_event videos_watched/ratio_video_events"
+					      metal:use-macro="macro:three_plots_event">
+			</illustration>
+
+			<tal:block tal:condition="python: options['has_video_watched_data_per_enrollment_types']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Videos Watched per Enrollment Types
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="videos_watched options/data/videos_watched_per_enrollment_types">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event videos_watched/event_video_events_watch;
+							  	  			  user_event videos_watched/user_video_events_watch;
+										      ratio_event videos_watched/ratio_video_events_watch"
+							      metal:use-macro="macro:three_plots_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_video_watched_data_per_device_types']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Videos Watched per Application Types
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="videos_watched options/data/videos_watched_per_device_types">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event videos_watched/event_video_events_watch;
+							  	  			  user_event videos_watched/user_video_events_watch;
+										      ratio_event videos_watched/ratio_video_events_watch"
+							      metal:use-macro="macro:three_plots_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_video_watched_data_per_course_sections']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Videos Watched per Course Sections
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="videos_watched options/data/videos_watched_per_course_sections/all_section_plots">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event videos_watched/event_video_events_per_course_sections_watch;
+							  	  			  user_event videos_watched/user_video_events_per_course_sections_watch;
+										      ratio_event videos_watched/ratio_video_events_per_course_sections_watch"
+							      metal:use-macro="macro:three_plots_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_video_skipped_data']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Overview of Videos Skipped
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="videos_skipped options/data/videos_skipped">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event videos_skipped/event_video_events;
+						  	  			  user_event videos_skipped/user_video_events;
+									      ratio_event videos_skipped/ratio_video_events"
+						      metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_video_skipped_data_per_enrollment_types']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Videos Skipped per Enrollment Types
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="videos_skipped options/data/videos_skipped_per_enrollment_types">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event videos_skipped/event_video_events_skip;
+							  	  			  user_event videos_skipped/user_video_events_skip;
+										      ratio_event videos_skipped/ratio_video_events_skip"
+							      metal:use-macro="macro:three_plots_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_video_skipped_data_per_device_types']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Videos Skipped per Application Types
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="videos_skipped options/data/videos_skipped_per_device_types">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event videos_skipped/event_video_events_skip;
+							  	  			  user_event videos_skipped/user_video_events_skip;
+										      ratio_event videos_skipped/ratio_video_events_skip"
+							      metal:use-macro="macro:three_plots_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_video_skipped_data_per_course_sections']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Videos Skipped per Course Sections
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="videos_skipped options/data/videos_skipped_per_course_sections/all_section_plots">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event videos_skipped/event_video_events_per_course_sections_skip;
+							  	  			  user_event videos_skipped/user_video_events_per_course_sections_skip;
+										      ratio_event videos_skipped/ratio_video_events_per_course_sections_skip"
+							      metal:use-macro="macro:three_plots_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+		</tal:block>
+	</tal:block>
+</metal:block>
