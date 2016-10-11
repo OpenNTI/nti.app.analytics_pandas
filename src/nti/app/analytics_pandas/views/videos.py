@@ -14,7 +14,7 @@ from zope import interface
 from nti.analytics_pandas.analysis import VideoEventsTimeseries
 from nti.analytics_pandas.analysis import VideoEventsTimeseriesPlot
 
-from nti.app.analytics_pandas import MessageFactory as _m
+from nti.app.analytics_pandas import MessageFactory as _
 
 from nti.app.analytics_pandas.views.commons import get_course_names
 from nti.app.analytics_pandas.views.commons import build_plot_images_dictionary
@@ -44,7 +44,7 @@ class VideosTimeseriesReportView(AbstractReportView):
 
 	@property
 	def report_title(self):
-		return _m('Videos Related Events')
+		return _('Videos Related Events')
 
 	def _build_data(self, data=_('sample Videos related events report')):
 		keys = self.options.keys()
