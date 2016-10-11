@@ -9,18 +9,18 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-from . import MessageFactory as _
-
 from zope import interface
 
-from ...analysis import VideoEventsTimeseries
-from ...analysis import VideoEventsTimeseriesPlot
+from nti.analytics_pandas.analysis import VideoEventsTimeseries
+from nti.analytics_pandas.analysis import VideoEventsTimeseriesPlot
 
-from .commons import get_course_names
-from .commons import build_plot_images_dictionary
-from .commons import build_images_dict_from_plot_dict
+from nti.app.analytics_pandas import MessageFactory as _m
 
-from .mixins import AbstractReportView
+from nti.app.analytics_pandas.views.commons import get_course_names
+from nti.app.analytics_pandas.views.commons import build_plot_images_dictionary
+from nti.app.analytics_pandas.views.commons import build_images_dict_from_plot_dict
+
+from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
 @interface.implementer(interface.Interface)
 class VideosTimeseriesContext(object):
@@ -28,6 +28,7 @@ class VideosTimeseriesContext(object):
 	def __init__(self, session=None, start_date=None, end_date=None, courses=None,
 				 period_breaks=None, minor_period_breaks=None, theme_seaborn_=True,
 				 number_of_most_active_user=10, period='daily'):
+		self.period = period
 		self.session = session
 		self.courses = courses
 		self.end_date = end_date
@@ -36,7 +37,6 @@ class VideosTimeseriesContext(object):
 		self.theme_seaborn_ = theme_seaborn_
 		self.minor_period_breaks = minor_period_breaks
 		self.number_of_most_active_user = number_of_most_active_user
-		self.period = period
 
 Context = VideosTimeseriesContext
 
@@ -44,7 +44,7 @@ class VideosTimeseriesReportView(AbstractReportView):
 
 	@property
 	def report_title(self):
-		return _('Videos Related Events')
+		return _m('Videos Related Events')
 
 	def _build_data(self, data=_('sample Videos related events report')):
 		keys = self.options.keys()
