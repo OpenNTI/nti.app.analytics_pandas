@@ -17,14 +17,14 @@ import tempfile
 from collections import Mapping
 from contextlib import contextmanager
 
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 
 from z3c.rml import rml2pdf
 
-from ...queries import QueryCourses
+from nti.analytics_pandas.queries import QueryCourses
 
-from ...utils import Plot
-from ...utils import save_plot_
+from nti.analytics_pandas.utils import Plot
+from nti.analytics_pandas.utils import save_plot_
 
 def build_images_dict_from_plot_dict(plots, image_type='png', dirname=None):
 	"""
@@ -52,6 +52,17 @@ def build_images_dict_from_plot_dict(plots, image_type='png', dirname=None):
 					images[key] = filename
 	return images
 
+@contextmanager
+def copy_plot_to_temporary_file(plot, image_type, dirname=None):
+	image_file = tempfile.NamedTemporaryFile(delete=False, dir=dirname)
+	try:
+		plt.figure.Figure = plot.plot.draw()
+		plt.savefig(image_file.name, format=image_type)
+		plt.close()
+	finally:
+		image_file.close()
+		yield image_file.name
+
 def build_plot_images_dictionary(plots, image_type='png', dirname=None):
 	images = {}
 	for plot in plots:
@@ -72,17 +83,6 @@ def copy_plot_to_temporary_file_(plot, image_type, dirname=None):
 	finally:
 		image.data.close()
 	return image_file.name
-
-@contextmanager
-def copy_plot_to_temporary_file(plot, image_type, dirname=None):
-	image_file = tempfile.NamedTemporaryFile(delete=False, dir=dirname)
-	try:
-		plt.figure.Figure = plot.plot.draw()
-		plt.savefig(image_file.name, format=image_type)
-		plt.close()
-	finally:
-		image_file.close()
-		yield image_file.name
 
 def get_course_names(session, courses_id):
 	qc = QueryCourses(session)
