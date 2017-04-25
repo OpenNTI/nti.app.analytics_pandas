@@ -17,6 +17,8 @@ from hamcrest import greater_than
 
 import os
 
+from zope.cachedescriptors.property import Lazy
+
 from z3c.rml import rml2pdf
 
 from nti.analytics_pandas.reports.views.commons import cleanup_temporary_file
@@ -25,8 +27,6 @@ from nti.analytics_pandas.reports.views.forums import View
 from nti.analytics_pandas.reports.views.forums import Context
 
 from nti.analytics_pandas.reports.z3c_zpt import ViewPageTemplateFile
-
-from nti.property.property import Lazy
 
 from nti.analytics_pandas.tests import AnalyticsPandasTestBase
 
