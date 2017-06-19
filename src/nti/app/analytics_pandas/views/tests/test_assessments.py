@@ -78,9 +78,9 @@ class TestAssessmentsEvents(AnalyticsPandasTestBase):
 		courses = ['1024', '1025', '1026', '1027', '1028']
 		period_breaks = '1 day'
 		minor_period_breaks = None
-		theme_seaborn_ = True
+		theme_bw_ = True
 		context = Context(self.session, start_date, end_date, courses,
-						  period_breaks, minor_period_breaks, theme_seaborn_)
+						  period_breaks, minor_period_breaks, theme_bw_)
 		assert_that(context.start_date, equal_to('2015-01-01'))
 
 		view = View(context)
@@ -110,9 +110,9 @@ class TestAssessmentsEvents(AnalyticsPandasTestBase):
 		courses = ['1068', '1096', '1097', '1098', '1099']
 		period_breaks = '1 day'
 		minor_period_breaks = None
-		theme_seaborn_ = True
+		theme_bw_ = True
 		context = Context(self.session, start_date, end_date, courses,
-						  period_breaks, minor_period_breaks, theme_seaborn_)
+						  period_breaks, minor_period_breaks, theme_bw_)
 		assert_that(context.start_date, equal_to('2015-10-05'))
 
 		view = View(context)
@@ -141,9 +141,9 @@ class TestAssessmentsEvents(AnalyticsPandasTestBase):
 		courses = ['xxx']
 		period_breaks = '1 day'
 		minor_period_breaks = None
-		theme_seaborn_ = True
+		theme_bw_ = True
 		context = Context(self.session, start_date, end_date, courses,
-						  period_breaks, minor_period_breaks, theme_seaborn_)
+						  period_breaks, minor_period_breaks, theme_bw_)
 
 		view = View(context)
 		view()

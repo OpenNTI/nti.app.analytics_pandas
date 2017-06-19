@@ -35,14 +35,14 @@ from .mixins import AbstractReportView
 class TopicsTimeseriesContext(object):
 
 	def __init__(self, session=None, start_date=None, end_date=None, courses=None,
-				 period_breaks=None, minor_period_breaks=None, theme_seaborn_=True,
+				 period_breaks=None, minor_period_breaks=None, theme_bw_=True,
 				 number_of_most_active_user=10, period='daily'):
 		self.session = session
 		self.courses = courses
 		self.end_date = end_date
 		self.start_date = start_date
 		self.period_breaks = period_breaks
-		self.theme_seaborn_ = theme_seaborn_
+		self.theme_bw_ = theme_bw_
 		self.minor_period_breaks = minor_period_breaks
 		self.number_of_most_active_user = number_of_most_active_user
 		self.period = period
@@ -141,7 +141,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
 	def get_topics_created_plots(self, data):
 		plots = self.tctp.explore_events(self.context.period_breaks,
 										 self.context.minor_period_breaks,
-										 self.context.theme_seaborn_)
+										 self.context.theme_bw_)
 		if plots :
 			data['topics_created'] = build_plot_images_dictionary(plots)
 		return data
@@ -149,7 +149,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
 	def get_topics_created_plots_per_device_types(self, data):
 		plots = self.tctp.analyze_events_per_device_types(self.context.period_breaks,
 														  self.context.minor_period_breaks,
-														  self.context.theme_seaborn_)
+														  self.context.theme_bw_)
 		self.options['has_topics_created_per_device_types'] = False
 		if plots :
 			data['topics_created_per_device_types'] = build_plot_images_dictionary(plots)
@@ -159,7 +159,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
 	def get_topics_created_plots_per_course_sections(self, data):
 		plots = self.tctp.analyze_events_per_course_sections(self.context.period_breaks,
 															 self.context.minor_period_breaks,
-															 self.context.theme_seaborn_)
+															 self.context.theme_bw_)
 		self.options['has_topics_created_per_course_sections'] = False
 		if plots :
 			data['topics_created_per_course_sections'] = build_images_dict_from_plot_dict(plots)
@@ -169,7 +169,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
 	def get_topics_created_plots_per_enrollment_types(self, data):
 		plots = self.tctp.analyze_events_per_enrollment_types(self.context.period_breaks,
 															  self.context.minor_period_breaks,
-															  self.context.theme_seaborn_)
+															  self.context.theme_bw_)
 		self.options['has_topics_created_per_enrollment_types'] = False
 		if plots :
 			data['topics_created_per_enrollment_types'] = build_plot_images_dictionary(plots)
@@ -190,7 +190,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
 	def get_topic_view_plots(self, data):
 		plots = self.tvtp.explore_events(self.context.period_breaks,
 										 self.context.minor_period_breaks,
-										 self.context.theme_seaborn_)
+										 self.context.theme_bw_)
 		if plots:
 			data['topic_views'] = build_plot_images_dictionary(plots)
 		return data
@@ -198,7 +198,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
 	def get_topic_view_plots_per_device_types(self, data):
 		plots = self.tvtp.analyze_device_types(self.context.period_breaks,
 											   self.context.minor_period_breaks,
-											   self.context.theme_seaborn_)
+											   self.context.theme_bw_)
 		self.options['has_topic_views_per_device_types'] = False
 		if plots:
 			data['topic_views_per_device_types'] = build_plot_images_dictionary(plots)
@@ -208,7 +208,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
 	def get_topic_view_plots_per_course_sections(self, data):
 		plots = self.tvtp.analyze_events_per_course_sections(self.context.period_breaks,
 															 self.context.minor_period_breaks,
-															 self.context.theme_seaborn_)
+															 self.context.theme_bw_)
 		self.options['has_topic_views_per_course_sections'] = False
 		if plots:
 			data['topic_views_per_course_sections'] = build_images_dict_from_plot_dict(plots)
@@ -218,7 +218,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
 	def get_topic_view_plots_per_enrollment_types(self, data):
 		plots = self.tvtp.analyze_enrollment_types(self.context.period_breaks,
 												   self.context.minor_period_breaks,
-												   self.context.theme_seaborn_)
+												   self.context.theme_bw_)
 		self.options['has_topic_views_per_enrollment_types'] = False
 		if plots:
 			data['topic_views_per_enrollment_types'] = build_plot_images_dictionary(plots)
@@ -233,7 +233,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
 	def get_topic_like_plots(self, data):
 		plots = self.tltp.explore_events(self.context.period_breaks,
 										 self.context.minor_period_breaks,
-										 self.context.theme_seaborn_)
+										 self.context.theme_bw_)
 		if plots:
 			data['topic_likes'] = build_plot_images_dictionary(plots)
 		return data
@@ -246,7 +246,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
 	def get_topic_favorite_plots(self, data):
 		plots = self.tftp.explore_events(self.context.period_breaks,
 										 self.context.minor_period_breaks,
-										 self.context.theme_seaborn_)
+										 self.context.theme_bw_)
 		if plots:
 			data['topic_favorites'] = build_plot_images_dictionary(plots)
 		return data

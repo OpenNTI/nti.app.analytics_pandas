@@ -75,9 +75,9 @@ class TestBookmarksEvents(AnalyticsPandasTestBase):
 		courses = ['1068', '1096', '1097', '1098', '1099']
 		period_breaks = '1 week'
 		minor_period_breaks = '1 day'
-		theme_seaborn_ = True
+		theme_bw_ = True
 		context = Context(self.session, start_date, end_date, courses,
-						  period_breaks, minor_period_breaks, theme_seaborn_)
+						  period_breaks, minor_period_breaks, theme_bw_)
 		assert_that(context.start_date, equal_to('2015-10-05'))
 
 		view = View(context)

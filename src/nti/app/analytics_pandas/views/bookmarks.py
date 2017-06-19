@@ -26,14 +26,14 @@ from .mixins import AbstractReportView
 class BookmarksTimeseriesContext(object):
 
 	def __init__(self, session=None, start_date=None, end_date=None, courses=None,
-				 period_breaks=None, minor_period_breaks=None, theme_seaborn_=True,
+				 period_breaks=None, minor_period_breaks=None, theme_bw_=True,
 				 number_of_most_active_user=10, period='daily'):
 		self.session = session
 		self.courses = courses
 		self.end_date = end_date
 		self.start_date = start_date
 		self.period_breaks = period_breaks
-		self.theme_seaborn_ = theme_seaborn_
+		self.theme_bw_ = theme_bw_
 		self.minor_period_breaks = minor_period_breaks
 		self.number_of_most_active_user = number_of_most_active_user
 		self.period = period
@@ -105,7 +105,7 @@ class BookmarksTimeseriesReportView(AbstractReportView):
 	def get_bookmarks_created_plots(self, data):
 		plots = self.bctp.explore_events(self.context.period_breaks,
 										 self.context.minor_period_breaks,
-										 self.context.theme_seaborn_)
+										 self.context.theme_bw_)
 		if plots:
 			data['bookmarks_created'] = build_plot_images_dictionary(plots)
 		return data
@@ -113,7 +113,7 @@ class BookmarksTimeseriesReportView(AbstractReportView):
 	def get_bookmarks_created_plots_per_device_types(self, data):
 		plots = self.bctp.analyze_device_types(self.context.period_breaks,
 										 	   self.context.minor_period_breaks,
-										 	   self.context.theme_seaborn_)
+										 	   self.context.theme_bw_)
 		if plots:
 			data['bookmarks_created_per_device_types'] = build_plot_images_dictionary(plots)
 			self.options['has_bookmark_data_per_device_types'] = True
@@ -122,7 +122,7 @@ class BookmarksTimeseriesReportView(AbstractReportView):
 	def get_bookmarks_created_plots_per_enrollment_types(self, data):
 		plots = self.bctp.analyze_enrollment_types(self.context.period_breaks,
 										 	   self.context.minor_period_breaks,
-										 	   self.context.theme_seaborn_)
+										 	   self.context.theme_bw_)
 		if plots:
 			data['bookmarks_created_per_enrollment_types'] = build_plot_images_dictionary(plots)
 			self.options['has_bookmark_data_per_enrollment_types'] = True
@@ -131,7 +131,7 @@ class BookmarksTimeseriesReportView(AbstractReportView):
 	def get_bookmarks_created_plots_per_resource_types(self, data):
 		plots = self.bctp.analyze_resource_types(self.context.period_breaks,
 										 	   	 self.context.minor_period_breaks,
-										 	   	 self.context.theme_seaborn_)
+										 	   	 self.context.theme_bw_)
 		if plots:
 			data['bookmarks_created_per_resource_types'] = build_images_dict_from_plot_dict(plots)
 			self.options['has_bookmark_data_per_resource_types'] = True
@@ -147,7 +147,7 @@ class BookmarksTimeseriesReportView(AbstractReportView):
 	def get_bookmarks_created_plots_per_course_sections(self, data):
 		plots = self.bctp.analyze_events_per_course_sections(self.context.period_breaks,
 										 	   	 			 self.context.minor_period_breaks,
-										 	   	 			 self.context.theme_seaborn_)
+										 	   	 			 self.context.theme_bw_)
 		if plots:
 			data['bookmarks_created_per_course_sections'] = build_images_dict_from_plot_dict(plots)
 			self.options['has_bookmark_data_per_course_sections'] = True

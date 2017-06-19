@@ -48,14 +48,14 @@ from .mixins import AbstractReportView
 class SocialTimeseriesContext(object):
 
 	def __init__(self, session=None, start_date=None, end_date=None,
-				 period_breaks=None, minor_period_breaks=None, theme_seaborn_=True,
+				 period_breaks=None, minor_period_breaks=None, theme_bw_=True,
 				 number_of_most_active_user=10, period='daily'):
 		self.period = period
 		self.session = session
 		self.end_date = end_date
 		self.start_date = start_date
 		self.period_breaks = period_breaks
-		self.theme_seaborn_ = theme_seaborn_
+		self.theme_bw_ = theme_bw_
 		self.minor_period_breaks = minor_period_breaks
 		self.number_of_most_active_user = number_of_most_active_user
 
@@ -169,7 +169,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def generate_chats_initiated_plots(self, data):
 		plots = self.ctp.explore_chats_initiated(self.context.period_breaks,
 												 self.context.minor_period_breaks,
-												 self.context.theme_seaborn_)
+												 self.context.theme_bw_)
 		if plots:
 			data['chats_initiated'] = build_plot_images_dictionary(plots)
 			self.options['has_chats_initiated'] = True
@@ -180,7 +180,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def generate_chats_initiated_plots_per_application_type(self, data):
 		plots = self.ctp.analyze_application_types(self.context.period_breaks,
 												   self.context.minor_period_breaks,
-												   self.context.theme_seaborn_)
+												   self.context.theme_bw_)
 		if plots:
 			data['chats_initiated_per_application_type'] = build_plot_images_dictionary(plots)
 			self.options['has_chats_initiated_per_application_type'] = True
@@ -192,7 +192,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 		plots = self.ctp.analyze_number_of_users_join_chats_per_date(
 												   self.context.period_breaks,
 												   self.context.minor_period_breaks,
-												   self.context.theme_seaborn_)
+												   self.context.theme_bw_)
 		if plots:
 			data['users_join_chats'] = build_plot_images_dictionary(plots)
 			self.options['has_users_join_chats'] = True
@@ -203,7 +203,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def generate_one_one_and_group_chat_plots(self, data):
 		plot = self.ctp.analyze_one_one_and_group_chat(self.context.period_breaks,
 													   self.context.minor_period_breaks,
-													   self.context.theme_seaborn_)
+													   self.context.theme_bw_)
 		if plot:
 			print(plot)
 			data['one_one_and_group_chat'] = build_plot_images_dictionary(plot)
@@ -222,7 +222,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def get_contacts_added_plots(self, data):
 		plots = self.catp.analyze_events(self.context.period_breaks,
 										 self.context.minor_period_breaks,
-										 self.context.theme_seaborn_)
+										 self.context.theme_bw_)
 		if plots:
 			data['contacts_added'] = build_plot_images_dictionary(plots)
 		return data
@@ -230,7 +230,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def get_contacts_added_plots_per_application_type(self, data):
 		plots = self.catp.analyze_application_types(self.context.period_breaks,
 										 			self.context.minor_period_breaks,
-										 			self.context.theme_seaborn_)
+										 			self.context.theme_bw_)
 		if plots:
 			data['contacts_added_per_application_type'] = build_plot_images_dictionary(plots)
 			self.options['has_contacts_added_per_application_type'] = True
@@ -257,7 +257,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def get_contacts_removed_plots(self, data):
 		plots = self.crtp.analyze_events(self.context.period_breaks,
 										 self.context.minor_period_breaks,
-										 self.context.theme_seaborn_)
+										 self.context.theme_bw_)
 		if plots:
 			data['contacts_removed'] = build_plot_images_dictionary(plots)
 		return data
@@ -265,7 +265,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def get_contacts_removed_plots_per_application_type(self, data):
 		plots = self.crtp.analyze_application_types(self.context.period_breaks,
 													self.context.minor_period_breaks,
-													self.context.theme_seaborn_)
+													self.context.theme_bw_)
 		if plots:
 			data['contacts_removed_per_application_type'] = build_plot_images_dictionary(plots)
 			self.options['has_contacts_removed_per_application_type'] = True
@@ -286,7 +286,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 		self.cetp = ContactsEventsTimeseriesPlot(self.cet)
 		plot = self.cetp.combine_events(self.context.period_breaks,
 										self.context.minor_period_breaks,
-										self.context.theme_seaborn_)
+										self.context.theme_bw_)
 		if plot :
 			data['combine_contact_events'] = build_plot_images_dictionary(plot)
 			self.options['has_combined_contact_event_data'] = True
@@ -301,7 +301,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 		plots = self.flmatp.analyze_number_of_friend_list_members_added(
 										self.context.period_breaks,
 										self.context.minor_period_breaks,
-										self.context.theme_seaborn_)
+										self.context.theme_bw_)
 		if plots:
 			data['friendlist_members_added'] = build_plot_images_dictionary(plots)
 		return data
@@ -318,7 +318,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def get_profile_view_plots(self, data):
 		plots = self.epvtp.explore_events(self.context.period_breaks,
 										  self.context.minor_period_breaks,
-										  self.context.theme_seaborn_)
+										  self.context.theme_bw_)
 		if plots:
 			data['profile_views'] = build_plot_images_dictionary(plots)
 			self.options['has_profile_views'] = True
@@ -329,7 +329,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def get_profile_view_plots_per_application_type(self, data):
 		plots = self.epvtp.analyze_application_types(self.context.period_breaks,
 													 self.context.minor_period_breaks,
-													 self.context.theme_seaborn_)
+													 self.context.theme_bw_)
 		if plots:
 			data['profile_views_per_application_type'] = build_plot_images_dictionary(plots)
 			self.options['has_profile_views_per_application_type'] = True
@@ -340,7 +340,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def get_profile_view_plots_per_viewer_type(self, data):
 		plots = self.epvtp.analyze_views_by_owner_or_by_others(self.context.period_breaks,
 															   self.context.minor_period_breaks,
-															   self.context.theme_seaborn_)
+															   self.context.theme_bw_)
 		if plots:
 			data['profile_views_per_viewer_type'] = build_plot_images_dictionary(plots)
 			self.options['has_profile_views_per_viewer_type'] = True
@@ -379,7 +379,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def get_profile_activity_view_plots(self, data):
 		plots = self.epavtp.explore_events(self.context.period_breaks,
 										   self.context.minor_period_breaks,
-										   self.context.theme_seaborn_)
+										   self.context.theme_bw_)
 		if plots:
 			data['profile_activity_views'] = build_plot_images_dictionary(plots)
 			self.options['has_profile_activity_views'] = True
@@ -390,7 +390,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def get_profile_activity_view_plots_per_application_type(self, data):
 		plots = self.epavtp.analyze_application_types(self.context.period_breaks,
 													  self.context.minor_period_breaks,
-													  self.context.theme_seaborn_)
+													  self.context.theme_bw_)
 		if plots:
 			data['profile_activity_views_per_application_type'] = build_plot_images_dictionary(plots)
 			self.options['has_profile_activity_views_per_application_type'] = True
@@ -401,7 +401,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def get_profile_activity_view_plots_per_viewer_type(self, data):
 		plots = self.epavtp.analyze_views_by_owner_or_by_others(self.context.period_breaks,
 															    self.context.minor_period_breaks,
-															    self.context.theme_seaborn_)
+															    self.context.theme_bw_)
 		if plots:
 			data['profile_activity_views_per_viewer_type'] = build_plot_images_dictionary(plots)
 			self.options['has_profile_activity_views_per_viewer_type'] = True
@@ -439,7 +439,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def get_profile_membership_view_plots(self, data):
 		plots = self.epmvtp.explore_events(self.context.period_breaks,
 										   self.context.minor_period_breaks,
-										   self.context.theme_seaborn_)
+										   self.context.theme_bw_)
 		if plots:
 			data['profile_membership_views'] = build_plot_images_dictionary(plots)
 			self.options['has_profile_membership_views'] = True
@@ -450,7 +450,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def get_profile_membership_view_plots_per_application_type(self, data):
 		plots = self.epmvtp.analyze_application_types(self.context.period_breaks,
 													  self.context.minor_period_breaks,
-													  self.context.theme_seaborn_)
+													  self.context.theme_bw_)
 		if plots:
 			data['profile_membership_views_per_application_type'] = build_plot_images_dictionary(plots)
 			self.options['has_profile_membership_views_per_application_type'] = True
@@ -461,7 +461,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 	def get_profile_membership_view_plots_per_viewer_type(self, data):
 		plots = self.epmvtp.analyze_views_by_owner_or_by_others(self.context.period_breaks,
 															    self.context.minor_period_breaks,
-															    self.context.theme_seaborn_)
+															    self.context.theme_bw_)
 		if plots:
 			data['profile_membership_views_per_viewer_type'] = build_plot_images_dictionary(plots)
 			self.options['has_profile_membership_views_per_viewer_type'] = True

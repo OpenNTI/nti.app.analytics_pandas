@@ -41,7 +41,7 @@ def _parse_args():
 	arg_parser.add_argument('-mpb', '--minor_period_breaks',
 							 default=None,
 							 help="Set minor period breaks on generated plots. The default is %s" % "None")
-	arg_parser.add_argument('-ts', '--theme_seaborn',
+	arg_parser.add_argument('-ts', '--theme_bw',
 							 default=True,
 							 help="Seaborn theme for generated plots. The default it is 1 (true)")
 	arg_parser.add_argument('-o', '--output',
@@ -95,10 +95,10 @@ def process_args(social=False):
 		args_dict['period_breaks'] = args.period_breaks
 		args_dict['minor_period_breaks'] = args.minor_period_breaks
 
-	if isinstance(args.theme_seaborn, bool):
-		args_dict['theme_seaborn'] = args.theme_seaborn
+	if isinstance(args.theme_bw, bool):
+		args_dict['theme_bw'] = args.theme_bw
 	else:
-		args_dict['theme_seaborn'] = str2bool(args.theme_seaborn)
+		args_dict['theme_bw'] = str2bool(args.theme_bw)
 
 	args_dict['output'] = args.output
 	return args_dict
@@ -106,16 +106,16 @@ def process_args(social=False):
 class Report(object):
 
 	def __init__(self, Context, View, start_date, end_date, courses,
-				 period_breaks, minor_period_breaks, theme_seaborn_,
+				 period_breaks, minor_period_breaks, theme_bw_,
 				 filepath, period='daily'):
 		self.db = DBConnection()
 		if not courses:
 			self.context = Context(self.db.session, start_date, end_date,
-						  		   period_breaks, minor_period_breaks, theme_seaborn_,
+						  		   period_breaks, minor_period_breaks, theme_bw_,
 						  		   period=period)
 		else:
 			self.context = Context(self.db.session, start_date, end_date, courses,
-						  		   period_breaks, minor_period_breaks, theme_seaborn_,
+						  		   period_breaks, minor_period_breaks, theme_bw_,
 						  		   period=period)
 		self.view = View(self.context)
 		self.filepath = filepath

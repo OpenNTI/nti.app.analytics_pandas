@@ -35,14 +35,14 @@ class EnrollmentTimeseriesContext(object):
 
 	def __init__(self, session=None, start_date=None, end_date=None, courses=None,
 				 period_breaks='1 week', minor_period_breaks='1 day',
-				 theme_seaborn_=True, number_of_most_active_user=10,
+				 theme_bw_=True, number_of_most_active_user=10,
 				 period='daily'):
 		self.session = session
 		self.courses = courses
 		self.end_date = end_date
 		self.start_date = start_date
 		self.period_breaks = period_breaks
-		self.theme_seaborn_ = theme_seaborn_
+		self.theme_bw_ = theme_bw_
 		self.minor_period_breaks = minor_period_breaks
 		self.number_of_most_active_user = number_of_most_active_user
 		self.period = period
@@ -129,7 +129,7 @@ class EnrollmentTimeseriesReportView(AbstractReportView):
 	def get_course_catalog_view_plots(self, data):
 		plots = self.ccvtp.explore_events(self.context.period_breaks,
 										  self.context.minor_period_breaks,
-										  self.context.theme_seaborn_)
+										  self.context.theme_bw_)
 		if plots:
 			data['course_catalog_views'] = build_plot_images_dictionary(plots)
 		return data
@@ -137,7 +137,7 @@ class EnrollmentTimeseriesReportView(AbstractReportView):
 	def get_course_catalog_view_plots_per_device_types(self, data):
 		plots = self.ccvtp.analyze_device_types(self.context.period_breaks,
 												self.context.minor_period_breaks,
-												self.context.theme_seaborn_)
+												self.context.theme_bw_)
 		self.options['has_course_catalog_views_per_device_types'] = False
 		if plots:
 			data['course_catalog_views_per_device_types'] = build_plot_images_dictionary(plots)
@@ -153,7 +153,7 @@ class EnrollmentTimeseriesReportView(AbstractReportView):
 	def get_course_enrollment_plots(self, data):
 		plots = self.cetp.explore_events(self.context.period_breaks,
 										 self.context.minor_period_breaks,
-										 self.context.theme_seaborn_)
+										 self.context.theme_bw_)
 		if plots:
 			data['course_enrollments'] = build_plot_images_dictionary(plots)
 		return data
@@ -161,7 +161,7 @@ class EnrollmentTimeseriesReportView(AbstractReportView):
 	def get_course_enrollment_plots_per_types(self, data):
 		plots = self.cetp.analyze_device_enrollment_types(self.context.period_breaks,
 														  self.context.minor_period_breaks,
-														  self.context.theme_seaborn_)
+														  self.context.theme_bw_)
 		self.options['has_course_enrollments_per_types'] = False
 		if plots:
 			data['course_enrollments_per_types'] = build_plot_images_dictionary(plots)
@@ -186,7 +186,7 @@ class EnrollmentTimeseriesReportView(AbstractReportView):
 	def get_course_drop_plots(self, data):
 		plots = self.cdtp.explore_events(self.context.period_breaks,
 										 self.context.minor_period_breaks,
-										 self.context.theme_seaborn_)
+										 self.context.theme_bw_)
 		if plots:
 			data['course_drops'] = build_plot_images_dictionary(plots)
 		return data
@@ -194,7 +194,7 @@ class EnrollmentTimeseriesReportView(AbstractReportView):
 	def get_course_drop_plots_per_device_types(self, data):
 		plots = self.cdtp.analyze_device_types(self.context.period_breaks,
 											   self.context.minor_period_breaks,
-											   self.context.theme_seaborn_)
+											   self.context.theme_bw_)
 		self.options['has_course_drops_per_device_types'] = False
 		if plots:
 			data['course_drops_per_device_types'] = build_plot_images_dictionary(plots)
@@ -204,7 +204,7 @@ class EnrollmentTimeseriesReportView(AbstractReportView):
 	def get_course_drop_plots_per_enrollment_types(self, data):
 		plots = self.cdtp.analyze_enrollment_types(self.context.period_breaks,
 												   self.context.minor_period_breaks,
-												   self.context.theme_seaborn_)
+												   self.context.theme_bw_)
 		self.options['has_course_drops_per_enrollment_types'] = False
 		if plots:
 			data['course_drops_per_enrollment_types'] = build_plot_images_dictionary(plots)
@@ -220,7 +220,7 @@ class EnrollmentTimeseriesReportView(AbstractReportView):
 	def get_course_enrollments_vs_drops_plots(self, data):
 		plots = self.ceetp.explore_course_enrollments_vs_drops(self.context.period_breaks,
 															   self.context.minor_period_breaks,
-															   self.context.theme_seaborn_)
+															   self.context.theme_bw_)
 		self.options['has_course_enrollments_vs_drops'] = False
 		if plots:
 			data['course_enrollments_vs_drops'] = build_plot_images_dictionary(plots)
@@ -230,7 +230,7 @@ class EnrollmentTimeseriesReportView(AbstractReportView):
 	def get_course_enrollments_vs_catalog_views_plots(self, data):
 		plots = self.ceetp.explore_course_catalog_views_vs_enrollments(self.context.period_breaks,
 																	   self.context.minor_period_breaks,
-																	   self.context.theme_seaborn_)
+																	   self.context.theme_bw_)
 		self.options['has_course_enrollments_vs_catalog_views'] = False
 		if plots:
 			data['course_enrollments_vs_catalog_views'] = build_plot_images_dictionary(plots)

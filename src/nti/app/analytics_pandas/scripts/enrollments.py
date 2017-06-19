@@ -39,7 +39,7 @@ def main():
 							  courses=args['courses'],
 						 	  period_breaks=args['period_breaks'],
 						 	  minor_period_breaks=args['minor_period_breaks'],
-						 	  theme_seaborn_=args['theme_seaborn'],
+						 	  theme_bw_=args['theme_bw'],
 						 	  filepath=filepath,
 						 	  period = args['period'])
 	report = report_generator.build()

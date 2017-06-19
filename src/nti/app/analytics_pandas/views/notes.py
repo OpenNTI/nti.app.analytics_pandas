@@ -35,13 +35,13 @@ class NoteEventsTimeseriesContext(object):
 
 	def __init__(self, session=None, start_date=None, end_date=None, courses=None,
 				 period_breaks='1 week', minor_period_breaks='1 day',
-				 theme_seaborn_=True, number_of_most_active_user=10, period='daily'):
+				 theme_bw_=True, number_of_most_active_user=10, period='daily'):
 		self.session = session
 		self.courses = courses
 		self.end_date = end_date
 		self.start_date = start_date
 		self.period_breaks = period_breaks
-		self.theme_seaborn_ = theme_seaborn_
+		self.theme_bw_ = theme_bw_
 		self.minor_period_breaks = minor_period_breaks
 		self.number_of_most_active_user = number_of_most_active_user
 		self.period = period
@@ -148,7 +148,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 	def get_notes_created_plots(self, data):
 		plots = self.nctp.explore_events(self.context.period_breaks,
 										 self.context.minor_period_breaks,
-										 self.context.theme_seaborn_)
+										 self.context.theme_bw_)
 		if plots:
 			data['notes_created'] = build_plot_images_dictionary(plots)
 		return data
@@ -156,7 +156,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 	def get_notes_created_per_device_types_plots(self, data):
 		plots = self.nctp.analyze_device_types(self.context.period_breaks,
 										 	   self.context.minor_period_breaks,
-										 	   self.context.theme_seaborn_)
+										 	   self.context.theme_bw_)
 		self.options['has_notes_created_data_per_device_types'] = False
 		if plots:
 			data['notes_created_per_device_types'] = build_plot_images_dictionary(plots)
@@ -166,7 +166,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 	def get_notes_created_per_enrollment_types_plots(self, data):
 		plots = self.nctp.analyze_enrollment_types(self.context.period_breaks,
 										 		   self.context.minor_period_breaks,
-										 		   self.context.theme_seaborn_)
+										 		   self.context.theme_bw_)
 		self.options['has_notes_created_data_per_enrollment_types'] = False
 		if plots:
 			data['notes_created_per_enrollment_types'] = build_plot_images_dictionary(plots)
@@ -176,7 +176,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 	def get_notes_created_per_resource_types_plots(self, data):
 		plots = self.nctp.analyze_resource_types(self.context.period_breaks,
 										 		 self.context.minor_period_breaks,
-										 		 self.context.theme_seaborn_)
+										 		 self.context.theme_bw_)
 		self.options['has_notes_created_data_per_resource_types'] = False
 		if plots:
 			data['notes_created_per_resource_types'] = build_plot_images_dictionary(plots)
@@ -186,7 +186,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 	def get_notes_created_per_sharing_types_plots(self, data):
 		plots = self.nctp.analyze_sharing_types(self.context.period_breaks,
 										 		self.context.minor_period_breaks,
-										 		self.context.theme_seaborn_)
+										 		self.context.theme_bw_)
 		self.options['has_notes_created_data_per_sharing_types'] = False
 		if plots:
 			data['notes_created_per_sharing_types'] = build_plot_images_dictionary(plots)
@@ -196,7 +196,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 	def get_notes_created_on_videos(self, data):
 		plots = self.nctp.analyze_notes_created_on_videos(self.context.period_breaks,
 												 		  self.context.minor_period_breaks,
-												 		  self.context.theme_seaborn_)
+												 		  self.context.theme_bw_)
 		self.options['has_notes_created_on_videos'] = False
 		if plots:
 			data['notes_created_on_videos'] = build_images_dict_from_plot_dict(plots)
@@ -216,7 +216,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 	def get_notes_created_per_course_sections_plots(self, data):
 		plots = self.nctp.analyze_events_per_course_sections(self.context.period_breaks,
 										 					 self.context.minor_period_breaks,
-										 					 self.context.theme_seaborn_)
+										 					 self.context.theme_bw_)
 		self.options['has_notes_created_data_per_course_sections'] = False
 		if plots:
 			data['notes_created_per_course_sections'] = build_images_dict_from_plot_dict(plots)
@@ -249,7 +249,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 	def get_note_views_plots(self, data):
 		plots = self.nvtp.explore_events(self.context.period_breaks,
 										 self.context.minor_period_breaks,
-										 self.context.theme_seaborn_)
+										 self.context.theme_bw_)
 		if plots:
 			data['note_views'] = build_plot_images_dictionary(plots)
 		return data
@@ -257,7 +257,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 	def get_note_views_plots_per_device_types(self, data):
 		plots = self.nvtp.analyze_total_events_based_on_device_type(self.context.period_breaks,
 										 				  			self.context.minor_period_breaks,
-										 				  			self.context.theme_seaborn_)
+										 				  			self.context.theme_bw_)
 		self.options['has_note_views_data_per_device_types'] = False
 		if plots:
 			data['note_views_per_device_types'] = build_plot_images_dictionary(plots)
@@ -267,7 +267,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 	def get_note_views_plots_per_enrollment_types(self, data):
 		plots = self.nvtp.analyze_total_events_based_on_enrollment_type(self.context.period_breaks,
 										 				  			self.context.minor_period_breaks,
-										 				  			self.context.theme_seaborn_)
+										 				  			self.context.theme_bw_)
 		self.options['has_note_views_data_per_enrollment_types'] = False
 		if plots:
 			data['note_views_per_enrollment_types'] = build_plot_images_dictionary(plots)
@@ -277,7 +277,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 	def get_note_views_plots_per_resource_types(self, data):
 		plots = self.nvtp.analyze_total_events_based_on_resource_type(self.context.period_breaks,
 										 				  			self.context.minor_period_breaks,
-										 				  			self.context.theme_seaborn_)
+										 				  			self.context.theme_bw_)
 		self.options['has_note_views_data_per_resource_types'] = False
 		if plots:
 			data['note_views_per_resource_types'] = build_plot_images_dictionary(plots)
@@ -287,7 +287,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 	def get_note_views_plots_per_sharing_types(self, data):
 		plots = self.nvtp.analyze_total_events_based_on_sharing_type(self.context.period_breaks,
 										 				  			self.context.minor_period_breaks,
-										 				  			self.context.theme_seaborn_)
+										 				  			self.context.theme_bw_)
 		self.options['has_note_views_data_per_sharing_types'] = False
 		if plots:
 			data['note_views_per_sharing_types'] = build_plot_images_dictionary(plots)
@@ -297,7 +297,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 	def get_note_views_per_course_sections_plots(self, data):
 		plots = self.nvtp.analyze_total_events_per_course_sections(self.context.period_breaks,
 										 					 	   self.context.minor_period_breaks,
-										 						   self.context.theme_seaborn_)
+										 						   self.context.theme_bw_)
 		self.options['has_note_views_data_per_course_sections'] = False
 		if plots:
 			data['note_views_per_course_sections'] = build_images_dict_from_plot_dict(plots)
@@ -328,7 +328,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 	def get_note_likes_plots(self, data):
 		plots = self.nltp.explore_events(self.context.period_breaks,
 										 self.context.minor_period_breaks,
-										 self.context.theme_seaborn_)
+										 self.context.theme_bw_)
 		if plots:
 			data['note_likes'] = build_plot_images_dictionary(plots)
 		return data
@@ -341,7 +341,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 	def get_note_favorites_plots(self, data):
 		plots = self.nftp.explore_events(self.context.period_breaks,
 										 self.context.minor_period_breaks,
-										 self.context.theme_seaborn_)
+										 self.context.theme_bw_)
 		if plots:
 			data['note_favorites'] = build_plot_images_dictionary(plots)
 		return data
@@ -350,7 +350,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 		self.netp = NotesEventsTimeseriesPlot(self.net)
 		plots = self.netp.explore_all_events(self.context.period_breaks,
 										 	 self.context.minor_period_breaks,
-										 	 self.context.theme_seaborn_)
+										 	 self.context.theme_bw_)
 		self.options['has_note_events_data'] = False
 		if plots:
 			data['note_events'] = build_plot_images_dictionary(plots)
