@@ -13,17 +13,17 @@ from . import MessageFactory as _
 
 from zope import interface
 
-from ...analysis import TopicsCreationTimeseries
-from ...analysis import TopicsCreationTimeseriesPlot
+from nti.analytics_pandas.analysis import TopicsCreationTimeseries
+from nti.analytics_pandas.analysis import TopicsCreationTimeseriesPlot
 
-from ...analysis import TopicViewsTimeseries
-from ...analysis import TopicViewsTimeseriesPlot
+from nti.analytics_pandas.analysis import TopicViewsTimeseries
+from nti.analytics_pandas.analysis import TopicViewsTimeseriesPlot
 
-from ...analysis import TopicLikesTimeseries
-from ...analysis import TopicLikesTimeseriesPlot
+from nti.analytics_pandas.analysis import TopicLikesTimeseries
+from nti.analytics_pandas.analysis import TopicLikesTimeseriesPlot
 
-from ...analysis import TopicFavoritesTimeseries
-from ...analysis import TopicFavoritesTimeseriesPlot
+from nti.analytics_pandas.analysis import TopicFavoritesTimeseries
+from nti.analytics_pandas.analysis import TopicFavoritesTimeseriesPlot
 
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary

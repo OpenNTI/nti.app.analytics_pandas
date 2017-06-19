@@ -13,17 +13,17 @@ from . import MessageFactory as _
 
 from zope import interface
 
-from ...analysis import ForumsEventsTimeseries
-from ...analysis import ForumsCreatedTimeseries
-from ...analysis import ForumCommentLikesTimeseries
-from ...analysis import ForumCommentFavoritesTimeseries
-from ...analysis import ForumsCommentsCreatedTimeseries
+from nti.analytics_pandas.analysis import ForumsEventsTimeseries
+from nti.analytics_pandas.analysis import ForumsCreatedTimeseries
+from nti.analytics_pandas.analysis import ForumCommentLikesTimeseries
+from nti.analytics_pandas.analysis import ForumCommentFavoritesTimeseries
+from nti.analytics_pandas.analysis import ForumsCommentsCreatedTimeseries
 
-from ...analysis import ForumsEventsTimeseriesPlot
-from ...analysis import ForumsCreatedTimeseriesPlot
-from ...analysis import ForumCommentLikesTimeseriesPlot
-from ...analysis import ForumsCommentsCreatedTimeseriesPlot
-from ...analysis import ForumCommentFavoritesTimeseriesPlot
+from nti.analytics_pandas.analysis import ForumsEventsTimeseriesPlot
+from nti.analytics_pandas.analysis import ForumsCreatedTimeseriesPlot
+from nti.analytics_pandas.analysis import ForumCommentLikesTimeseriesPlot
+from nti.analytics_pandas.analysis import ForumsCommentsCreatedTimeseriesPlot
+from nti.analytics_pandas.analysis import ForumCommentFavoritesTimeseriesPlot
 
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary

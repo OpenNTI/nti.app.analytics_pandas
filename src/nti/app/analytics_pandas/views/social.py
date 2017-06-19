@@ -13,32 +13,32 @@ from . import MessageFactory as _
 
 from zope import interface
 
-from ...analysis import ChatsTimeseriesPlot
-from ...analysis import ChatsJoinedTimeseries
-from ...analysis import ChatsInitiatedTimeseries
+from nti.analytics_pandas.analysis import ChatsTimeseriesPlot
+from nti.analytics_pandas.analysis import ChatsJoinedTimeseries
+from nti.analytics_pandas.analysis import ChatsInitiatedTimeseries
 
-from ...analysis import ContactsAddedTimeseries
-from ...analysis import ContactsAddedTimeseriesPlot
+from nti.analytics_pandas.analysis import ContactsAddedTimeseries
+from nti.analytics_pandas.analysis import ContactsAddedTimeseriesPlot
 
-from ...analysis import ContactsRemovedTimeseries
-from ...analysis import ContactsRemovedTimeseriesPlot
+from nti.analytics_pandas.analysis import ContactsRemovedTimeseries
+from nti.analytics_pandas.analysis import ContactsRemovedTimeseriesPlot
 
-from ...analysis import ContactsEventsTimeseries
-from ...analysis import ContactsEventsTimeseriesPlot
+from nti.analytics_pandas.analysis import ContactsEventsTimeseries
+from nti.analytics_pandas.analysis import ContactsEventsTimeseriesPlot
 
-from ...analysis import FriendsListsMemberAddedTimeseries
-from ...analysis import FriendsListsMemberAddedTimeseriesPlot
+from nti.analytics_pandas.analysis import FriendsListsMemberAddedTimeseries
+from nti.analytics_pandas.analysis import FriendsListsMemberAddedTimeseriesPlot
 
-from ...analysis import EntityProfileViewsTimeseries
-from ...analysis import EntityProfileViewsTimeseriesPlot
+from nti.analytics_pandas.analysis import EntityProfileViewsTimeseries
+from nti.analytics_pandas.analysis import EntityProfileViewsTimeseriesPlot
 
-from ...analysis import EntityProfileActivityViewsTimeseries
-from ...analysis import EntityProfileActivityViewsTimeseriesPlot
+from nti.analytics_pandas.analysis import EntityProfileActivityViewsTimeseries
+from nti.analytics_pandas.analysis import EntityProfileActivityViewsTimeseriesPlot
 
-from ...analysis import EntityProfileMembershipViewsTimeseries
-from ...analysis import EntityProfileMembershipViewsTimeseriesPlot
+from nti.analytics_pandas.analysis import EntityProfileMembershipViewsTimeseries
+from nti.analytics_pandas.analysis import EntityProfileMembershipViewsTimeseriesPlot
 
-from ...analysis import EntityProfileViewEventsTimeseries
+from nti.analytics_pandas.analysis import EntityProfileViewEventsTimeseries
 
 from .commons import build_plot_images_dictionary
 

@@ -13,18 +13,18 @@ from . import MessageFactory as _
 
 from zope import interface
 
-from ...analysis import AssessmentEventsTimeseries
-from ...analysis import AssessmentEventsTimeseriesPlot
+from nti.analytics_pandas.analysis import AssessmentEventsTimeseries
+from nti.analytics_pandas.analysis import AssessmentEventsTimeseriesPlot
 
-from ...analysis import AssignmentViewsTimeseries
-from ...analysis import AssignmentsTakenTimeseries
-from ...analysis import AssignmentViewsTimeseriesPlot
-from ...analysis import AssignmentsTakenTimeseriesPlot
+from nti.analytics_pandas.analysis import AssignmentViewsTimeseries
+from nti.analytics_pandas.analysis import AssignmentsTakenTimeseries
+from nti.analytics_pandas.analysis import AssignmentViewsTimeseriesPlot
+from nti.analytics_pandas.analysis import AssignmentsTakenTimeseriesPlot
 
-from ...analysis import SelfAssessmentViewsTimeseries
-from ...analysis import SelfAssessmentsTakenTimeseries
-from ...analysis import SelfAssessmentViewsTimeseriesPlot
-from ...analysis import SelfAssessmentsTakenTimeseriesPlot
+from nti.analytics_pandas.analysis import SelfAssessmentViewsTimeseries
+from nti.analytics_pandas.analysis import SelfAssessmentsTakenTimeseries
+from nti.analytics_pandas.analysis import SelfAssessmentViewsTimeseriesPlot
+from nti.analytics_pandas.analysis import SelfAssessmentsTakenTimeseriesPlot
 
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary

@@ -13,8 +13,8 @@ from . import MessageFactory as _
 
 from zope import interface
 
-from ...analysis import ResourceViewsTimeseries
-from ...analysis import ResourceViewsTimeseriesPlot
+from nti.analytics_pandas.analysis import ResourceViewsTimeseries
+from nti.analytics_pandas.analysis import ResourceViewsTimeseriesPlot
 
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary

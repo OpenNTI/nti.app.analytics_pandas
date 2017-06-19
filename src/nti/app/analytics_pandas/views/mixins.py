@@ -19,7 +19,7 @@ from zope import interface
 
 from z3c.pagelet.browser import BrowserPagelet
 
-from ..interfaces import IPDFReportView
+from nti.app.analytics_pandas.reports.interfaces import IPDFReportView
 
 def adjust_date(date):
 	"""

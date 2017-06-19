@@ -13,8 +13,8 @@ from . import MessageFactory as _
 
 from zope import interface
 
-from ...analysis import BookmarksTimeseriesPlot
-from ...analysis import BookmarkCreationTimeseries
+from nti.analytics_pandas.analysis import BookmarksTimeseriesPlot
+from nti.analytics_pandas.analysis import BookmarkCreationTimeseries
 
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary
