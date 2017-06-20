@@ -1,0 +1,119 @@
+<metal:block
+	xmlns:tal="http://xml.zope.org/namespaces/tal"
+	xmlns:metal="http://xml.zope.org/namespaces/metal"
+	tal:define="options view/options">
+
+	<tal:block tal:condition="python: options['has_bookmark_data']">
+		<para style="normal" spaceAfter=".5in" >
+			This document presents an overview of bookmarks created in <u>${options/course_names}</u> from <strong>${context/start_date}</strong> through <strong>${context/end_date}</strong>.
+			It includes plots of bookmarks created grouped by resource and device types.
+			It also shows the most active users creating bookmarks.
+		</para>
+	</tal:block>	
+	<hr width="100%" />
+
+	<tal:block tal:condition="python: options['has_bookmark_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Bookmarks Created
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="bookmarks_created options/data/bookmarks_created">
+			<illustration width="5in" height="3in"
+					  	  tal:define="event bookmarks_created/event_bookmarks_created;
+					  	  			  user_event bookmarks_created/user_bookmarks_created;
+								      ratio_event bookmarks_created/ratio_bookmarks_created"
+					      metal:use-macro="macro:three_plots_event">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_bookmark_data_per_enrollment_types']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Bookmarks Created per Enrollment Types
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="bookmarks_created options/data/bookmarks_created_per_enrollment_types">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event bookmarks_created/event_bookmarks_created_per_enrollment_types;
+						  	  			  user_event bookmarks_created/user_bookmarks_created_per_enrollment_types;
+									      ratio_event bookmarks_created/ratio_bookmarks_created_per_enrollment_types"
+						      metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_bookmark_data_per_device_types']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Bookmarks Created per Application Types
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="bookmarks_created options/data/bookmarks_created_per_device_types">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event bookmarks_created/event_bookmarks_created_per_device_types;
+						  	  			  user_event bookmarks_created/user_bookmarks_created_per_device_types;
+									      ratio_event bookmarks_created/ratio_bookmarks_created_per_device_types"
+						      metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_bookmark_data_per_resource_types']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Bookmarks Created per Resource Types
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="bookmarks_created options/data/bookmarks_created_per_resource_types/line_plots;
+								   bookmarks_created_hist options/data/bookmarks_created_per_resource_types/hist_plot">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event bookmarks_created/event_bookmarks_created_per_resource_types;
+						  	  			  user_event bookmarks_created/user_bookmarks_created_per_resource_types;
+									      ratio_event bookmarks_created/ratio_bookmarks_created_per_resource_types;
+									      additional_plot bookmarks_created_hist"
+						      metal:use-macro="macro:four_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_bookmark_created_users']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				The most active users creating bookmarks
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="bookmark_created_users options/data/bookmark_created_users">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event bookmark_created_users/most_active_user_creating_bookmarks"
+						      metal:use-macro="macro:one_plot_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_bookmark_data_per_course_sections']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Bookmarks Created per Course Sections
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define= "all_sections options/data/bookmarks_created_per_course_sections/all_section_plots">
+				<illustration width="5in" height="3in"
+							  tal:define="event all_sections/event_bookmarks_created_per_course_sections;
+										  user_event all_sections/user_bookmarks_created_per_course_sections;
+										  ratio_event all_sections/ratio_bookmarks_created_per_course_sections"
+							  tal:condition="all_sections"
+							  metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>		
+		</tal:block>
+
+	</tal:block>
+
+</metal:block>

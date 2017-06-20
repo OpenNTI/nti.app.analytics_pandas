@@ -1,0 +1,338 @@
+<metal:block
+	xmlns:tal="http://xml.zope.org/namespaces/tal"
+	xmlns:metal="http://xml.zope.org/namespaces/metal"
+	tal:define="options view/options">
+
+	<tal:block tal:condition="python: options['has_assessment_events']">
+		<para style="normal" spaceAfter=".5in" >
+			This document presents an overview of assessments related events in <u>${options/course_names}</u> from <strong>${context/start_date}</strong> through <strong>${context/end_date}</strong>.
+		</para>
+	</tal:block>	
+	<hr width="100%" />
+
+	<tal:block tal:condition="python: options['has_assessment_events']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Assessment related Events
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="assessment_events options/data/assessment_events">
+			<illustration width="5in" height="3in"
+						  tal:define="event assessment_events/event_assessment_events;
+									  user_event assessment_events/user_assessment_events;
+									  ratio_event assessment_events/ratio_assessment_events"
+						  metal:use-macro="macro:three_plots_event">
+			</illustration>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_assignment_views_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Assignment Views
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="assignment_views options/data/assignment_views">
+			<illustration width="5in" height="3in"
+						  tal:define="event assignment_views/event_assignment_views;
+									  user_event assignment_views/user_assignment_views;
+									  ratio_event assignment_views/ratio_assignment_views"
+						  metal:use-macro="macro:three_plots_event">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_assignment_views_per_enrollment_types']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Assignment Views per Enrollment Types
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="assignment_views options/data/assignment_views_per_enrollment_types">
+				<illustration width="5in" height="3in"
+							  tal:define="event assignment_views/event_assignment_views_per_enrollment_types;
+										  user_event assignment_views/user_assignment_views_per_enrollment_types;
+										  ratio_event assignment_views/ratio_assignment_views_per_enrollment_types"
+							  metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_assignment_views_per_device_types']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Assignment Views per Application Types
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="assignment_views options/data/assignment_views_per_device_types">
+				<illustration width="5in" height="3in"
+							  tal:define="event assignment_views/event_assignment_views_per_device_types;
+										  user_event assignment_views/user_assignment_views_per_device_types;
+										  ratio_event assignment_views/ratio_assignment_views_per_device_types"
+							  metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_assignment_views_per_course_sections']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Assignment Views per Course Sections
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="assignment_views options/data/assignment_views_per_course_sections/all_section_plots">
+				<illustration width="5in" height="3in"
+							  tal:define="event assignment_views/event_assignment_views_per_course_sections;
+										  user_event assignment_views/user_assignment_views_per_course_sections;
+										  ratio_event assignment_views/ratio_assignment_views_per_course_sections"
+							  metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+	</tal:block>
+
+	
+	<tal:block tal:condition="python: options['has_assignment_taken_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Assignments Taken
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="assignment_taken options/data/assignment_taken">
+			<illustration width="5in" height="3in"
+						  tal:define="event assignment_taken/event_assignments_taken;
+									  user_event assignment_taken/user_assignments_taken;
+									  ratio_event assignment_taken/ratio_assignments_taken"
+						  metal:use-macro="macro:three_plots_event">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_assignment_taken_per_enrollment_types']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Assignments Taken per Enrollment Types
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="assignment_taken options/data/assignment_taken_per_enrollment_types">
+				<illustration width="5in" height="3in"
+							  tal:define="event assignment_taken/event_assignments_taken_per_enrollment_types;
+										  user_event assignment_taken/user_assignments_taken_per_enrollment_types;
+										  ratio_event assignment_taken/ratio_assignments_taken_per_enrollment_types"
+							  metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_assignment_taken_per_device_types']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Assignments Taken per Application Types
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="assignment_taken options/data/assignment_taken_per_device_types">
+				<illustration width="5in" height="3in"
+							  tal:define="event assignment_taken/event_assignments_taken_per_device_types;
+										  user_event assignment_taken/user_assignments_taken_per_device_types;
+										  ratio_event assignment_taken/ratio_assignments_taken_per_device_types"
+							  metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_assignment_taken_per_course_sections']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Assignments Taken per Course Sections
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="assignment_taken options/data/assignment_taken_per_course_sections/all_section_plots">
+				<illustration width="5in" height="3in"
+							  tal:define="event assignment_taken/event_assignments_taken_per_course_sections;
+										  user_event assignment_taken/user_assignments_taken_per_course_sections;
+										  ratio_event assignment_taken/ratio_assignments_taken_per_course_sections"
+							  metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_assignment_taken_over_total_enrollments_ts']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Assignments Taken vs Enrollment Count
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="assignment_taken options/data/assignment_taken_over_total_enrollments_ts">
+				<illustration width="5in" height="3in"
+							  tal:define="event assignment_taken/assignments_taken_over_total_enrollments"
+							  metal:use-macro="macro:one_plot_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_self_assessment_views_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Self Assessment Views
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="self_assessment_views options/data/self_assessment_views">
+			<illustration width="5in" height="3in"
+						  tal:define="event self_assessment_views/event_self_assessment_views;
+									  user_event self_assessment_views/user_self_assessment_views;
+									  ratio_event self_assessment_views/ratio_self_assessment_views"
+						  metal:use-macro="macro:three_plots_event">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_self_assessment_views_per_device_types']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Self Assessment Views per Application Types
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="self_assessment_views options/data/self_assessment_views_per_device_types">
+				<illustration width="5in" height="3in"
+							  tal:define="event self_assessment_views/event_self_assessment_views_per_device_types;
+										  user_event self_assessment_views/user_self_assessment_views_per_device_types;
+										  ratio_event self_assessment_views/ratio_self_assessment_views_per_device_types"
+							  metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_self_assessment_views_per_enrollment_types']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Self Assessment Views per Enrollment Types
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="self_assessment_views options/data/self_assessment_views_per_enrollment_types">
+				<illustration width="5in" height="3in"
+							  tal:define="event self_assessment_views/event_self_assessment_views_per_enrollment_types;
+										  user_event self_assessment_views/user_self_assessment_views_per_enrollment_types;
+										  ratio_event self_assessment_views/ratio_self_assessment_views_per_enrollment_types"
+							  metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_self_assessment_views_per_course_sections']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Self Assessment Views per Course Sections
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:condition="python: options['has_self_assessment_views_all_section_plots']">
+				<tal:block tal:define="self_assessment_views options/data/self_assessment_views_per_course_sections/all_section_plots">
+					<illustration width="5in" height="3in"
+								  tal:define="event self_assessment_views/event_self_assessment_views_per_course_sections;
+											  user_event self_assessment_views/user_self_assessment_views_per_course_sections;
+											  ratio_event self_assessment_views/ratio_self_assessment_views_per_course_sections"
+								  metal:use-macro="macro:three_plots_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_self_assessments_taken_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />		
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Self Assessments Taken
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="self_assessments_taken options/data/self_assessments_taken">
+			<illustration width="5in" height="3in"
+						  tal:define="event self_assessments_taken/event_self_assessments_taken;
+									  user_event self_assessments_taken/user_self_assessments_taken;
+									  ratio_event self_assessments_taken/ratio_self_assessments_taken"
+						  metal:use-macro="macro:three_plots_event">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_self_assessments_taken_per_enrollment_types']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Self Assessments Taken per Enrollment Types
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="self_assessments_taken options/data/self_assessments_taken_per_enrollment_types">
+				<illustration width="5in" height="3in"
+							  tal:define="event self_assessments_taken/event_self_assessments_taken_per_enrollment_types;
+										  user_event self_assessments_taken/user_self_assessments_taken_per_enrollment_types;
+										  ratio_event self_assessments_taken/ratio_self_assessments_taken_per_enrollment_types"
+							  metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_self_assessments_taken_per_device_types']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Self Assessments Taken per Application Types
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="self_assessments_taken options/data/self_assessments_taken_per_device_types">
+				<illustration width="5in" height="3in"
+							  tal:define="event self_assessments_taken/event_self_assessments_taken_per_device_types;
+										  user_event self_assessments_taken/user_self_assessments_taken_per_device_types;
+										  ratio_event self_assessments_taken/ratio_self_assessments_taken_per_device_types"
+							  metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_self_assessments_taken_per_course_sections']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Self Assessments Taken per Course Sections
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:condition="python: options['has_self_assessments_taken_all_section_plots']">
+				<tal:block tal:define="self_assessments_taken options/data/self_assessments_taken_per_course_sections/all_section_plots">
+					<illustration width="5in" height="3in"
+								  tal:define="event self_assessments_taken/event_self_assessments_taken_per_course_sections;
+											  user_event self_assessments_taken/user_self_assessments_taken_per_course_sections;
+											  ratio_event self_assessments_taken/ratio_self_assessments_taken_per_course_sections"
+								  metal:use-macro="macro:three_plots_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_self_assessments_taken_over_total_enrollments_ts']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Self Assessments Taken vs Enrollment Count
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="self_assessments_taken options/data/self_assessments_taken_over_total_enrollments_ts">
+				<illustration width="5in" height="3in"
+							  tal:define="event self_assessments_taken/self_assessments_taken_over_total_enrollments"
+							  metal:use-macro="macro:one_plot_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+	</tal:block>
+
+</metal:block>

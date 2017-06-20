@@ -1,0 +1,455 @@
+<metal:block
+	xmlns:tal="http://xml.zope.org/namespaces/tal"
+	xmlns:metal="http://xml.zope.org/namespaces/metal"
+	tal:define="options view/options">
+	
+	<para style="normal" spaceAfter=".5in" >
+		This document presents an overview of social related event activities from <strong>${context/start_date}</strong> through <strong>${context/end_date}</strong>.
+	</para>
+	<hr width="100%" />
+
+	<tal:block tal:condition="python: options['has_combined_contact_event_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Contact Related Events
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="combine_contact_events options/data/combine_contact_events">
+			<illustration width="5in" height="3in"
+					  	  tal:define="event combine_contact_events/event_combine_contact_events;
+					  	  			  user_event combine_contact_events/user_combine_contact_events;
+								      ratio_event combine_contact_events/ratio_combine_contact_events"
+					      metal:use-macro="macro:three_plots_event">
+			</illustration>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_contacts_added_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Contacts Added
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="contacts_added options/data/contacts_added">
+			<illustration width="5in" height="3in"
+					  	  tal:define="event contacts_added/event_contacts_added;
+					  	  			  user_event contacts_added/user_contacts_added;
+								      ratio_event contacts_added/ratio_contacts_added"
+					      metal:use-macro="macro:three_plots_event">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_contacts_added_per_application_type']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Contacts Added per Application Type
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="contacts_added options/data/contacts_added_per_application_type">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event contacts_added/event_contacts_added_per_application_type;
+						  	  			  user_event contacts_added/user_contacts_added_per_application_type;
+									      ratio_event contacts_added/ratio_contacts_added_per_application_type"
+						      metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_contacts_added_users']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				The most active users adding contacts
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="contacts_added_users options/data/contacts_added_users">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event contacts_added_users/most_active_users_adding_contacts"
+						      metal:use-macro="macro:one_plot_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_contacts_removed_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Contacts Removed
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="contacts_removed options/data/contacts_removed">
+			<illustration width="5in" height="3in"
+					  	  tal:define="event contacts_removed/event_contacts_removed;
+					  	  			  user_event contacts_removed/user_contacts_removed;
+								      ratio_event contacts_removed/ratio_contacts_removed"
+					      metal:use-macro="macro:three_plots_event">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_contacts_removed_per_application_type']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Contacts Removed per Application Type
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="contacts_removed options/data/contacts_removed_per_application_type">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event contacts_removed/event_contacts_removed_per_application_type;
+						  	  			  user_event contacts_removed/user_contacts_removed_per_application_type;
+									      ratio_event contacts_removed/ratio_contacts_removed_per_application_type"
+						      metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_contacts_removed_users']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				The most active users removing contacts
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="contacts_removed_users options/data/contacts_removed_users">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event contacts_removed_users/most_active_users_removing_contacts"
+						      metal:use-macro="macro:one_plot_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_friendlist_members_added_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Friend List Members Added
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="fl_members_added options/data/friendlist_members_added">
+			<illustration width="5in" height="3in"
+					  	  tal:define="plot_1 fl_members_added/average_number_of_friend_list_members_added;
+					  	  			  plot_2 fl_members_added/total_number_of_friend_list_members_added;
+								      plot_3 fl_members_added/number_of_friend_lists"
+					      metal:use-macro="macro:three_plots">
+			</illustration>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_chats_data']">
+		<tal:block tal:condition="python: options['has_chats_initiated']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Overview of Chats Initiated
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="chats_initiated options/data/chats_initiated">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event chats_initiated/event_chats_initiated;
+						  	  			  user_event chats_initiated/user_chats_initiated;
+									      ratio_event chats_initiated/ratio_chats_initiated"
+						      metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_chats_initiated_per_application_type']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Chats Initiated per Application Type
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="chats_initiated options/data/chats_initiated_per_application_type">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event chats_initiated/event_chats_initiated_per_application_type;
+							  	  			  user_event chats_initiated/user_chats_initiated_per_application_type;
+										      ratio_event chats_initiated/ratio_chats_initiated_per_application_type"
+							      metal:use-macro="macro:three_plots_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_users_join_chats']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Overview of Users Joining Chats
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="users_join_chats options/data/users_join_chats">
+				<illustration width="5in" height="3in"
+						  	  tal:define="plot_1 users_join_chats/average_number_user_join_chats;
+						  	  			  plot_2 users_join_chats/total_number_user_join_chats;
+									      plot_3 users_join_chats/chats_created"
+						      metal:use-macro="macro:three_plots">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_one_one_or_group_chats']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Overviews of One one or Group Chats
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="one_one_and_group_chat options/data/one_one_and_group_chat">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event one_one_and_group_chat/chats"
+						      metal:use-macro="macro:one_plot_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_profile_view_events']">
+		<tal:block tal:condition="python: options['has_profile_views']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Overview of Profile Views
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="profile_views options/data/profile_views">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event profile_views/event_profile_views;
+						  	  			  user_event profile_views/user_profile_views;
+									      ratio_event profile_views/ratio_profile_views"
+						      metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_profile_views_per_application_type']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Profile Views per Application Type
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="profile_views options/data/profile_views_per_application_type">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event profile_views/event_profile_views_per_application_type;
+							  	  			  user_event profile_views/user_profile_views_per_application_type;
+										      ratio_event profile_views/ratio_profile_views_per_application_type"
+							      metal:use-macro="macro:three_plots_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_profile_views_per_viewer_type']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Profile Views per Viewer Type
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="profile_views options/data/profile_views_per_viewer_type">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event profile_views/event_profile_views_per_viewer_type;
+							  	  			  user_event profile_views/user_profile_views_per_viewer_type;
+										      ratio_event profile_views/ratio_profile_views_per_viewer_type"
+							      metal:use-macro="macro:three_plots_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_profile_views_most_active_users']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Most Active Users Viewing Profiles
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="most_active_users options/data/profile_views_most_active_users">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event most_active_users/most_active_user_viewing_profiles"
+							      metal:use-macro="macro:one_plot_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_most_viewed_profiles']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Most Viewed Profiles
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="most_viewed_profiles options/data/most_viewed_profiles">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event most_viewed_profiles/most_viewed_profiles"
+							      metal:use-macro="macro:one_plot_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_profile_activity_views']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Overview of Profile Activity Views
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="profile_activity_views options/data/profile_activity_views">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event profile_activity_views/event_profile_activity_views;
+						  	  			  user_event profile_activity_views/user_profile_activity_views;
+									      ratio_event profile_activity_views/ratio_profile_activity_views"
+						      metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_profile_activity_views_per_application_type']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Profile Activity Views per Application Type
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="profile_activity_views options/data/profile_activity_views_per_application_type">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event profile_activity_views/event_profile_activity_views_per_application_type;
+							  	  			  user_event profile_activity_views/user_profile_activity_views_per_application_type;
+										      ratio_event profile_activity_views/ratio_profile_activity_views_per_application_type"
+							      metal:use-macro="macro:three_plots_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_profile_activity_views_per_viewer_type']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Profile Activity Views per Viewer Type
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="profile_activity_views options/data/profile_activity_views_per_viewer_type">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event profile_activity_views/event_profile_activity_views_per_viewer_type;
+							  	  			  user_event profile_activity_views/user_profile_activity_views_per_viewer_type;
+										      ratio_event profile_activity_views/ratio_profile_activity_views_per_viewer_type"
+							      metal:use-macro="macro:three_plots_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_profile_activity_views_most_active_users']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Most Active Users Viewing Profile Activities
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="most_active_users options/data/profile_activity_views_most_active_users">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event most_active_users/most_active_user_viewing_profile_activities"
+							      metal:use-macro="macro:one_plot_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_most_viewed_profile_activities']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Most Viewed Profile Activities
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="most_viewed_profile_activities options/data/most_viewed_profile_activities">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event most_viewed_profile_activities/most_viewed_profile_activities"
+							      metal:use-macro="macro:one_plot_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_profile_membership_views']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Overview of Profile Membership Views
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="profile_membership_views options/data/profile_membership_views">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event profile_membership_views/event_profile_membership_views;
+						  	  			  user_event profile_membership_views/user_profile_membership_views;
+									      ratio_event profile_membership_views/ratio_profile_membership_views"
+						      metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_profile_membership_views_per_application_type']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Profile Membership Views per Application Type
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="profile_membership_views options/data/profile_membership_views_per_application_type">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event profile_membership_views/event_profile_membership_views_per_application_type;
+							  	  			  user_event profile_membership_views/user_profile_membership_views_per_application_type;
+										      ratio_event profile_membership_views/ratio_profile_membership_views_per_application_type"
+							      metal:use-macro="macro:three_plots_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_profile_membership_views_per_viewer_type']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Profile Membership Views per Viewer Type
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="profile_membership_views options/data/profile_membership_views_per_viewer_type">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event profile_membership_views/event_profile_membership_views_per_viewer_type;
+							  	  			  user_event profile_membership_views/user_profile_membership_views_per_viewer_type;
+										      ratio_event profile_membership_views/ratio_profile_membership_views_per_viewer_type"
+							      metal:use-macro="macro:three_plots_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_profile_membership_views_most_active_users']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Most Active Users Viewing Profile Memberships
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="most_active_users options/data/profile_membership_views_most_active_users">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event most_active_users/most_active_user_viewing_profile_memberships"
+							      metal:use-macro="macro:one_plot_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['has_most_viewed_profile_memberships']">
+				<setNextTemplate name="main"/>
+				<nextPage />
+				<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+					Most Viewed Profile Memberships
+				</h1>
+				<hr width="100%" />
+				<tal:block tal:define="most_viewed_profile_memberships options/data/most_viewed_profile_memberships">
+					<illustration width="5in" height="3in"
+							  	  tal:define="event most_viewed_profile_memberships/most_viewed_profile_memberships"
+							      metal:use-macro="macro:one_plot_event">
+					</illustration>
+				</tal:block>
+			</tal:block>
+		</tal:block>
+	</tal:block>
+</metal:block>

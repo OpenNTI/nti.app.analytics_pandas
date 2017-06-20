@@ -1,0 +1,183 @@
+<metal:block
+	xmlns:tal="http://xml.zope.org/namespaces/tal"
+	xmlns:metal="http://xml.zope.org/namespaces/metal"
+	tal:define="options view/options">
+
+	<tal:block tal:condition="python: options['has_topics_created_data']">
+		<para style="normal" spaceAfter=".5in" >
+			This document presents an overview of topics related events in <u>${options/course_names}</u> from <strong>${context/start_date}</strong> through <strong>${context/end_date}</strong>.
+		</para>
+	</tal:block>	
+	<hr width="100%" />
+
+	<tal:block tal:condition="python: options['has_topics_created_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Topics Created
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="topics_created options/data/topics_created">
+			<illustration width="5in" height="3in"
+					  	  tal:define="event topics_created/event_topics_created;
+					  	  			  user_event topics_created/user_topics_created;
+								      ratio_event topics_created/ratio_topics_created"
+					      metal:use-macro="macro:three_plots_event">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_topics_created_per_enrollment_types']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Topics Created per Enrolment Types
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="topics_created options/data/topics_created_per_enrollment_types">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event topics_created/event_topics_created_per_enrollment_types;
+						  	  			  user_event topics_created/user_topics_created_per_enrollment_types;
+									      ratio_event topics_created/ratio_topics_created_per_enrollment_types"
+						      metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_topics_created_per_device_types']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Topics Created per Application Types
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="topics_created options/data/topics_created_per_device_types">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event topics_created/event_topics_created_per_device_types;
+						  	  			  user_event topics_created/user_topics_created_per_device_types;
+									      ratio_event topics_created/ratio_topics_created_per_device_types"
+						      metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_topics_created_per_course_sections']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Topics Created per Course Sections
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="topics_created options/data/topics_created_per_course_sections/all_section_plots">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event topics_created/event_topics_created_per_course_sections;
+						  	  			  user_event topics_created/user_topics_created_per_course_sections;
+									      ratio_event topics_created/ratio_topics_created_per_course_sections"
+						      metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_topic_views_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Topic Views
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="topic_views options/data/topic_views">
+			<illustration width="5in" height="3in"
+					  	  tal:define="event topic_views/event_topic_views;
+					  	  			  user_event topic_views/user_topic_views;
+								      ratio_event topic_views/ratio_topic_views"
+					      metal:use-macro="macro:three_plots_event">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_topic_views_per_enrollment_types']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Topic Views per Enrollment Types
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="topic_views options/data/topic_views_per_enrollment_types">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event topic_views/event_topic_views_per_enrollment_types;
+						  	  			  user_event topic_views/user_topic_views_per_enrollment_types;
+									      ratio_event topic_views/ratio_topic_views_per_enrollment_types"
+						      metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_topic_views_per_device_types']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Topic Views per Application Types
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="topic_views options/data/topic_views_per_device_types">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event topic_views/event_topic_views_per_device_types;
+						  	  			  user_event topic_views/user_topic_views_per_device_types;
+									      ratio_event topic_views/ratio_topic_views_per_device_types"
+						      metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+
+		<tal:block tal:condition="python: options['has_topic_views_per_course_sections']">
+			<setNextTemplate name="main"/>
+			<nextPage />
+			<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+				Topic Views per Course Sections
+			</h1>
+			<hr width="100%" />
+			<tal:block tal:define="topic_views options/data/topic_views_per_course_sections/all_section_plots">
+				<illustration width="5in" height="3in"
+						  	  tal:define="event topic_views/event_topic_views_per_course_sections;
+						  	  			  user_event topic_views/user_topic_views_per_course_sections;
+									      ratio_event topic_views/ratio_topic_views_per_course_sections"
+						      metal:use-macro="macro:three_plots_event">
+				</illustration>
+			</tal:block>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_topic_likes_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Topic Likes
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="topic_likes options/data/topic_likes">
+			<illustration width="5in" height="3in"
+					  	  tal:define="event topic_likes/event_topic_likes;
+					  	  			  user_event topic_likes/user_topic_likes;
+								      ratio_event topic_likes/ratio_topic_likes"
+					      metal:use-macro="macro:three_plots_event">
+			</illustration>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_topic_likes_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Topic Favorites
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="topic_favorites options/data/topic_favorites">
+			<illustration width="5in" height="3in"
+					  	  tal:define="event topic_favorites/event_topic_favorites;
+					  	  			  user_event topic_favorites/user_topic_favorites;
+								      ratio_event topic_favorites/ratio_topic_favorites"
+					      metal:use-macro="macro:three_plots_event">
+			</illustration>
+		</tal:block>
+	</tal:block>
+
+</metal:block>
