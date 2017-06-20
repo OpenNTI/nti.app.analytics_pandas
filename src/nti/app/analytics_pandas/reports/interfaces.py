@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 """
-.. $Id: interfaces.py 73928 2015-10-01 16:16:17Z carlos.sanchez $
+.. $Id$
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
@@ -23,7 +23,6 @@ from nti.schema.field import TextLine
 from nti.schema.field import ListOrTuple
 from nti.schema.field import Bool
 
-
 class IPDFReportView(interface.Interface):
 	"""
 	An interface that all the reporting views
@@ -35,11 +34,10 @@ class IPDFReportView(interface.Interface):
 	"""
 
 	filename = TextLine(title="The final portion of the file name, usually the view name",
-                     required=False,
-                     default="")
+						required=False,
+						default="")
 
 	report_title = TextLine(title="The title of the report.")
-
 
 class IPDFReportHeaderManager(IViewletManager):
 	"""

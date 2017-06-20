@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*
 """
-.. $Id: topics.py 115516 2017-06-19 16:50:24Z austin.graham $
+.. $Id$
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division

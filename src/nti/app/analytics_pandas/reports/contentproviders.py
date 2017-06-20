@@ -2,8 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 RML content providers.
-
-.. $Id: contentproviders.py 73928 2015-10-01 16:16:17Z carlos.sanchez $
+.. $Id$
 """
 
 from __future__ import print_function, unicode_literals, absolute_import, division
