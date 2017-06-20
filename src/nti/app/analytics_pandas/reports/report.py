@@ -24,6 +24,8 @@ from nti.app.analytics_pandas.reports.interfaces import IPandasReportContext
 
 from nti.schema.fieldproperty import createDirectFieldProperties
 
+from nti.schema.schema import SchemaConfigured
+
 from nti.app.analytics_pandas.views.commons import cleanup_temporary_file
 from nti.app.analytics_pandas.views.commons import create_pdf_file_from_rml
 
@@ -111,22 +113,12 @@ def process_args(social=False):
 	return args_dict
 
 @interface.implementer(IPandasReportContext)
-class PandasReportContext(object):
+class PandasReportContext(SchemaConfigured):
 	
 	createDirectFieldProperties(IPandasReportContext)
 	
-	def __init__(self, session=None, start_date=None, end_date=None, courses=None,
-				 period_breaks=None, minor_period_breaks=None, theme_bw_=True,
-				 number_of_most_active_user=10, period='daily'):
-		self.session = session
-		self.courses = courses
-		self.end_date = end_date
-		self.start_date = start_date
-		self.period_breaks = period_breaks
-		self.theme_bw_ = theme_bw_
-		self.minor_period_breaks = minor_period_breaks
-		self.number_of_most_active_user = number_of_most_active_user
-		self.period = period
+	def __init__(self, *args, **kwargs):
+		SchemaConfigured.__init__(self, **kwargs)
 
 class Report(object):
 
@@ -135,13 +127,20 @@ class Report(object):
 				 filepath, period='daily'):
 		self.db = DBConnection()
 		if not courses:
-			self.context = Context(self.db.session, start_date, end_date,
-						  		   period_breaks, minor_period_breaks, theme_bw_,
-						  		   period=period)
+			self.context = Context(session=self.session,
+		                          start_date=start_date,
+		                          end_date=end_date,
+		                          period_breaks=period_breaks,
+		                          minor_period_breaks=minor_period_breaks,
+		                          theme_bw_=theme_bw_)
 		else:
-			self.context = Context(self.db.session, start_date, end_date, courses,
-						  		   period_breaks, minor_period_breaks, theme_bw_,
-						  		   period=period)
+			self.context = Context(session=self.session,
+		                          start_date=start_date,
+		                          end_date=end_date,
+		                          courses=courses,
+		                          period_breaks=period_breaks,
+		                          minor_period_breaks=minor_period_breaks,
+		                          theme_bw_=theme_bw_)
 		self.view = View(self.context)
 		self.filepath = filepath
 

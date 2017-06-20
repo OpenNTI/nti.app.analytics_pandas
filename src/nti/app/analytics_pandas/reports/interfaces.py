@@ -15,6 +15,8 @@ from zope.schema import Int
 
 from zope.viewlet.interfaces import IViewletManager
 
+from nti.app.analytics_pandas.reports.schema import ValidDBSession
+
 from nti.contenttypes.reports.interfaces import IReportContext
 
 from nti.schema.field import TextLine
@@ -49,26 +51,40 @@ class IPandasReportContext(IReportContext):
 	"""
 	Special model for a report in analytics_pandas
 	"""
+	session = ValidDBSession(title="Database session for this context",
+							 required=False,
+							 default=None)
+	session.setTaggedValue('_ext_excluded_out', True)
+	
 	start_date = TextLine(title="Start date of the report context",
-                       required=True)
+                       required=False,
+                       default=None)
 	
 	end_date = TextLine(title="End date of the report context",
-                     	required=True)
+                     	required=False,
+                     	default=None)
 	
 	courses = ListOrTuple(title="Courses in this context",
                        value_type=TextLine(title="Course number"),
-                       required=False)
+                       required=False,
+                       default=None)
 	
 	period_breaks = TextLine(title="Period breaks for this context",
-                          required=True)
+                          required=False,
+                          default='1 week')
 	
 	minor_period_breaks = TextLine(title="Minor period breaks for this context",
-                                required=True)
+                                required=False,
+                                default='1 day')
 	
 	theme_bw_ = Bool(title="Theme for the report",
-                    required=True)
+                    required=False,
+                    default=True)
 
 	number_of_most_active_user = Int(title="Number of most active users in this context",
-                                      required=True)
+                                      required=False,
+                                      default=10)
+	
 	period = TextLine(title="Period for this context",
-                   required=True)
+                   required=False,
+                   default='daily')

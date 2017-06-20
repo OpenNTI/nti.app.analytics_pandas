@@ -36,14 +36,8 @@ from .mixins import AbstractReportView
 
 class AssessmentsEventsTimeseriesContext(PandasReportContext):
 
-	def __init__(self, session=None, start_date=None, end_date=None, courses=None,
-				 period_breaks='1 week', minor_period_breaks='1 day',
-				 theme_bw_=True, number_of_most_active_user=10, period='daily'):
-		super(AssessmentsEventsTimeseriesContext, self).__init__(session, start_date, 
-														 end_date, courses, 
-														 period_breaks, minor_period_breaks,
-														 theme_bw_, number_of_most_active_user,
-														 period)
+	def __init__(self, *args, **kwargs):
+		super(AssessmentsEventsTimeseriesContext, self).__init__(*args, **kwargs)
 
 Context = AssessmentsEventsTimeseriesContext
 
