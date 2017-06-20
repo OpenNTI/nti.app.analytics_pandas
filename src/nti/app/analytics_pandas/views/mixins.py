@@ -24,6 +24,8 @@ from nti.app.analytics_pandas.reports.interfaces import IPDFReportView
 
 from nti.analytics_pandas.databases.interfaces import IDBConnection
 
+from nti.analytics_pandas.databases import DBConnection
+
 def adjust_date(date):
 	"""
 	Takes a date and returns a timezoned datetime
@@ -50,6 +52,7 @@ class AbstractReportView(BrowserPagelet):
 
 	def __init__(self, context=None, request=None):
 		BrowserPagelet.__init__(self, context, request)
+		db = DBConnection()
 		self.db = component.getUtility(IDBConnection)
 		self.options = {}
 			

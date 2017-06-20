@@ -1,0 +1,12 @@
+[console_scripts]
+nti_analytics_assesments = nti.analytics_pandas.reports.scripts.assessments:main
+nti_analytics_bookmarks = nti.analytics_pandas.reports.scripts.bookmarks:main
+nti_analytics_enrollments = nti.analytics_pandas.reports.scripts.enrollments:main
+nti_analytics_forums = nti.analytics_pandas.reports.scripts.forums:main
+nti_analytics_highlights = nti.analytics_pandas.reports.scripts.highlights:main
+nti_analytics_notes = nti.analytics_pandas.reports.scripts.notes:main
+nti_analytics_resource_views = nti.analytics_pandas.reports.scripts.resource_views:main
+nti_analytics_social = nti.analytics_pandas.reports.scripts.social:main
+nti_analytics_topics = nti.analytics_pandas.reports.scripts.topics:main
+nti_analytics_videos = nti.analytics_pandas.reports.scripts.videos:main
+

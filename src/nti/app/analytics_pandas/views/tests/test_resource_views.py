@@ -21,16 +21,16 @@ from zope.cachedescriptors.property import Lazy
 
 from z3c.rml import rml2pdf
 
-from nti.analytics_pandas.reports.views.commons import cleanup_temporary_file
+from nti.app.analytics_pandas.views.commons import cleanup_temporary_file
 
-from nti.analytics_pandas.reports.views.resource_views import View
-from nti.analytics_pandas.reports.views.resource_views import Context
+from nti.app.analytics_pandas.views.resource_views import View
+from nti.app.analytics_pandas.views.resource_views import Context
 
-from nti.analytics_pandas.reports.z3c_zpt import ViewPageTemplateFile
+from nti.app.analytics_pandas.reports.z3c_zpt import ViewPageTemplateFile
 
-from nti.analytics_pandas.tests import AnalyticsPandasTestBase
+from nti.app.analytics_pandas.tests import AppAnalyticsTestBase
 
-class TestResourceViews(AnalyticsPandasTestBase):
+class TestResourceViews(AppAnalyticsTestBase):
 
 	def setUp(self):
 		super(TestResourceViews, self).setUp()
@@ -91,8 +91,7 @@ class TestResourceViews(AnalyticsPandasTestBase):
 		period_breaks = '1 week'
 		minor_period_breaks = '1 day'
 		theme_bw_ = True
-		context = Context(session=self.session, 
-						  start_date=start_date, 
+		context = Context(start_date=start_date, 
 						  end_date=end_date, 
 						  courses=courses,
 						  period_breaks=period_breaks, 

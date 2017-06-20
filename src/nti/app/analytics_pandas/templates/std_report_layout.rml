@@ -11,10 +11,10 @@
 		  tal:attributes="filename view/filename; title view/report_title">
 
 	<docinit>
-		<registerTTFont faceName="OpenSans" fileName="[nti.analytics_pandas.reports]/fonts/OpenSans-Regular.ttf" />
-		<registerTTFont faceName="OpenSansBold" fileName="[nti.analytics_pandas.reports]/fonts/OpenSans-Bold.ttf" />
-		<registerTTFont faceName="OpenSansLight" fileName="[nti.analytics_pandas.reports]/fonts/OpenSans-Light.ttf" />
-		<registerTTFont faceName="OpenSansSemiBold" fileName="[nti.analytics_pandas.reports]/fonts/OpenSans-Semibold.ttf" />
+		<registerTTFont faceName="OpenSans" fileName="[nti.app.analytics_pandas]/fonts/OpenSans-Regular.ttf" />
+		<registerTTFont faceName="OpenSansBold" fileName="[nti.app.analytics_pandas]/fonts/OpenSans-Bold.ttf" />
+		<registerTTFont faceName="OpenSansLight" fileName="[nti.app.analytics_pandas]/fonts/OpenSans-Light.ttf" />
+		<registerTTFont faceName="OpenSansSemiBold" fileName="[nti.app.analytics_pandas]/fonts/OpenSans-Semibold.ttf" />
 	</docinit>
 
 	<template pagesize="(842,595)" leftMargin="72" showBoundary="0" rightMargin="72">

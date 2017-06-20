@@ -21,16 +21,16 @@ from zope.cachedescriptors.property import Lazy
 
 from z3c.rml import rml2pdf
 
-from nti.analytics_pandas.reports.views.commons import cleanup_temporary_file
+from nti.app.analytics_pandas.views.commons import cleanup_temporary_file
 
-from nti.analytics_pandas.reports.views.forums import View
-from nti.analytics_pandas.reports.views.forums import Context
+from nti.app.analytics_pandas.views.forums import View
+from nti.app.analytics_pandas.views.forums import Context
 
-from nti.analytics_pandas.reports.z3c_zpt import ViewPageTemplateFile
+from nti.app.analytics_pandas.reports.z3c_zpt import ViewPageTemplateFile
 
-from nti.analytics_pandas.tests import AnalyticsPandasTestBase
+from nti.app.analytics_pandas.tests import AppAnalyticsTestBase
 
-class TestForumsEvents(AnalyticsPandasTestBase):
+class TestForumsEvents(AppAnalyticsTestBase):
 
 	@Lazy
 	def std_report_layout_rml(self):

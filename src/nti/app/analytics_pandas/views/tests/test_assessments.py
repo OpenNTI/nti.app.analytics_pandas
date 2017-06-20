@@ -21,16 +21,16 @@ from zope.cachedescriptors.property import Lazy
 
 from z3c.rml import rml2pdf
 
-from nti.analytics_pandas.reports.views.commons import cleanup_temporary_file
+from nti.app.analytics_pandas.views.commons import cleanup_temporary_file
 
-from nti.analytics_pandas.reports.views.assessments import View
-from nti.analytics_pandas.reports.views.assessments import Context
+from nti.app.analytics_pandas.views.assessments import View
+from nti.app.analytics_pandas.views.assessments import Context
 
-from nti.analytics_pandas.reports.z3c_zpt import ViewPageTemplateFile
+from nti.app.analytics_pandas.reports.z3c_zpt import ViewPageTemplateFile
 
-from nti.analytics_pandas.tests import AnalyticsPandasTestBase
+from nti.app.analytics_pandas.tests import AppAnalyticsTestBase
 
-class TestAssessmentsEvents(AnalyticsPandasTestBase):
+class TestAssessmentsEvents(AppAnalyticsTestBase):
 
 	def setUp(self):
 		super(TestAssessmentsEvents, self).setUp()
