@@ -61,7 +61,7 @@ class HighlightsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
-		self.hct = HighlightsCreationTimeseries(self.context.session,
+		self.hct = HighlightsCreationTimeseries(self.db.session,
 										   		self.context.start_date,
 										   		self.context.end_date,
 										   		self.context.courses,
@@ -72,7 +72,7 @@ class HighlightsTimeseriesReportView(AbstractReportView):
 
 		self.options['has_highlight_data'] = True
 
-		course_names = get_course_names(self.context.session, self.context.courses)
+		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 		data = {}
 		data = self.generate_highlights_created_plots(data)

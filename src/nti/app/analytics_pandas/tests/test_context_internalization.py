@@ -47,8 +47,7 @@ class TestContextInternalization(AppAnalyticsTestBase):
         theme_bw_ = True
         number_of_most_active_user = 10
         period = "daily"
-        ret_context = context(session=self.session,
-                              start_date=start_date,
+        ret_context = context(start_date=start_date,
                               end_date=end_date,
                               courses=courses,
                               period_breaks=period_breaks,

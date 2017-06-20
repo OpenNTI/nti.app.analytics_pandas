@@ -123,17 +123,14 @@ class Report(object):
 	def __init__(self, Context, View, start_date, end_date, courses,
 				 period_breaks, minor_period_breaks, theme_bw_,
 				 filepath, period='daily'):
-		self.db = DBConnection()
 		if not courses:
-			self.context = Context(session=self.session,
-		                          start_date=start_date,
+			self.context = Context(start_date=start_date,
 		                          end_date=end_date,
 		                          period_breaks=period_breaks,
 		                          minor_period_breaks=minor_period_breaks,
 		                          theme_bw_=theme_bw_)
 		else:
-			self.context = Context(session=self.session,
-		                          start_date=start_date,
+			self.context = Context(start_date=start_date,
 		                          end_date=end_date,
 		                          courses=courses,
 		                          period_breaks=period_breaks,

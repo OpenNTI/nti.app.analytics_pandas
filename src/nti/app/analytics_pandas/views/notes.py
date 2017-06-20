@@ -67,11 +67,11 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
-		course_names = get_course_names(self.context.session, self.context.courses)
+		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 		data = {}
 
-		self.nct = NotesCreationTimeseries(self.context.session,
+		self.nct = NotesCreationTimeseries(self.db.session,
 										   self.context.start_date,
 										   self.context.end_date,
 										   self.context.courses,
@@ -82,7 +82,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 			self.options['has_notes_created_data'] = True
 			data = self.generate_notes_created_plots(data)
 
-		self.nvt = NotesViewTimeseries(self.context.session,
+		self.nvt = NotesViewTimeseries(self.db.session,
 									   self.context.start_date,
 									   self.context.end_date,
 									   self.context.courses,
@@ -93,7 +93,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 			self.options['has_note_views_data'] = True
 			data = self.generate_note_views_plots(data)
 
-		self.nlt = NoteLikesTimeseries(self.context.session,
+		self.nlt = NoteLikesTimeseries(self.db.session,
 									   self.context.start_date,
 									   self.context.end_date,
 									   self.context.courses,
@@ -104,7 +104,7 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 			self.options['has_note_likes_data'] = True
 			data = self.generate_note_likes_plots(data)
 
-		self.nft = NoteFavoritesTimeseries(self.context.session,
+		self.nft = NoteFavoritesTimeseries(self.db.session,
 									   	   self.context.start_date,
 									   	   self.context.end_date,
 									   	   self.context.courses,

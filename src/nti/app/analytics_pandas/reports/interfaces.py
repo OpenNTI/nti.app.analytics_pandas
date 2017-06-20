@@ -49,11 +49,6 @@ class IPandasReportContext(IReportContext):
 	"""
 	Special model for a report in analytics_pandas
 	"""
-	session = ValidDBSession(title="Database session for this context",
-							 required=False,
-							 default=None)
-	session.setTaggedValue('_ext_excluded_out', True)
-	
 	start_date = TextLine(title="Start date of the report context",
                        required=False,
                        default=None)

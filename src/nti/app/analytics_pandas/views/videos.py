@@ -65,10 +65,10 @@ class VideosTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
-		course_names = get_course_names(self.context.session, self.context.courses)
+		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 		data = {}
-		self.vet = VideoEventsTimeseries(self.context.session,
+		self.vet = VideoEventsTimeseries(self.db.session,
 										 self.context.start_date,
 										 self.context.end_date,
 										 self.context.courses,

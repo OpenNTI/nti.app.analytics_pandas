@@ -63,11 +63,11 @@ class EnrollmentTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
-		course_names = get_course_names(self.context.session, self.context.courses)
+		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 		data = {}
 
-		self.ccvt = CourseCatalogViewsTimeseries(self.context.session,
+		self.ccvt = CourseCatalogViewsTimeseries(self.db.session,
 											   	 self.context.start_date,
 											   	 self.context.end_date,
 												 self.context.courses,
@@ -78,7 +78,7 @@ class EnrollmentTimeseriesReportView(AbstractReportView):
 			self.options['has_course_catalog_view_data'] = True
 			data = self.generate_course_catalog_view_plots(data)
 
-		self.cet = CourseEnrollmentsTimeseries(self.context.session,
+		self.cet = CourseEnrollmentsTimeseries(self.db.session,
 										   	   self.context.start_date,
 										   	   self.context.end_date,
 											   self.context.courses,
@@ -89,7 +89,7 @@ class EnrollmentTimeseriesReportView(AbstractReportView):
 			self.options['has_course_enrollment_data'] = True
 			data = self.generate_course_enrollment_plots(data)
 
-		self.cdt = CourseDropsTimeseries(self.context.session,
+		self.cdt = CourseDropsTimeseries(self.db.session,
 								   		 self.context.start_date,
 								   		 self.context.end_date,
 										 self.context.courses,

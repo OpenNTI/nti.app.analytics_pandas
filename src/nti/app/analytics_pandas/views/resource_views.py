@@ -57,7 +57,7 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
-		self.rvt = ResourceViewsTimeseries(self.context.session,
+		self.rvt = ResourceViewsTimeseries(self.db.session,
 										   self.context.start_date,
 										   self.context.end_date,
 										   self.context.courses,
@@ -68,7 +68,7 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
 
 		self.options['has_resource_view_events'] = True
 
-		course_names = get_course_names(self.context.session, self.context.courses)
+		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ",".join(map(str, course_names))
 
 		self.rvtp = ResourceViewsTimeseriesPlot(self.rvt)

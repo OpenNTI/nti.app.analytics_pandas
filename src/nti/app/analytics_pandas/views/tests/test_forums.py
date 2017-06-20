@@ -76,8 +76,7 @@ class TestForumsEvents(AnalyticsPandasTestBase):
 		period_breaks = '1 day'
 		minor_period_breaks = None
 		theme_bw_ = True
-		context = Context(session=self.session, 
-						  start_date=start_date, 
+		context = Context(start_date=start_date, 
 						  end_date=end_date, 
 						  courses=courses,
 						  period_breaks=period_breaks, 

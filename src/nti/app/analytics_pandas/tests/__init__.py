@@ -9,6 +9,8 @@ __docformat__ = "restructuredtext en"
 
 from zope.testing import cleanup as testing_cleanup
 
+from zope import component
+
 import unittest
 
 from nti.testing.layers import GCLayerMixin
@@ -72,17 +74,19 @@ def create_session(sessionmaker):
 
 from nti.analytics_database import Base
 
+from nti.analytics_pandas.databases.db_connection import DBConnection
+
+from nti.analytics_pandas.databases.interfaces import IDBConnection
+
 class AppAnalyticsTestBase(unittest.TestCase):
     
     layer = SharedConfiguringTestLayer
     
     def setUp(self):
         # TODO: Fix URI
-        dburi="mysql+pymysql://root@localhost:3306/Analytics"
-        self.engine = create_engine(dburi)
-        self.metadata = getattr(Base, 'metadata').create_all(self.engine, checkfirst=True)
-        self.sessionmaker = create_sessionmaker(self.engine)
-        self.session = create_session(self.sessionmaker)
+        self.db = DBConnection()
+        component.getGlobalSiteManager().registerUtility(self.db, IDBConnection)
     
     def tearDown(self):
-        self.session.close()
+        self.db.session.close()
+        component.getGlobalSiteManager().unregisterUtility(self.db)
