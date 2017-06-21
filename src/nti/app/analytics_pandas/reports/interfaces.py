@@ -15,8 +15,6 @@ from zope.schema import Int
 
 from zope.viewlet.interfaces import IViewletManager
 
-from nti.app.analytics_pandas.reports.schema import ValidDBSession
-
 from nti.contenttypes.reports.interfaces import IReportContext
 
 from nti.schema.field import TextLine
