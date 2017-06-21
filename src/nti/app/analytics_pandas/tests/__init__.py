@@ -11,7 +11,25 @@ from zope.testing import cleanup as testing_cleanup
 
 from zope import component
 
+from zope.component import getGlobalSiteManager
+
 import unittest
+import functools
+
+from nti.app.analytics_pandas.reports.report import PandasReport
+
+from nti.app.analytics_pandas.reports.interfaces import IPandasReport
+
+from nti.contenttypes.reports.interfaces import IReportAvailablePredicate
+
+from nti.contenttypes.reports.tests import ITestReportContext
+
+from nti.app.contenttypes.reports.interfaces import IReportLinkProvider
+
+from nti.app.contenttypes.reports.tests import TestReportContext
+from nti.app.contenttypes.reports.tests import TestPredicate
+
+from nti.dataserver.authorization import ACT_NTI_ADMIN
 
 from nti.testing.layers import GCLayerMixin
 from nti.testing.layers import ZopeComponentLayer
@@ -90,3 +108,87 @@ class AppAnalyticsTestBase(unittest.TestCase):
     def tearDown(self):
         self.db.session.close()
         component.getGlobalSiteManager().unregisterUtility(self.db)
+        
+
+from nti.app.testing.application_webtest import ApplicationLayerTest
+
+class PandasReportsLayerTest(ApplicationLayerTest):
+
+    set_up_packages = ('nti.app.analytics_pandas.reports',)
+
+    utils = []
+    factory = None
+    predicate = None
+    link_provider = None
+
+    @classmethod
+    def setUp(self):
+        """
+        Set up environment for app layer report testing
+        """
+        def _register_report(name, title, description,
+                             contexts, permission, supported_types):
+            """
+            Manual and temporary registration of reports
+            """
+
+            # Build a report factory
+            report = functools.partial(PandasReport,
+                                       name=name,
+                                       title=title,
+                                       description=description,
+                                       contexts=contexts,
+                                       permission=permission,
+                                       supported_types=supported_types)
+            self.factory = report
+
+            report_obj = report()
+            # Register as a utility
+            getGlobalSiteManager().registerUtility(report_obj, IPandasReport, name)
+
+            for interface in contexts:
+                # Register it as a subscriber
+                getGlobalSiteManager().registerSubscriptionAdapter(report,
+                                                                   (interface,),
+                                                                   IPandasReport)
+
+            return report_obj
+
+        # Register three reports to test with
+        self.utils.append(_register_report(u"TestReport",
+                                           u"Test Report",
+                                           u"TestDescription",
+                                           (ITestReportContext,),
+                                           ACT_NTI_ADMIN.id,
+                                           [u"csv", u"pdf"]))
+
+        self.predicate = functools.partial(TestPredicate)
+
+        gsm = getGlobalSiteManager()
+        gsm.registerSubscriptionAdapter(self.predicate,
+                                        (TestReportContext,),
+                                        IReportAvailablePredicate)
+
+    @classmethod
+    def tearDown(self):
+        """
+        Unregister all test utilities and
+        subscribers
+        """
+        sm = component.getGlobalSiteManager()
+        for util in self.utils:
+            sm.unregisterUtility(component=util,
+                                 provided=IPandasReport,
+                                 name=util.name)
+
+        sm.unregisterSubscriptionAdapter(factory=self.factory,
+                                         required=(ITestReportContext,),
+                                         provided=IPandasReport)
+
+        sm.unregisterSubscriptionAdapter(factory=self.predicate,
+                                         required=(TestReportContext,),
+                                         provided=IReportAvailablePredicate)
+
+        sm.unregisterSubscriptionAdapter(factory=self.link_provider,
+                                         required=(PandasReport,),
+                                         provided=IReportLinkProvider)

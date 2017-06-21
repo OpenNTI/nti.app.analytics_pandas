@@ -42,10 +42,13 @@ from nti.analytics_pandas.analysis import EntityProfileViewEventsTimeseries
 
 from nti.app.analytics_pandas.reports.report import PandasReportContext
 
+from nti.app.analytics_pandas.views.interfaces import ISocialTimeseriesContext
+
 from .commons import build_plot_images_dictionary
 
 from .mixins import AbstractReportView
 
+@interface.implementer(ISocialTimeseriesContext)
 class SocialTimeseriesContext(PandasReportContext):
 
 	def __init__(self, *args, **kwargs):

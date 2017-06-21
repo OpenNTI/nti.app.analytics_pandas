@@ -15,7 +15,7 @@ from zope.schema import Int
 
 from zope.viewlet.interfaces import IViewletManager
 
-from nti.contenttypes.reports.interfaces import IReportContext
+from nti.contenttypes.reports.interfaces import IReport
 
 from nti.schema.field import TextLine
 from nti.schema.field import ListOrTuple
@@ -43,7 +43,7 @@ class IPDFReportHeaderManager(IViewletManager):
 	"""
 
 
-class IPandasReportContext(IReportContext):
+class IPandasReportContext(interface.Interface):
 	"""
 	Special model for a report in analytics_pandas
 	"""
@@ -79,3 +79,8 @@ class IPandasReportContext(IReportContext):
 	period = TextLine(title="Period for this context",
                    required=False,
                    default='daily')
+
+class IPandasReport(IReport):
+	"""
+	An analytics_pandas report
+	"""

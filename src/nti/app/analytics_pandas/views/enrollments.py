@@ -27,11 +27,14 @@ from nti.analytics_pandas.analysis import CourseEnrollmentsEventsTimeseriesPlot
 
 from nti.app.analytics_pandas.reports.report import PandasReportContext
 
+from nti.app.analytics_pandas.views.interfaces import IEnrollmentTimeseriesContext
+
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary
 
 from .mixins import AbstractReportView
 
+@interface.implementer(IEnrollmentTimeseriesContext)
 class EnrollmentTimeseriesContext(PandasReportContext):
 
 	def __init__(self, *args, **kwargs):
