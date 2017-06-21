@@ -21,16 +21,16 @@ from zope.cachedescriptors.property import Lazy
 
 from z3c.rml import rml2pdf
 
-from nti.analytics_pandas.reports.views.commons import cleanup_temporary_file
+from nti.app.analytics_pandas.views.commons import cleanup_temporary_file
 
-from nti.analytics_pandas.reports.views.highlights import View
-from nti.analytics_pandas.reports.views.highlights import Context
+from nti.app.analytics_pandas.views.highlights import View
+from nti.app.analytics_pandas.views.highlights import Context
 
-from nti.analytics_pandas.reports.z3c_zpt import ViewPageTemplateFile
+from nti.app.analytics_pandas.reports.z3c_zpt import ViewPageTemplateFile
 
-from nti.analytics_pandas.tests import AnalyticsPandasTestBase
+from nti.app.analytics_pandas.tests import AppAnalyticsTestBase
 
-class TestHighlightsEvents(AnalyticsPandasTestBase):
+class TestHighlightsEvents(AppAnalyticsTestBase):
 
 	def setUp(self):
 		super(TestHighlightsEvents, self).setUp()
@@ -79,8 +79,12 @@ class TestHighlightsEvents(AnalyticsPandasTestBase):
 		period_breaks = '1 day'
 		minor_period_breaks = None
 		theme_bw_ = True
-		context = Context(self.session, start_date, end_date, courses,
-						  period_breaks, minor_period_breaks, theme_bw_)
+		context = Context(start_date=start_date, 
+						  end_date=end_date, 
+						  courses=courses,
+						  period_breaks=period_breaks, 
+						  minor_period_breaks=minor_period_breaks, 
+						  theme_bw_=theme_bw_)
 		assert_that(context.start_date, equal_to('2015-10-05'))
 
 		view = View(context)

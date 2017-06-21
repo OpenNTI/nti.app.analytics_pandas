@@ -3,7 +3,6 @@
 """
 .. $Id$
 """
-
 from __future__ import print_function, unicode_literals, absolute_import, division
 __docformat__ = "restructuredtext en"
 
@@ -13,16 +12,24 @@ import os
 import logging
 import argparse
 
+from zope import interface
+
 from zope.configuration import xmlconfig, config
 
 import nti.analytics_pandas
 
-from .views import cleanup_temporary_file
-from .views import create_pdf_file_from_rml
+from nti.app.analytics_pandas.reports.interfaces import IPandasReportContext
+
+from nti.schema.fieldproperty import createDirectFieldProperties
+
+from nti.schema.schema import SchemaConfigured
+
+from nti.app.analytics_pandas.views.commons import cleanup_temporary_file
+from nti.app.analytics_pandas.views.commons import create_pdf_file_from_rml
 
 from .z3c_zpt import ViewPageTemplateFile
 
-from ..databases import DBConnection
+from nti.analytics_pandas.databases import DBConnection
 
 DEFAULT_FORMAT_STRING = '[%(asctime)-15s] [%(name)s] %(levelname)s: %(message)s'
 
@@ -103,20 +110,32 @@ def process_args(social=False):
 	args_dict['output'] = args.output
 	return args_dict
 
+@interface.implementer(IPandasReportContext)
+class PandasReportContext(SchemaConfigured):
+	
+	createDirectFieldProperties(IPandasReportContext)
+	
+	def __init__(self, *args, **kwargs):
+		SchemaConfigured.__init__(self, **kwargs)
+
 class Report(object):
 
 	def __init__(self, Context, View, start_date, end_date, courses,
 				 period_breaks, minor_period_breaks, theme_bw_,
 				 filepath, period='daily'):
-		self.db = DBConnection()
 		if not courses:
-			self.context = Context(self.db.session, start_date, end_date,
-						  		   period_breaks, minor_period_breaks, theme_bw_,
-						  		   period=period)
+			self.context = Context(start_date=start_date,
+		                          end_date=end_date,
+		                          period_breaks=period_breaks,
+		                          minor_period_breaks=minor_period_breaks,
+		                          theme_bw_=theme_bw_)
 		else:
-			self.context = Context(self.db.session, start_date, end_date, courses,
-						  		   period_breaks, minor_period_breaks, theme_bw_,
-						  		   period=period)
+			self.context = Context(start_date=start_date,
+		                          end_date=end_date,
+		                          courses=courses,
+		                          period_breaks=period_breaks,
+		                          minor_period_breaks=minor_period_breaks,
+		                          theme_bw_=theme_bw_)
 		self.view = View(self.context)
 		self.filepath = filepath
 

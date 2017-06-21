@@ -34,20 +34,18 @@
       
 	<!-- Default macros for the reports -->
 	<z3c:macro
-		template="templates/std_report_macros.pt"
+		template="../templates/std_report_macros.pt"
 		name="stylesheet"
 		for="zope.interface.Interface"
 		view=".interfaces.IPDFReportView"
 		layer="*" />
 
 	<z3c:macro
-		template="templates/std_report_macros.pt"
+		template="../templates/std_report_macros.pt"
 		name="template"
 		for="zope.interface.Interface"
 		view=".interfaces.IPDFReportView"
 		layer="*" />
-
-	<include package=".views" file="configure.zcml" />
 
 	<!-- A default header_table that does nothing -->
 	<adapter name="header_table"

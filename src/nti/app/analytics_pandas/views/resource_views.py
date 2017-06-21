@@ -16,26 +16,17 @@ from zope import interface
 from nti.analytics_pandas.analysis import ResourceViewsTimeseries
 from nti.analytics_pandas.analysis import ResourceViewsTimeseriesPlot
 
+from nti.app.analytics_pandas.reports.report import PandasReportContext
+
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary
 
 from .mixins import AbstractReportView
 
-@interface.implementer(interface.Interface)
-class ResourceViewsTimeseriesContext(object):
+class ResourceViewsTimeseriesContext(PandasReportContext):
 
-	def __init__(self, session=None, start_date=None, end_date=None, courses=None,
-				 period_breaks=None, minor_period_breaks=None, theme_bw_=True,
-				 number_of_most_active_user=10, period='daily'):
-		self.session = session
-		self.courses = courses
-		self.end_date = end_date
-		self.start_date = start_date
-		self.period_breaks = period_breaks
-		self.theme_bw_ = theme_bw_
-		self.minor_period_breaks = minor_period_breaks
-		self.number_of_most_active_user = number_of_most_active_user
-		self.period = period
+	def __init__(self, *args, **kwargs):
+		super(ResourceViewsTimeseriesContext, self).__init__(*args, **kwargs)
 
 Context = ResourceViewsTimeseriesContext
 
@@ -66,7 +57,7 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
-		self.rvt = ResourceViewsTimeseries(self.context.session,
+		self.rvt = ResourceViewsTimeseries(self.db.session,
 										   self.context.start_date,
 										   self.context.end_date,
 										   self.context.courses,
@@ -77,7 +68,7 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
 
 		self.options['has_resource_view_events'] = True
 
-		course_names = get_course_names(self.context.session, self.context.courses)
+		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ",".join(map(str, course_names))
 
 		self.rvtp = ResourceViewsTimeseriesPlot(self.rvt)

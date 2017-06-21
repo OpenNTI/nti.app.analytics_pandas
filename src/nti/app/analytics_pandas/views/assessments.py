@@ -26,27 +26,18 @@ from nti.analytics_pandas.analysis import SelfAssessmentsTakenTimeseries
 from nti.analytics_pandas.analysis import SelfAssessmentViewsTimeseriesPlot
 from nti.analytics_pandas.analysis import SelfAssessmentsTakenTimeseriesPlot
 
+from nti.app.analytics_pandas.reports.report import PandasReportContext
+
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary
 from .commons import build_images_dict_from_plot_dict
 
 from .mixins import AbstractReportView
 
-@interface.implementer(interface.Interface)
-class AssessmentsEventsTimeseriesContext(object):
+class AssessmentsEventsTimeseriesContext(PandasReportContext):
 
-	def __init__(self, session=None, start_date=None, end_date=None, courses=None,
-				 period_breaks='1 week', minor_period_breaks='1 day',
-				 theme_bw_=True, number_of_most_active_user=10, period='daily'):
-		self.session = session
-		self.courses = courses
-		self.end_date = end_date
-		self.start_date = start_date
-		self.period_breaks = period_breaks
-		self.theme_bw_ = theme_bw_
-		self.minor_period_breaks = minor_period_breaks
-		self.number_of_most_active_user = number_of_most_active_user
-		self.period = period
+	def __init__(self, *args, **kwargs):
+		super(AssessmentsEventsTimeseriesContext, self).__init__(*args, **kwargs)
 
 Context = AssessmentsEventsTimeseriesContext
 
@@ -78,11 +69,11 @@ class AssessmentsEventsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
-		course_names = get_course_names(self.context.session, self.context.courses)
+		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 		data = {}
 
-		self.att = AssignmentsTakenTimeseries(self.context.session,
+		self.att = AssignmentsTakenTimeseries(self.db.session,
 											  self.context.start_date,
 											  self.context.end_date,
 											  self.context.courses,
@@ -95,7 +86,7 @@ class AssessmentsEventsTimeseriesReportView(AbstractReportView):
 			data = self.generate_assignments_taken_plots(data)
 
 
-		self.avt = AssignmentViewsTimeseries(self.context.session,
+		self.avt = AssignmentViewsTimeseries(self.db.session,
 											 self.context.start_date,
 											 self.context.end_date,
 											 self.context.courses,
@@ -107,7 +98,7 @@ class AssessmentsEventsTimeseriesReportView(AbstractReportView):
 			self.options['has_assignment_views_data'] = True
 			data = self.generate_assignment_view_plots(data)
 
-		self.savt = SelfAssessmentViewsTimeseries(self.context.session,
+		self.savt = SelfAssessmentViewsTimeseries(self.db.session,
 												  self.context.start_date,
 												  self.context.end_date,
 												  self.context.courses,
@@ -120,7 +111,7 @@ class AssessmentsEventsTimeseriesReportView(AbstractReportView):
 			data = self.generate_self_assessment_view_plots(data)
 
 
-		self.satt = SelfAssessmentsTakenTimeseries(self.context.session,
+		self.satt = SelfAssessmentsTakenTimeseries(self.db.session,
 												   self.context.start_date,
 												   self.context.end_date,
 												   self.context.courses,

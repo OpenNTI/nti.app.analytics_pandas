@@ -25,27 +25,18 @@ from nti.analytics_pandas.analysis import ForumCommentLikesTimeseriesPlot
 from nti.analytics_pandas.analysis import ForumsCommentsCreatedTimeseriesPlot
 from nti.analytics_pandas.analysis import ForumCommentFavoritesTimeseriesPlot
 
+from nti.app.analytics_pandas.reports.report import PandasReportContext
+
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary
 from .commons import  build_images_dict_from_plot_dict
 
 from .mixins import AbstractReportView
 
-@interface.implementer(interface.Interface)
-class ForumsTimeseriesContext(object):
+class ForumsTimeseriesContext(PandasReportContext):
 
-	def __init__(self, session=None, start_date=None, end_date=None, courses=None,
-				 period_breaks=None, minor_period_breaks=None, theme_bw_=True,
-				 number_of_most_active_user=10, period='daily'):
-		self.session = session
-		self.courses = courses
-		self.end_date = end_date
-		self.start_date = start_date
-		self.period_breaks = period_breaks
-		self.theme_bw_ = theme_bw_
-		self.minor_period_breaks = minor_period_breaks
-		self.number_of_most_active_user = number_of_most_active_user
-		self.period = period
+	def __init__(self, *args, **kwargs):
+		super(ForumsTimeseriesContext, self).__init__(*args, **kwargs)
 
 Context = ForumsTimeseriesContext
 
@@ -76,10 +67,10 @@ class ForumsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
-		course_names = get_course_names(self.context.session, self.context.courses)
+		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 
-		self.fct = ForumsCreatedTimeseries(self.context.session,
+		self.fct = ForumsCreatedTimeseries(self.db.session,
 										   self.context.start_date,
 										   self.context.end_date,
 										   self.context.courses,
@@ -92,7 +83,7 @@ class ForumsTimeseriesReportView(AbstractReportView):
 			self.options['has_forums_created_data'] = True
 			data = self.generate_forums_created_plots(data)
 
-		self.fcct = ForumsCommentsCreatedTimeseries(self.context.session,
+		self.fcct = ForumsCommentsCreatedTimeseries(self.db.session,
 													self.context.start_date,
 													self.context.end_date,
 													self.context.courses,
@@ -103,7 +94,7 @@ class ForumsTimeseriesReportView(AbstractReportView):
 			self.options['has_forum_comments_created_data'] = True
 			data = self.generate_forum_comments_created_plots(data)
 
-		self.fclt = ForumCommentLikesTimeseries(self.context.session,
+		self.fclt = ForumCommentLikesTimeseries(self.db.session,
 												self.context.start_date,
 												self.context.end_date,
 												self.context.courses,
@@ -114,7 +105,7 @@ class ForumsTimeseriesReportView(AbstractReportView):
 			self.options['has_forum_comment_likes_data'] = True
 			data = self.generate_forum_comment_likes_plots(data)
 
-		self.fcft = ForumCommentFavoritesTimeseries(self.context.session,
+		self.fcft = ForumCommentFavoritesTimeseries(self.db.session,
 													self.context.start_date,
 													self.context.end_date,
 													self.context.courses,

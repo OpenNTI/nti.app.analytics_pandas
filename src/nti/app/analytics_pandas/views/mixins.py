@@ -16,10 +16,16 @@ import textwrap
 from datetime import datetime
 
 from zope import interface
+from zope import component
 
 from z3c.pagelet.browser import BrowserPagelet
 
 from nti.app.analytics_pandas.reports.interfaces import IPDFReportView
+
+from nti.analytics_pandas.databases.interfaces import IDBConnection
+
+from nti.analytics_pandas.databases import DBConnection
+from nti.analytics_pandas.databases import get_analytics_db
 
 def adjust_date(date):
 	"""
@@ -47,6 +53,7 @@ class AbstractReportView(BrowserPagelet):
 
 	def __init__(self, context=None, request=None):
 		BrowserPagelet.__init__(self, context, request)
+		self.db = get_analytics_db()
 		self.options = {}
 			
 	@property

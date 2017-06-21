@@ -20,23 +20,15 @@ from nti.app.analytics_pandas.views.commons import get_course_names
 from nti.app.analytics_pandas.views.commons import build_plot_images_dictionary
 from nti.app.analytics_pandas.views.commons import build_images_dict_from_plot_dict
 
+from nti.app.analytics_pandas.reports.report import PandasReportContext
+
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
-@interface.implementer(interface.Interface)
-class VideosTimeseriesContext(object):
+class VideosTimeseriesContext(PandasReportContext):
 
-	def __init__(self, session=None, start_date=None, end_date=None, courses=None,
-				 period_breaks=None, minor_period_breaks=None, theme_bw_=True,
-				 number_of_most_active_user=10, period='daily'):
-		self.period = period
-		self.session = session
-		self.courses = courses
-		self.end_date = end_date
-		self.start_date = start_date
-		self.period_breaks = period_breaks
-		self.theme_bw_ = theme_bw_
-		self.minor_period_breaks = minor_period_breaks
-		self.number_of_most_active_user = number_of_most_active_user
+	def __init__(self, *args, **kwargs):
+		super(VideosTimeseriesContext, self).__init__(*args, **kwargs)
+
 
 Context = VideosTimeseriesContext
 
@@ -73,10 +65,10 @@ class VideosTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
-		course_names = get_course_names(self.context.session, self.context.courses)
+		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 		data = {}
-		self.vet = VideoEventsTimeseries(self.context.session,
+		self.vet = VideoEventsTimeseries(self.db.session,
 										 self.context.start_date,
 										 self.context.end_date,
 										 self.context.courses,

@@ -40,24 +40,16 @@ from nti.analytics_pandas.analysis import EntityProfileMembershipViewsTimeseries
 
 from nti.analytics_pandas.analysis import EntityProfileViewEventsTimeseries
 
+from nti.app.analytics_pandas.reports.report import PandasReportContext
+
 from .commons import build_plot_images_dictionary
 
 from .mixins import AbstractReportView
 
-@interface.implementer(interface.Interface)
-class SocialTimeseriesContext(object):
+class SocialTimeseriesContext(PandasReportContext):
 
-	def __init__(self, session=None, start_date=None, end_date=None,
-				 period_breaks=None, minor_period_breaks=None, theme_bw_=True,
-				 number_of_most_active_user=10, period='daily'):
-		self.period = period
-		self.session = session
-		self.end_date = end_date
-		self.start_date = start_date
-		self.period_breaks = period_breaks
-		self.theme_bw_ = theme_bw_
-		self.minor_period_breaks = minor_period_breaks
-		self.number_of_most_active_user = number_of_most_active_user
+	def __init__(self, *args, **kwargs):
+		super(SocialTimeseriesContext, self).__init__(*args, **kwargs)
 
 Context = SocialTimeseriesContext
 
@@ -86,7 +78,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 
 	def __call__(self):
 		data = {}
-		self.cat = ContactsAddedTimeseries(self.context.session,
+		self.cat = ContactsAddedTimeseries(self.db.session,
 										   self.context.start_date,
 										   self.context.end_date,
 										   period=self.context.period)
@@ -97,7 +89,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 			self.options['has_contacts_added_data'] = True
 			data = self.generate_contacts_added_plots(data)
 
-		self.crt = ContactsRemovedTimeseries(self.context.session,
+		self.crt = ContactsRemovedTimeseries(self.db.session,
 										   	 self.context.start_date,
 											 self.context.end_date,
 											 period=self.context.period)
@@ -112,7 +104,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 			self.cet = ContactsEventsTimeseries(cat=self.cat, crt=self.crt)
 			data = self.generate_combined_contact_related_events(data)
 
-		self.flmat = FriendsListsMemberAddedTimeseries(self.context.session,
+		self.flmat = FriendsListsMemberAddedTimeseries(self.db.session,
 												   	   self.context.start_date,
 													   self.context.end_date,
 													   period=self.context.period)
@@ -122,11 +114,11 @@ class SocialTimeseriesReportView(AbstractReportView):
 			self.options['has_friendlist_members_added_data'] = True
 			data = self.generate_friendlist_members_added_plots(data)
 
-		self.cit = ChatsInitiatedTimeseries(self.context.session,
+		self.cit = ChatsInitiatedTimeseries(self.db.session,
 										   	self.context.start_date,
 											self.context.end_date,
 											period=self.context.period)
-		self.cjt = ChatsJoinedTimeseries(self.context.session,
+		self.cjt = ChatsJoinedTimeseries(self.db.session,
 									   	 self.context.start_date,
 										 self.context.end_date,
 										 period=self.context.period)
@@ -139,15 +131,15 @@ class SocialTimeseriesReportView(AbstractReportView):
 			data = self.get_number_of_users_join_chats_per_date_plots(data)
 			data = self.generate_one_one_and_group_chat_plots(data)
 
-		self.epvt = EntityProfileViewsTimeseries(self.context.session,
+		self.epvt = EntityProfileViewsTimeseries(self.db.session,
 											   	 self.context.start_date,
 												 self.context.end_date,
 												 period=self.context.period)
-		self.epavt = EntityProfileActivityViewsTimeseries(self.context.session,
+		self.epavt = EntityProfileActivityViewsTimeseries(self.db.session,
 													   	  self.context.start_date,
 														  self.context.end_date,
 														  period=self.context.period)
-		self.epmvt = EntityProfileMembershipViewsTimeseries(self.context.session,
+		self.epmvt = EntityProfileMembershipViewsTimeseries(self.db.session,
 														   	self.context.start_date,
 															self.context.end_date,
 															period=self.context.period)

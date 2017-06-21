@@ -25,27 +25,18 @@ from nti.analytics_pandas.analysis import TopicLikesTimeseriesPlot
 from nti.analytics_pandas.analysis import TopicFavoritesTimeseries
 from nti.analytics_pandas.analysis import TopicFavoritesTimeseriesPlot
 
+from nti.app.analytics_pandas.reports.report import PandasReportContext
+
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary
 from .commons import build_images_dict_from_plot_dict
 
 from .mixins import AbstractReportView
 
-@interface.implementer(interface.Interface)
-class TopicsTimeseriesContext(object):
+class TopicsTimeseriesContext(PandasReportContext):
 
-	def __init__(self, session=None, start_date=None, end_date=None, courses=None,
-				 period_breaks=None, minor_period_breaks=None, theme_bw_=True,
-				 number_of_most_active_user=10, period='daily'):
-		self.session = session
-		self.courses = courses
-		self.end_date = end_date
-		self.start_date = start_date
-		self.period_breaks = period_breaks
-		self.theme_bw_ = theme_bw_
-		self.minor_period_breaks = minor_period_breaks
-		self.number_of_most_active_user = number_of_most_active_user
-		self.period = period
+	def __init__(self, *args, **kwargs):
+		super(TopicsTimeseriesContext, self).__init__(*args, **kwargs)
 
 Context = TopicsTimeseriesContext
 
@@ -74,11 +65,11 @@ class TopicsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
-		course_names = get_course_names(self.context.session, self.context.courses)
+		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 		data = {}
 
-		self.tct = TopicsCreationTimeseries(self.context.session,
+		self.tct = TopicsCreationTimeseries(self.db.session,
 									   		self.context.start_date,
 									   		self.context.end_date,
 											self.context.courses,
@@ -90,7 +81,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
 			data = self.generate_topics_created_plots(data)
 
 
-		self.tvt = TopicViewsTimeseries(self.context.session,
+		self.tvt = TopicViewsTimeseries(self.db.session,
 								   		self.context.start_date,
 								   		self.context.end_date,
 										self.context.courses,
@@ -101,7 +92,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
 			self.options['has_topic_views_data'] = True
 			data = self.generate_topic_view_plots(data)
 
-		self.tlt = TopicLikesTimeseries(self.context.session,
+		self.tlt = TopicLikesTimeseries(self.db.session,
 								   		self.context.start_date,
 								   		self.context.end_date,
 										self.context.courses,
@@ -113,7 +104,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
 			self.options['has_topic_likes_data'] = True
 			data = self.generate_topic_like_plots(data)
 
-		self.tft = TopicFavoritesTimeseries(self.context.session,
+		self.tft = TopicFavoritesTimeseries(self.db.session,
 									   		self.context.start_date,
 									   		self.context.end_date,
 											self.context.courses,
