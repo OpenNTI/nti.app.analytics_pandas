@@ -22,8 +22,11 @@ from nti.app.analytics_pandas.views.commons import build_images_dict_from_plot_d
 
 from nti.app.analytics_pandas.reports.report import PandasReportContext
 
+from nti.app.analytics_pandas.views.interfaces import IVideosTimeseriesContext
+
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
+@interface.implementer(IVideosTimeseriesContext)
 class VideosTimeseriesContext(PandasReportContext):
 
 	def __init__(self, *args, **kwargs):

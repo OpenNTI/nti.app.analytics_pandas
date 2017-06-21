@@ -27,12 +27,15 @@ from nti.analytics_pandas.analysis import TopicFavoritesTimeseriesPlot
 
 from nti.app.analytics_pandas.reports.report import PandasReportContext
 
+from nti.app.analytics_pandas.views.interfaces import ITopicsTimeseriesContext
+
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary
 from .commons import build_images_dict_from_plot_dict
 
 from .mixins import AbstractReportView
 
+@interface.implementer(ITopicsTimeseriesContext)
 class TopicsTimeseriesContext(PandasReportContext):
 
 	def __init__(self, *args, **kwargs):

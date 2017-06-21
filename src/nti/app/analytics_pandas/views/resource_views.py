@@ -18,11 +18,14 @@ from nti.analytics_pandas.analysis import ResourceViewsTimeseriesPlot
 
 from nti.app.analytics_pandas.reports.report import PandasReportContext
 
+from nti.app.analytics_pandas.views.interfaces import IResourceViewsTimeseriesContext
+
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary
 
 from .mixins import AbstractReportView
 
+@interface.implementer(IResourceViewsTimeseriesContext)
 class ResourceViewsTimeseriesContext(PandasReportContext):
 
 	def __init__(self, *args, **kwargs):

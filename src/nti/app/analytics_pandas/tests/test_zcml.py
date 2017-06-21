@@ -49,6 +49,7 @@ HEAD_ZCML_STRING = u"""
 </configure>
 """
 
+
 @interface.implementer(ITestReportContext)
 class TestReportContext():
     """
@@ -57,14 +58,15 @@ class TestReportContext():
     """
     pass
 
+
 class TestPandasZCML(unittest.TestCase):
     """
     Test that analytics_pandas reports are registered
     correctly
     """
-    
+
     get_config_package = AbstractTestBase.get_configuration_package.__func__
-    
+
     def _test_for_test_report(self, report):
         assert_that(report, has_property("name", "TestReport"))
         assert_that(report, has_property("title", "Test Report"))
@@ -73,18 +75,17 @@ class TestPandasZCML(unittest.TestCase):
         assert_that(report, has_property("supported_types",
                                          contains_inanyorder("pdf", "csv")))
         assert_that(report, has_property("permission", "TestPermission"))
-    
+
     def test_zcml_registration(self):
         context = config.ConfigurationMachine()
         context.package = self.get_config_package()
         xmlconfig.registerCommonDirectives(context)
         xmlconfig.string(HEAD_ZCML_STRING, context)
-        
+
         report = component.subscribers((TestReportContext(),), IPandasReport)
         assert_that(report, has_length(1))
         self._test_for_test_report(report[0])
-        
+
         report = list(component.getAllUtilitiesRegisteredFor(IPandasReport))
         assert_that(report, has_length(1))
         self._test_for_test_report(report[0])
-        

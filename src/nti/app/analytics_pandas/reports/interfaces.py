@@ -15,7 +15,6 @@ from zope.schema import Int
 
 from zope.viewlet.interfaces import IViewletManager
 
-from nti.contenttypes.reports.interfaces import IReportContext
 from nti.contenttypes.reports.interfaces import IReport
 
 from nti.schema.field import TextLine
@@ -44,7 +43,7 @@ class IPDFReportHeaderManager(IViewletManager):
 	"""
 
 
-class IPandasReportContext(IReportContext):
+class IPandasReportContext(interface.Interface):
 	"""
 	Special model for a report in analytics_pandas
 	"""
