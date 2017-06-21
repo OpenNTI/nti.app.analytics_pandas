@@ -19,6 +19,7 @@ from zope.configuration import xmlconfig, config
 import nti.analytics_pandas
 
 from nti.app.analytics_pandas.reports.interfaces import IPandasReportContext
+from nti.app.analytics_pandas.reports.interfaces import IPandasReport
 
 from nti.schema.fieldproperty import createDirectFieldProperties
 
@@ -114,6 +115,14 @@ def process_args(social=False):
 class PandasReportContext(SchemaConfigured):
 	
 	createDirectFieldProperties(IPandasReportContext)
+	
+	def __init__(self, *args, **kwargs):
+		SchemaConfigured.__init__(self, **kwargs)
+	
+@interface.implementer(IPandasReport)
+class PandasReport(SchemaConfigured):
+	
+	createDirectFieldProperties(IPandasReport)
 	
 	def __init__(self, *args, **kwargs):
 		SchemaConfigured.__init__(self, **kwargs)
