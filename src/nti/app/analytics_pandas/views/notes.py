@@ -11,6 +11,10 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
+import json
+
+from pyramid.view import view_config
+
 from zope import interface
 
 from nti.analytics_pandas.analysis import NoteLikesTimeseries
@@ -40,8 +44,8 @@ class NoteEventsTimeseriesContext(PandasReportContext):
 	def __init__(self, *args, **kwargs):
 		super(NoteEventsTimeseriesContext, self).__init__(*args, **kwargs)
 
-Context = NoteEventsTimeseriesContext
-
+@view_config(name="NotesRelatedEvents",
+			 renderer="../templates/notes.rml")
 class NoteEventsTimeseriesReportView(AbstractReportView):
 
 	@property
@@ -70,6 +74,9 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
+		json_data = json.loads(self.request.json)
+		self.context = self._build_context(NoteEventsTimeseriesContext, json_data)
+		
 		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 		data = {}
@@ -350,5 +357,3 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 			data['note_events'] = build_plot_images_dictionary(plots)
 			self.options['has_note_events_data'] = True
 		return data
-
-View = NoteEventsTimeseriesReport = NoteEventsTimeseriesReportView

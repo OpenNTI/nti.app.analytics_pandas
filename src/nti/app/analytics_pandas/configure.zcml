@@ -7,7 +7,10 @@
 	<include package="zope.security" file="meta.zcml" />
 	<include package="zope.component" />
 	<include package="zope.security" />
-
-	<include package=".reports" />
+	
+	<adapter name="pandas_reports"
+			 for="nti.dataserver.interfaces.IDataserverFolder pyramid.interfaces.IRequest"
+			 factory=".views.PandasReportAdapter"
+			 provides="zope.traversing.interfaces.IPathAdapter" />
 
 </configure>

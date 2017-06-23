@@ -11,6 +11,10 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
+import json
+
+from pyramid.view import view_config
+
 from zope import interface
 
 from nti.analytics_pandas.analysis import HighlightsCreationTimeseries
@@ -32,8 +36,8 @@ class HighlightsTimeseriesContext(PandasReportContext):
 	def __init__(self, *args, **kwargs):
 		super(HighlightsTimeseriesContext, self).__init__(*args, **kwargs)
 
-Context = HighlightsTimeseriesContext
-
+@view_config(name="HighlightEventsReport",
+			 renderer="../templates/highlights.rml")
 class HighlightsTimeseriesReportView(AbstractReportView):
 
 	@property
@@ -64,6 +68,9 @@ class HighlightsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
+		json_data = json.loads(self.request.json)
+		self.context = self._build_context(HighlightsTimeseriesContext, json_data)
+		
 		self.hct = HighlightsCreationTimeseries(self.db.session,
 										   		self.context.start_date,
 										   		self.context.end_date,
@@ -142,5 +149,3 @@ class HighlightsTimeseriesReportView(AbstractReportView):
 		if plots:
 			data['highlights_created_per_course_sections'] = build_images_dict_from_plot_dict(plots)
 		return data
-
-View = HighlightsTimeseriesReport = HighlightsTimeseriesReportView

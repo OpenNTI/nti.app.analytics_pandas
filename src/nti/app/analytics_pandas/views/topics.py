@@ -11,6 +11,10 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
+import json
+
+from pyramid.view import view_config
+
 from zope import interface
 
 from nti.analytics_pandas.analysis import TopicsCreationTimeseries
@@ -41,8 +45,8 @@ class TopicsTimeseriesContext(PandasReportContext):
 	def __init__(self, *args, **kwargs):
 		super(TopicsTimeseriesContext, self).__init__(*args, **kwargs)
 
-Context = TopicsTimeseriesContext
-
+@view_config(name="TopicsReport",
+			 renderer="../templates/topics.rml")
 class TopicsTimeseriesReportView(AbstractReportView):
 
 	@property
@@ -68,6 +72,9 @@ class TopicsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
+		json_data = json.loads(self.request.json)
+		self.context = self._build_context(TopicsTimeseriesContext, json_data)
+		
 		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 		data = {}
@@ -244,5 +251,3 @@ class TopicsTimeseriesReportView(AbstractReportView):
 		if plots:
 			data['topic_favorites'] = build_plot_images_dictionary(plots)
 		return data
-
-View = TopicsTimeseriesReport = TopicsTimeseriesReportView

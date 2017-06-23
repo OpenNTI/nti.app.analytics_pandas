@@ -11,6 +11,10 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
+import json
+
+from pyramid.view import view_config
+
 from zope import interface
 
 from nti.analytics_pandas.analysis import CourseDropsTimeseries
@@ -40,8 +44,8 @@ class EnrollmentTimeseriesContext(PandasReportContext):
 	def __init__(self, *args, **kwargs):
 		super(EnrollmentTimeseriesContext, self).__init__(*args, **kwargs)
 
-Context = EnrollmentTimeseriesContext
-
+@view_config(name="EnrollmentRelatedEvents",
+			renderer="../templates/enrollments.rml")
 class EnrollmentTimeseriesReportView(AbstractReportView):
 
 	@property
@@ -66,6 +70,9 @@ class EnrollmentTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
+		json_data = json.loads(self.request.json)
+		self.context = self._build_context(EnrollmentTimeseriesContext, json_data)
+		
 		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 		data = {}
@@ -229,5 +236,3 @@ class EnrollmentTimeseriesReportView(AbstractReportView):
 			data['course_enrollments_vs_catalog_views'] = build_plot_images_dictionary(plots)
 			self.options['has_course_enrollments_vs_catalog_views'] = True
 		return data
-
-View = EnrollmentTimeseriesReport = EnrollmentTimeseriesReportView

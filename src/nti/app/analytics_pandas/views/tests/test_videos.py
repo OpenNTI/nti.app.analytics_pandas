@@ -8,44 +8,44 @@ __docformat__ = "restructuredtext en"
 # pylint: disable=W0212,R0904
 
 from hamcrest import is_
-from hamcrest import equal_to
-from hamcrest import has_item
 from hamcrest import has_length
 from hamcrest import assert_that
-from hamcrest import instance_of
 from hamcrest import greater_than
+from hamcrest import has_property
 
 import os
+import json
 
 from zope.cachedescriptors.property import Lazy
 
 from z3c.rml import rml2pdf
 
-from nti.app.analytics_pandas.views.commons import cleanup_temporary_file
-
-from nti.app.analytics_pandas.views.videos import View
-from nti.app.analytics_pandas.views.videos import Context
+from nti.app.analytics_pandas.views.videos import VideosTimeseriesReportView
+from nti.app.analytics_pandas.views.videos import VideosTimeseriesContext
 
 from nti.app.analytics_pandas.reports.z3c_zpt import ViewPageTemplateFile
 
 from nti.app.analytics_pandas.tests import AppAnalyticsTestBase
+from nti.app.analytics_pandas.tests import PandasReportsLayerTest
+
+from nti.app.analytics_pandas.views.tests import _build_sample_context
+
+from nti.app.testing.decorators import WithSharedApplicationMockDS
+
 
 class TestVideosEvents(AppAnalyticsTestBase):
 
 	@Lazy
 	def std_report_layout_rml(self):
-		path = os.path.join(os.path.dirname(__file__), '../../templates/std_report_layout.rml')
-		return path
-
-	@Lazy
-	def videos_rml(self):
-		path = os.path.join(os.path.dirname(__file__), '../../templates/videos.rml')
+		path = os.path.join(
+                    os.path.dirname(__file__),
+                    '../../templates/std_report_layout.rml')
 		return path
 
 	def template(self, path):
 		result = ViewPageTemplateFile(path,
-									  auto_reload=(False,),
-									  debug=False)
+                                auto_reload=(False,),
+                                debug=False)
 		return result
 
 	def test_std_report_layout_rml(self):
@@ -54,50 +54,24 @@ class TestVideosEvents(AppAnalyticsTestBase):
 		assert_that(os.path.exists(path), is_(True))
 
 		# prepare view and context
-		context = Context()
-		view = View(context)
+		context = VideosTimeseriesContext()
+		view = VideosTimeseriesReportView(context)
 		view._build_data('Bleach')
-		system = {'view':view, 'context':context}
+		system = {'view': view, 'context': context}
 		rml = self.template(path).bind(view)(**system)
 
 		pdf_stream = rml2pdf.parseString(rml)
 		result = pdf_stream.read()
 		assert_that(result, has_length(greater_than(1)))
 
-	def test_generate_pdf_from_rml(self):
-		# make sure  template exists
-		path = self.std_report_layout_rml
-		assert_that(os.path.exists(path), is_(True))
 
-		# prepare view and context
-		start_date = '2015-10-05'
-		end_date = '2015-10-20'
-		courses = ['1068', '1096', '1097', '1098', '1099']
-		period_breaks = '1 day'
-		minor_period_breaks = None
-		theme_bw_ = True
-		
-		context = Context(start_date=start_date, 
-						  end_date=end_date, 
-						  courses=courses,
-						  period_breaks=period_breaks, 
-						  minor_period_breaks=minor_period_breaks, 
-						  theme_bw_=theme_bw_)
+class TestVideosViews(PandasReportsLayerTest):
 
-		assert_that(context.start_date, equal_to('2015-10-05'))
-
-		view = View(context)
-		view()
-		assert_that(view.options['data'] , instance_of(dict))
-		assert_that(view.options['data'].keys(), has_item('videos_watched'))
-
-		system = {'view':view, 'context':context}
-		rml = self.template(path).bind(view)(**system)
-
-		pdf_stream = rml2pdf.parseString(rml)
-		pdf_stream.seek(0)
-		readbuf = pdf_stream.read()
-		assert_that(readbuf, has_length(greater_than(0)))
-
-		data = view.options['data']
-		cleanup_temporary_file(data)
+	@WithSharedApplicationMockDS(testapp=True, users=True)
+	def test_video_view(self):
+		context = _build_sample_context(VideosTimeseriesContext)
+		params = json.dumps(context.__dict__)
+		response = self.testapp.post_json('/dataserver2/pandas_reports/VideosRelatedEvents',
+                                    params,
+                                    extra_environ=self._make_extra_environ())
+		assert_that(response, has_property('content_type', 'application/pdf'))

@@ -11,6 +11,10 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
+import json
+
+from pyramid.view import view_config
+
 from zope import interface
 
 from nti.analytics_pandas.analysis import BookmarksTimeseriesPlot
@@ -32,8 +36,8 @@ class BookmarksTimeseriesContext(PandasReportContext):
 	def __init__(self, *args, **kwargs):
 		super(BookmarksTimeseriesContext, self).__init__(*args, **kwargs)
 
-Context = BookmarksTimeseriesContext
-
+@view_config(name="BookmarksReport",
+			 renderer="../templates/bookmarks.rml")
 class BookmarksTimeseriesReportView(AbstractReportView):
 
 	@property
@@ -64,6 +68,9 @@ class BookmarksTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
+		json_data = json.loads(self.request.json)
+		self.context = self._build_context(BookmarksTimeseriesContext, json_data)
+		
 		self.bct = BookmarkCreationTimeseries(self.db.session,
 										   	  self.context.start_date,
 										   	  self.context.end_date,
@@ -147,4 +154,3 @@ class BookmarksTimeseriesReportView(AbstractReportView):
 			self.options['has_bookmark_data_per_course_sections'] = True
 		return data
 
-View = BookmarksTimeseriesReport = BookmarksTimeseriesReportView

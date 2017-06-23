@@ -11,6 +11,10 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
+import json
+
+from pyramid.view import view_config
+
 from zope import interface
 
 from nti.analytics_pandas.analysis import ResourceViewsTimeseries
@@ -31,8 +35,8 @@ class ResourceViewsTimeseriesContext(PandasReportContext):
 	def __init__(self, *args, **kwargs):
 		super(ResourceViewsTimeseriesContext, self).__init__(*args, **kwargs)
 
-Context = ResourceViewsTimeseriesContext
-
+@view_config(name="ResourceViews",
+			 renderer="../templates/resource_views.rml")
 class ResourceViewsTimeseriesReportView(AbstractReportView):
 
 	@property
@@ -60,6 +64,9 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
+		json_data = json.loads(self.request.json)
+		self.context = self._build_context(ResourceViewsTimeseriesContext, json_data)
+		
 		self.rvt = ResourceViewsTimeseries(self.db.session,
 										   self.context.start_date,
 										   self.context.end_date,
@@ -124,5 +131,3 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
 			data['resource_view_users'] = build_plot_images_dictionary(plots)
 			self.options['has_resource_view_users'] = True
 		return data
-
-View = ResourceViewsTimeseriesReport = ResourceViewsTimeseriesReportView

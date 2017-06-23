@@ -11,6 +11,10 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
+import json
+
+from pyramid.view import view_config
+
 from zope import interface
 
 from nti.analytics_pandas.analysis import ForumsEventsTimeseries
@@ -41,8 +45,8 @@ class ForumsTimeseriesContext(PandasReportContext):
 	def __init__(self, *args, **kwargs):
 		super(ForumsTimeseriesContext, self).__init__(*args, **kwargs)
 
-Context = ForumsTimeseriesContext
-
+@view_config(name="ForumsRelatedEvents",
+			 renderer="../templates/forums.rml")
 class ForumsTimeseriesReportView(AbstractReportView):
 
 	@property
@@ -70,6 +74,9 @@ class ForumsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
+		json_data = json.loads(self.request.json)
+		self.context = self._build_context(ForumsTimeseriesContext, json_data)
+		
 		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 
@@ -313,4 +320,3 @@ class ForumsTimeseriesReportView(AbstractReportView):
 			self.options['has_forum_comment_favorites_per_course_sections'] = True
 		return data
 
-View = ForumsTimeseriesReport = ForumsTimeseriesReportView

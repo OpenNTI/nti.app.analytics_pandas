@@ -11,6 +11,10 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
+import json
+
+from pyramid.view import view_config
+
 from zope import interface
 
 from nti.analytics_pandas.analysis import AssessmentEventsTimeseries
@@ -26,9 +30,9 @@ from nti.analytics_pandas.analysis import SelfAssessmentsTakenTimeseries
 from nti.analytics_pandas.analysis import SelfAssessmentViewsTimeseriesPlot
 from nti.analytics_pandas.analysis import SelfAssessmentsTakenTimeseriesPlot
 
-from nti.app.analytics_pandas.reports.report import PandasReportContext
-
 from nti.app.analytics_pandas.views.interfaces import IAssessmentsEventsTimeseriesContext
+
+from nti.app.analytics_pandas.reports.report import PandasReportContext
 
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary
@@ -42,8 +46,9 @@ class AssessmentsEventsTimeseriesContext(PandasReportContext):
 	def __init__(self, *args, **kwargs):
 		super(AssessmentsEventsTimeseriesContext, self).__init__(*args, **kwargs)
 
-Context = AssessmentsEventsTimeseriesContext
 
+@view_config(renderer="../templates/assessments.rml",
+			 name="AssessmentsRelatedEvents")
 class AssessmentsEventsTimeseriesReportView(AbstractReportView):
 
 	@property
@@ -72,6 +77,9 @@ class AssessmentsEventsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
+		json_data = json.loads(self.request.json)
+		self.context = self._build_context(AssessmentsEventsTimeseriesContext, json_data)
+		
 		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 		data = {}
@@ -372,5 +380,3 @@ class AssessmentsEventsTimeseriesReportView(AbstractReportView):
 			data['assessment_events'] = build_plot_images_dictionary(plots)
 			self.options['has_assessment_events'] = True
 		return data
-
-View = AssessmentsEventsTimeseriesReport = AssessmentsEventsTimeseriesReportView
