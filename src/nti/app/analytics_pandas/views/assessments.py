@@ -11,11 +11,11 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
-import json
-
 from pyramid.view import view_config
 
 from zope import interface
+
+from nti.app.analytics_pandas.reports.model import AssessmentsEventsTimeseriesContext
 
 from nti.analytics_pandas.analysis import AssessmentEventsTimeseries
 from nti.analytics_pandas.analysis import AssessmentEventsTimeseriesPlot
@@ -30,21 +30,13 @@ from nti.analytics_pandas.analysis import SelfAssessmentsTakenTimeseries
 from nti.analytics_pandas.analysis import SelfAssessmentViewsTimeseriesPlot
 from nti.analytics_pandas.analysis import SelfAssessmentsTakenTimeseriesPlot
 
-from nti.app.analytics_pandas.views.interfaces import IAssessmentsEventsTimeseriesContext
-
-from nti.app.analytics_pandas.reports.report import PandasReportContext
+from nti.mimetype.mimetype import nti_mimetype_with_class
 
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary
 from .commons import build_images_dict_from_plot_dict
 
 from .mixins import AbstractReportView
-
-@interface.implementer(IAssessmentsEventsTimeseriesContext)
-class AssessmentsEventsTimeseriesContext(PandasReportContext):
-
-	def __init__(self, *args, **kwargs):
-		super(AssessmentsEventsTimeseriesContext, self).__init__(*args, **kwargs)
 
 
 @view_config(renderer="../templates/assessments.rml",
@@ -77,8 +69,11 @@ class AssessmentsEventsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
-		json_data = json.loads(self.request.json)
-		self.context = self._build_context(AssessmentsEventsTimeseriesContext, json_data)
+		values = self.readInput()
+		if "MimeType" not in values.keys():
+			values["MimeType"] = 'application/vnd.nextthought.reports.assessmentseventstimeseriescontext'
+		self.context = self._build_context(context_class=AssessmentsEventsTimeseriesContext, 
+										   params=values)
 		
 		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))

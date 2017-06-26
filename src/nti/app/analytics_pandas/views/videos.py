@@ -9,8 +9,6 @@ __docformat__ = "restructuredtext en"
 
 logger = __import__('logging').getLogger(__name__)
 
-import json
-
 from pyramid.view import view_config
 
 from zope import interface
@@ -18,23 +16,17 @@ from zope import interface
 from nti.analytics_pandas.analysis import VideoEventsTimeseries
 from nti.analytics_pandas.analysis import VideoEventsTimeseriesPlot
 
+from nti.app.analytics_pandas.reports.model import VideosTimeseriesContext
+
 from nti.app.analytics_pandas import MessageFactory as _
 
 from nti.app.analytics_pandas.views.commons import get_course_names
 from nti.app.analytics_pandas.views.commons import build_plot_images_dictionary
 from nti.app.analytics_pandas.views.commons import build_images_dict_from_plot_dict
 
-from nti.app.analytics_pandas.reports.report import PandasReportContext
-
-from nti.app.analytics_pandas.views.interfaces import IVideosTimeseriesContext
-
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
-@interface.implementer(IVideosTimeseriesContext)
-class VideosTimeseriesContext(PandasReportContext):
-
-	def __init__(self, *args, **kwargs):
-		super(VideosTimeseriesContext, self).__init__(*args, **kwargs)
+from nti.mimetype.mimetype import nti_mimetype_with_class
 
 @view_config(name="VideosRelatedEvents",
 			 renderer="../templates/videos.rml")
@@ -71,8 +63,11 @@ class VideosTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
-		json_data = json.loads(self.request.json)
-		self.context = self._build_context(VideosTimeseriesContext, json_data)
+		values = self.readInput()
+		if "MimeType" not in values.keys():
+			values["MimeType"] = 'application/vnd.nextthought.reports.videostimeseriescontext'
+		self.context = self._build_context(context_class=VideosTimeseriesContext, 
+										   params=values)
 		
 		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))

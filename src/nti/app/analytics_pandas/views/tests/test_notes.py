@@ -34,6 +34,9 @@ from nti.app.analytics_pandas.views.tests import _build_sample_context
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
+from nti.externalization.externalization import to_external_object
+
+
 class TestNoteEvents(AppAnalyticsTestBase):
 
 	def setUp(self):
@@ -41,13 +44,15 @@ class TestNoteEvents(AppAnalyticsTestBase):
 
 	@Lazy
 	def std_report_layout_rml(self):
-		path = os.path.join(os.path.dirname(__file__), '../../templates/std_report_layout.rml')
+		path = os.path.join(
+                    os.path.dirname(__file__),
+                    '../../templates/std_report_layout.rml')
 		return path
 
 	def template(self, path):
 		result = ViewPageTemplateFile(path,
-									  auto_reload=(False,),
-									  debug=False)
+                                auto_reload=(False,),
+                                debug=False)
 		return result
 
 	def test_std_report_layout_rml(self):
@@ -59,20 +64,21 @@ class TestNoteEvents(AppAnalyticsTestBase):
 		context = NoteEventsTimeseriesContext()
 		view = NoteEventsTimeseriesReportView(context)
 		view._build_data('Bleach')
-		system = {'view':view, 'context':context}
+		system = {'view': view, 'context': context}
 		rml = self.template(path).bind(view)(**system)
 
 		pdf_stream = rml2pdf.parseString(rml)
 		result = pdf_stream.read()
 		assert_that(result, has_length(greater_than(1)))
 
+
 class TestNotesViews(PandasReportsLayerTest):
-	
+
 	@WithSharedApplicationMockDS(testapp=True, users=True)
 	def test_notes_view(self):
 		context = _build_sample_context(NoteEventsTimeseriesContext)
-		params = json.dumps(context.__dict__)
-		response = self.testapp.post_json('/dataserver2/pandas_reports/NotesRelatedEvents',
-                                    params,
-                                    extra_environ=self._make_extra_environ())
+		params = to_external_object(context)
+		response = self.testapp.post('/dataserver2/pandas_reports/NotesRelatedEvents',
+                               json.dumps(params),
+                               extra_environ=self._make_extra_environ())
 		assert_that(response, has_property('content_type', 'application/pdf'))

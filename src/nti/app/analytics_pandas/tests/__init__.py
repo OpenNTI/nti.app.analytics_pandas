@@ -41,7 +41,8 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
                                  ConfiguringLayerMixin):
 
     set_up_packages = ('nti.app.analytics_pandas.reports',
-                       'nti.app.analytics_pandas.views')
+                       'nti.app.analytics_pandas.views',
+                       'nti.app.analytics_pandas')
 
     @classmethod
     def setUp(cls):
@@ -122,7 +123,8 @@ from nti.app.testing.application_webtest import ApplicationLayerTest
 
 class PandasReportsLayerTest(ApplicationLayerTest):
 
-    set_up_packages = ('nti.app.analytics_pandas',)
+    set_up_packages = ('nti.app.analytics_pandas',
+                       'nti.app.analytics_pandas.reports')
 
     utils = []
     factory = None

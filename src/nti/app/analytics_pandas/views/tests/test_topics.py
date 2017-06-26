@@ -34,6 +34,7 @@ from nti.app.analytics_pandas.views.tests import _build_sample_context
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
+from nti.externalization.externalization import to_external_object
 
 class TestNoteEvents(AppAnalyticsTestBase):
 
@@ -72,8 +73,8 @@ class TestTopicsReportView(PandasReportsLayerTest):
 	@WithSharedApplicationMockDS(testapp=True, users=True)
 	def test_topics_view(self):
 		context = _build_sample_context(TopicsTimeseriesContext)
-		params = json.dumps(context.__dict__)
-		response = self.testapp.post_json('/dataserver2/pandas_reports/TopicsReport',
-                                    params,
+		params = to_external_object(context)
+		response = self.testapp.post('/dataserver2/pandas_reports/TopicsReport',
+                                    json.dumps(params),
                                     extra_environ=self._make_extra_environ())
 		assert_that(response, has_property('content_type', 'application/pdf'))

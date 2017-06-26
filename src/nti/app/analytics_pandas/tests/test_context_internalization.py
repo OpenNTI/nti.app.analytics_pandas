@@ -40,6 +40,7 @@ from nti.app.analytics_pandas.views.tests import _build_sample_context
 
 from nti.externalization.externalization import to_external_object
 from nti.externalization.externalization import StandardExternalFields
+from nti.externalization.internalization import find_factory_for
 
 CLASS = StandardExternalFields.CLASS
 

@@ -11,29 +11,21 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
-import json
-
 from pyramid.view import view_config
 
 from zope import interface
 
+from nti.app.analytics_pandas.reports.model import ResourceViewsTimeseriesContext
+
 from nti.analytics_pandas.analysis import ResourceViewsTimeseries
 from nti.analytics_pandas.analysis import ResourceViewsTimeseriesPlot
 
-from nti.app.analytics_pandas.reports.report import PandasReportContext
-
-from nti.app.analytics_pandas.views.interfaces import IResourceViewsTimeseriesContext
+from nti.mimetype.mimetype import nti_mimetype_with_class
 
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary
 
 from .mixins import AbstractReportView
-
-@interface.implementer(IResourceViewsTimeseriesContext)
-class ResourceViewsTimeseriesContext(PandasReportContext):
-
-	def __init__(self, *args, **kwargs):
-		super(ResourceViewsTimeseriesContext, self).__init__(*args, **kwargs)
 
 @view_config(name="ResourceViews",
 			 renderer="../templates/resource_views.rml")
@@ -64,8 +56,11 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
-		json_data = json.loads(self.request.json)
-		self.context = self._build_context(ResourceViewsTimeseriesContext, json_data)
+		values = self.readInput()
+		if "MimeType" not in values.keys():
+			values["MimeType"] = 'application/vnd.nextthought.reports.resourceviewstimeseriescontext'
+		self.context = self._build_context(context_class=ResourceViewsTimeseriesContext, 
+										   params=values)
 		
 		self.rvt = ResourceViewsTimeseries(self.db.session,
 										   self.context.start_date,

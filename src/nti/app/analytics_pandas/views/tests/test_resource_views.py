@@ -34,6 +34,8 @@ from nti.app.analytics_pandas.views.tests import _build_sample_context
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
+from nti.externalization.externalization import to_external_object
+
 class TestResourceViews(AppAnalyticsTestBase):
 
 	def setUp(self):
@@ -83,8 +85,8 @@ class TestReourceViewsView(PandasReportsLayerTest):
 	@WithSharedApplicationMockDS(testapp=True, users=True)
 	def test_resource_views_view(self):
 		context = _build_sample_context(ResourceViewsTimeseriesContext)
-		params = json.dumps(context.__dict__)
-		response = self.testapp.post_json('/dataserver2/pandas_reports/ResourceViews',
-                                    params,
+		params = to_external_object(context)
+		response = self.testapp.post('/dataserver2/pandas_reports/ResourceViews',
+                                    json.dumps(params),
                                     extra_environ=self._make_extra_environ())
 		assert_that(response, has_property('content_type', 'application/pdf'))

@@ -26,9 +26,14 @@ from nti.app.analytics_pandas.reports.interfaces import IPDFReportView
 
 from nti.app.analytics_pandas.views import PandasReportAdapter
 
+from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
+
 from nti.analytics_pandas.databases import get_analytics_db
 
 from nti.dataserver.authorization import ACT_NTI_ADMIN
+
+from nti.externalization.internalization import find_factory_for
+from nti.externalization.internalization import update_from_external_object
 
 
 def adjust_date(date):
@@ -60,7 +65,8 @@ def format_datetime(local_date):
                context=PandasReportAdapter,
                permission=ACT_NTI_ADMIN)
 @interface.implementer(IPDFReportView)
-class AbstractReportView(BrowserPagelet):
+class AbstractReportView(BrowserPagelet,
+						 ModeledContentUploadRequestUtilsMixin):
 
 	def __init__(self, context=None, request=None):
 		BrowserPagelet.__init__(self, context, request)
@@ -85,4 +91,22 @@ class AbstractReportView(BrowserPagelet):
 		return textwrap.fill(text, size)
 
 	def _build_context(self, context_class, params):
-		return context_class(**params)
+		return self._create_object_from_external(map_obj=params)
+	
+	def readInput(self, value=None):
+		if self.request.body:
+		    values = super(AbstractReportView, self).readInput(value)
+		else:
+		    values = self.request.params
+		return values
+	
+	def _create_object_from_external(self, map_obj, notify=False, _exec=True):
+		# find factory
+		factory = find_factory_for(map_obj)
+		if _exec:
+		    assert factory is not None, "Could not find factory for external object"
+		# create and update
+		result = factory()
+		update_from_external_object(result, map_obj,
+		                            notify=notify,)
+		return result
