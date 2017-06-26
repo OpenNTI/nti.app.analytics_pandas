@@ -11,7 +11,11 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
+from pyramid.view import view_config
+
 from zope import interface
+
+from nti.app.analytics_pandas.reports.model import TopicsTimeseriesContext
 
 from nti.analytics_pandas.analysis import TopicsCreationTimeseries
 from nti.analytics_pandas.analysis import TopicsCreationTimeseriesPlot
@@ -25,9 +29,7 @@ from nti.analytics_pandas.analysis import TopicLikesTimeseriesPlot
 from nti.analytics_pandas.analysis import TopicFavoritesTimeseries
 from nti.analytics_pandas.analysis import TopicFavoritesTimeseriesPlot
 
-from nti.app.analytics_pandas.reports.report import PandasReportContext
-
-from nti.app.analytics_pandas.views.interfaces import ITopicsTimeseriesContext
+from nti.mimetype.mimetype import nti_mimetype_with_class
 
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary
@@ -35,14 +37,8 @@ from .commons import build_images_dict_from_plot_dict
 
 from .mixins import AbstractReportView
 
-@interface.implementer(ITopicsTimeseriesContext)
-class TopicsTimeseriesContext(PandasReportContext):
-
-	def __init__(self, *args, **kwargs):
-		super(TopicsTimeseriesContext, self).__init__(*args, **kwargs)
-
-Context = TopicsTimeseriesContext
-
+@view_config(name="TopicsReport",
+			 renderer="../templates/topics.rml")
 class TopicsTimeseriesReportView(AbstractReportView):
 
 	@property
@@ -68,6 +64,12 @@ class TopicsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
+		values = self.readInput()
+		if "MimeType" not in values.keys():
+			values["MimeType"] = 'application/vnd.nextthought.reports.topicstimeseriescontext'
+		self.context = self._build_context(context_class=TopicsTimeseriesContext, 
+										   params=values)
+		
 		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 		data = {}
@@ -244,5 +246,3 @@ class TopicsTimeseriesReportView(AbstractReportView):
 		if plots:
 			data['topic_favorites'] = build_plot_images_dictionary(plots)
 		return data
-
-View = TopicsTimeseriesReport = TopicsTimeseriesReportView

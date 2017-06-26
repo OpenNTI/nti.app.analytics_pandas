@@ -11,14 +11,16 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
+from pyramid.view import view_config
+
 from zope import interface
+
+from nti.app.analytics_pandas.reports.model import HighlightsTimeseriesContext
 
 from nti.analytics_pandas.analysis import HighlightsCreationTimeseries
 from nti.analytics_pandas.analysis import HighlightsCreationTimeseriesPlot
 
-from nti.app.analytics_pandas.reports.report import PandasReportContext
-
-from nti.app.analytics_pandas.views.interfaces import IHighlightsTimeseriesContext
+from nti.mimetype.mimetype import nti_mimetype_with_class
 
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary
@@ -26,14 +28,8 @@ from .commons import build_images_dict_from_plot_dict
 
 from .mixins import AbstractReportView
 
-@interface.implementer(IHighlightsTimeseriesContext)
-class HighlightsTimeseriesContext(PandasReportContext):
-
-	def __init__(self, *args, **kwargs):
-		super(HighlightsTimeseriesContext, self).__init__(*args, **kwargs)
-
-Context = HighlightsTimeseriesContext
-
+@view_config(name="HighlightEventsReport",
+			 renderer="../templates/highlights.rml")
 class HighlightsTimeseriesReportView(AbstractReportView):
 
 	@property
@@ -64,6 +60,12 @@ class HighlightsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
+		values = self.readInput()
+		if "MimeType" not in values.keys():
+			values["MimeType"] = 'application/vnd.nextthought.reports.highlightstimeseriescontext'
+		self.context = self._build_context(context_class=HighlightsTimeseriesContext, 
+										   params=values)
+		
 		self.hct = HighlightsCreationTimeseries(self.db.session,
 										   		self.context.start_date,
 										   		self.context.end_date,
@@ -142,5 +144,3 @@ class HighlightsTimeseriesReportView(AbstractReportView):
 		if plots:
 			data['highlights_created_per_course_sections'] = build_images_dict_from_plot_dict(plots)
 		return data
-
-View = HighlightsTimeseriesReport = HighlightsTimeseriesReportView

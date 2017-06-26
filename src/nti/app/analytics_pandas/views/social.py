@@ -11,7 +11,11 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
+from pyramid.view import view_config
+
 from zope import interface
+
+from nti.app.analytics_pandas.reports.model import SocialTimeseriesContext
 
 from nti.analytics_pandas.analysis import ChatsTimeseriesPlot
 from nti.analytics_pandas.analysis import ChatsJoinedTimeseries
@@ -40,22 +44,14 @@ from nti.analytics_pandas.analysis import EntityProfileMembershipViewsTimeseries
 
 from nti.analytics_pandas.analysis import EntityProfileViewEventsTimeseries
 
-from nti.app.analytics_pandas.reports.report import PandasReportContext
-
-from nti.app.analytics_pandas.views.interfaces import ISocialTimeseriesContext
+from nti.mimetype.mimetype import nti_mimetype_with_class
 
 from .commons import build_plot_images_dictionary
 
 from .mixins import AbstractReportView
 
-@interface.implementer(ISocialTimeseriesContext)
-class SocialTimeseriesContext(PandasReportContext):
-
-	def __init__(self, *args, **kwargs):
-		super(SocialTimeseriesContext, self).__init__(*args, **kwargs)
-
-Context = SocialTimeseriesContext
-
+@view_config(name="SocialRelatedEventsReport",
+			 renderer="../templates/social.rml")
 class SocialTimeseriesReportView(AbstractReportView):
 
 	@property
@@ -80,6 +76,12 @@ class SocialTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
+		values = self.readInput()
+		if "MimeType" not in values.keys():
+			values["MimeType"] = 'application/vnd.nextthought.reports.socialtimeseriescontext'
+		self.context = self._build_context(context_class=SocialTimeseriesContext, 
+										   params=values)
+		
 		data = {}
 		self.cat = ContactsAddedTimeseries(self.db.session,
 										   self.context.start_date,
@@ -151,13 +153,18 @@ class SocialTimeseriesReportView(AbstractReportView):
 			self.options['has_profile_view_events'] = True
 			if not self.epvt.dataframe.empty:
 				data = self.generate_profile_view_plots(data)
+			else:
+				self.options["has_profile_views"] = False
 			if not self.epavt.dataframe.empty:
 				data = self.generate_profile_activity_view_plots(data)
+			else:
+				self.options["has_profile_activity_views"] = False
 			if not self.epmvt.dataframe.empty:
 				data = self.generate_profile_membership_view_plots(data)
+			else:
+				self.options['has_profile_membership_views'] = False
 		else:
 			self.options['has_profile_view_events'] = False
-
 		self._build_data(data)
 		return self.options
 
@@ -200,7 +207,6 @@ class SocialTimeseriesReportView(AbstractReportView):
 													   self.context.minor_period_breaks,
 													   self.context.theme_bw_)
 		if plot:
-			print(plot)
 			data['one_one_and_group_chat'] = build_plot_images_dictionary(plot)
 			self.options['has_one_one_or_group_chats'] = True
 		else:
@@ -481,5 +487,3 @@ class SocialTimeseriesReportView(AbstractReportView):
 		else:
 			self.options['has_most_viewed_profile_memberships'] = False
 		return data
-
-View = SocialTimeseriesReport = SocialTimeseriesReportView

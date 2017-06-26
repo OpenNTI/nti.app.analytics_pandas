@@ -11,7 +11,11 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
+from pyramid.view import view_config
+
 from zope import interface
+
+from nti.app.analytics_pandas.reports.model import ForumsTimeseriesContext
 
 from nti.analytics_pandas.analysis import ForumsEventsTimeseries
 from nti.analytics_pandas.analysis import ForumsCreatedTimeseries
@@ -25,9 +29,7 @@ from nti.analytics_pandas.analysis import ForumCommentLikesTimeseriesPlot
 from nti.analytics_pandas.analysis import ForumsCommentsCreatedTimeseriesPlot
 from nti.analytics_pandas.analysis import ForumCommentFavoritesTimeseriesPlot
 
-from nti.app.analytics_pandas.reports.report import PandasReportContext
-
-from nti.app.analytics_pandas.views.interfaces import IForumsTimeseriesContext
+from nti.mimetype.mimetype import nti_mimetype_with_class
 
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary
@@ -35,14 +37,8 @@ from .commons import  build_images_dict_from_plot_dict
 
 from .mixins import AbstractReportView
 
-@interface.implementer(IForumsTimeseriesContext)
-class ForumsTimeseriesContext(PandasReportContext):
-
-	def __init__(self, *args, **kwargs):
-		super(ForumsTimeseriesContext, self).__init__(*args, **kwargs)
-
-Context = ForumsTimeseriesContext
-
+@view_config(name="ForumsRelatedEvents",
+			 renderer="../templates/forums.rml")
 class ForumsTimeseriesReportView(AbstractReportView):
 
 	@property
@@ -70,6 +66,12 @@ class ForumsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
+		values = self.readInput()
+		if "MimeType" not in values.keys():
+			values["MimeType"] = 'application/vnd.nextthought.reports.forumstimeseriescontext'
+		self.context = self._build_context(context_class=ForumsTimeseriesContext, 
+										   params=values)
+		
 		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 
@@ -313,4 +315,3 @@ class ForumsTimeseriesReportView(AbstractReportView):
 			self.options['has_forum_comment_favorites_per_course_sections'] = True
 		return data
 
-View = ForumsTimeseriesReport = ForumsTimeseriesReportView

@@ -11,7 +11,11 @@ logger = __import__('logging').getLogger(__name__)
 
 from . import MessageFactory as _
 
+from pyramid.view import view_config
+
 from zope import interface
+
+from nti.app.analytics_pandas.reports.model import NoteEventsTimeseriesContext
 
 from nti.analytics_pandas.analysis import NoteLikesTimeseries
 from nti.analytics_pandas.analysis import NotesViewTimeseries
@@ -24,9 +28,7 @@ from nti.analytics_pandas.analysis import NotesEventsTimeseriesPlot
 from nti.analytics_pandas.analysis import NotesCreationTimeseriesPlot
 from nti.analytics_pandas.analysis import NoteFavoritesTimeseriesPlot
 
-from nti.app.analytics_pandas.reports.report import PandasReportContext
-
-from nti.app.analytics_pandas.views.interfaces import INoteEventsTimeseriesContext
+from nti.mimetype.mimetype import nti_mimetype_with_class
 
 from .commons import get_course_names
 from .commons import build_plot_images_dictionary
@@ -34,14 +36,8 @@ from .commons import build_images_dict_from_plot_dict
 
 from .mixins import AbstractReportView
 
-@interface.implementer(INoteEventsTimeseriesContext)
-class NoteEventsTimeseriesContext(PandasReportContext):
-
-	def __init__(self, *args, **kwargs):
-		super(NoteEventsTimeseriesContext, self).__init__(*args, **kwargs)
-
-Context = NoteEventsTimeseriesContext
-
+@view_config(name="NotesRelatedEvents",
+			 renderer="../templates/notes.rml")
 class NoteEventsTimeseriesReportView(AbstractReportView):
 
 	@property
@@ -70,6 +66,12 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 		return self.options
 
 	def __call__(self):
+		values = self.readInput()
+		if "MimeType" not in values.keys():
+			values["MimeType"] = 'application/vnd.nextthought.reports.noteeventstimeseriescontext'
+		self.context = self._build_context(context_class=NoteEventsTimeseriesContext, 
+										   params=values)
+		
 		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
 		data = {}
@@ -350,5 +352,3 @@ class NoteEventsTimeseriesReportView(AbstractReportView):
 			data['note_events'] = build_plot_images_dictionary(plots)
 			self.options['has_note_events_data'] = True
 		return data
-
-View = NoteEventsTimeseriesReport = NoteEventsTimeseriesReportView
