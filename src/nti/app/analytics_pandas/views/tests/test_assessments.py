@@ -30,8 +30,6 @@ from nti.app.analytics_pandas.tests import PandasReportsLayerTest
 
 from nti.app.analytics_pandas.views.tests import _build_sample_context
 
-from nti.app.testing.application_webtest import ApplicationLayerTest
-
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.externalization.externalization import to_external_object
