@@ -24,9 +24,7 @@
 			 	provides="nti.contenttypes.reports.interfaces.IReportPredicate"
 			 	for="nti.app.analytics_pandas.reports.interfaces.IPandasReport
 			 	  	 nti.dataserver.interfaces.IUser" />
-	
-	
-
+			 	  	 
 	<!-- z3c:macro -->
 	<include package="z3c.macro" file="meta.zcml" /> 
 	<!-- regular pagetemplate usage uses chamelean engine -->
