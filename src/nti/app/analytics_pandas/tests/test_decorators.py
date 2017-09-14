@@ -19,7 +19,7 @@ from nti.app.contenttypes.reports.tests import TestReportContext
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
-from nti.externalization.oids import to_external_ntiid_oid
+from nti.ntiids.oids import to_external_ntiid_oid
 
 from nti.dataserver.tests import mock_dataserver
 
@@ -30,6 +30,7 @@ class TestPandasDecorators(PandasReportsLayerTest):
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_pandas_report_decorators(self):
+
         with mock_dataserver.mock_db_trans(self.ds):
             _user = self._create_user(self.basic_user)
             test_context = TestReportContext()
