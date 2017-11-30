@@ -17,6 +17,9 @@ import tempfile
 from collections import Mapping
 from contextlib import contextmanager
 
+import matplotlib
+matplotlib.use('Agg')
+
 from matplotlib import pyplot as plt
 
 from z3c.rml import rml2pdf
