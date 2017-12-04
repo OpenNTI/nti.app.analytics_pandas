@@ -116,7 +116,7 @@ def process_args(social=False):
         args_dict['minor_period_breaks'] = text_(args.minor_period_breaks)
 
     if isinstance(args.theme_bw, bool):
-        args_dict['theme_bw'] = text_(args.theme_bw)
+        args_dict['theme_bw'] = args.theme_bw
     else:
         args_dict['theme_bw'] = str2bool(args.theme_bw)
 
