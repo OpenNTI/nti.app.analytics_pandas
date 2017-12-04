@@ -100,9 +100,9 @@ def process_args(social=False):
 
     if not social:
         if ',' in args.courses:
-            args_dict['courses'] = text_(args.courses.split(','))
+            args_dict['courses'] = [text_(x) for x in args.courses.split(',')]
         else:
-            args_dict['courses'] = text_(args.courses.split())
+            args_dict['courses'] = [text_(x) for x in args.courses.split()]
 
     args_dict['period'] = args.period
     if args.period == 'daily':
