@@ -7,6 +7,9 @@ entry_points = {
     "z3c.autoinclude.plugin": [
 		'target = nti.app',
 	],
+    'console_scripts': [
+        "nti_analytics_resource_views = nti.app.analytics_pandas.scripts.resource_views:main"
+    ],
 }
 
 setup(
