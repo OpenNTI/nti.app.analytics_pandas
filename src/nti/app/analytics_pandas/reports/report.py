@@ -27,6 +27,8 @@ from nti.app.analytics_pandas.reports.z3c_zpt import ViewPageTemplateFile
 from nti.app.analytics_pandas.views.commons import cleanup_temporary_file
 from nti.app.analytics_pandas.views.commons import create_pdf_file_from_rml
 
+from nti.base._compat import text_
+
 from nti.schema.fieldproperty import createDirectFieldProperties
 
 from nti.schema.schema import SchemaConfigured
@@ -61,12 +63,9 @@ def _parse_args():
 
 
 def _configure_logging(level='INFO'):
-    numeric_level = getattr(logging, level.upper(), None)
-    numeric_level = logging.INFO if not isinstance(
-        numeric_level, int) else numeric_level
-    logging.basicConfig(level=numeric_level)
-
-
+    nl = getattr(logging, level.upper(), None)
+    nl = logging.INFO if not isinstance(nl, int) else nl
+    logging.basicConfig(level=nl)
 configure_logging = _configure_logging
 
 
@@ -96,32 +95,32 @@ def process_args(social=False):
                                 help="Course/s ID. For example %s" % '1068, 1096, 1097, 1098, 1099')
     args = arg_parser.parse_args()
     args_dict = {}
-    args_dict['start_date'] = args.start_date
-    args_dict['end_date'] = args.end_date
+    args_dict['end_date'] = text_(args.end_date)
+    args_dict['start_date'] = text_(args.start_date)
 
     if not social:
         if ',' in args.courses:
-            args_dict['courses'] = args.courses.split(',')
+            args_dict['courses'] = text_(args.courses.split(','))
         else:
-            args_dict['courses'] = args.courses.split()
+            args_dict['courses'] = text_(args.courses.split())
 
     args_dict['period'] = args.period
     if args.period == 'daily':
-        args_dict['period_breaks'] = '1 day'
+        args_dict['period_breaks'] = u'1 day'
         args_dict['minor_period_breaks'] = None
     elif args.period == 'weekly':
-        args_dict['period_breaks'] = '1 week'
+        args_dict['period_breaks'] = u'1 week'
         args_dict['minor_period_breaks'] = None
     else:
-        args_dict['period_breaks'] = args.period_breaks
-        args_dict['minor_period_breaks'] = args.minor_period_breaks
+        args_dict['period_breaks'] = text_(args.period_breaks)
+        args_dict['minor_period_breaks'] = text_(args.minor_period_breaks)
 
     if isinstance(args.theme_bw, bool):
-        args_dict['theme_bw'] = args.theme_bw
+        args_dict['theme_bw'] = text_(args.theme_bw)
     else:
         args_dict['theme_bw'] = str2bool(args.theme_bw)
 
-    args_dict['output'] = args.output
+    args_dict['output'] = text_(args.output)
     return args_dict
 
 
@@ -139,7 +138,7 @@ class Report(object):
 
     def __init__(self, Context, View, start_date, end_date, courses,
                  period_breaks, minor_period_breaks, theme_bw_,
-                 filepath, period='daily'):  # pylint: disable=unused-argument
+                 filepath, period=u'daily'):  # pylint: disable=unused-argument
         if not courses:
             self.context = Context(start_date=start_date,
                                    end_date=end_date,
