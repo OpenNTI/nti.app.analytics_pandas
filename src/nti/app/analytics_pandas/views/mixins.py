@@ -78,13 +78,13 @@ class AbstractReportView(BrowserPagelet,
 
     @property
     def report_title(self):
-        return _('Report')
+        return _(u'Report')
 
     def generate_footer(self):
         date = adjust_date(datetime.utcnow())
         date = date.strftime('%b %d, %Y %I:%M %p')
         title = self.report_title
-        return "%s %s" % (title, date)
+        return u"%s %s" % (title, date)
 
     def wrap_text(self, text, size):
         return textwrap.fill(text, size)
@@ -106,6 +106,5 @@ class AbstractReportView(BrowserPagelet,
             assert factory is not None, "Could not find factory for external object"
         # create and update
         result = factory()
-        update_from_external_object(result, map_obj,
-                                    notify=notify,)
+        update_from_external_object(result, map_obj, notify=notify)
         return result
