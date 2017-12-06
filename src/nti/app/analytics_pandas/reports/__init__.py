@@ -4,11 +4,10 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
-logger = __import__('logging').getLogger(__name__)
+from nti.app.analytics_pandas import MessageFactory
 
-from .. import MessageFactory
-
-from . z3c_zpt import ViewPageTemplateFile
+from nti.app.analytics_pandas.reports.z3c_zpt import ViewPageTemplateFile
