@@ -8,9 +8,7 @@
 			i18n_domain="nti.analytics_pandas.reports">
 
 	<include package="zope.component" file="meta.zcml" />
-	<include package="zope.security" file="meta.zcml" />
 	<include package="zope.component" />
-	<include package="zope.security" />
 
 	<include package="zope.browserpage" file="meta.zcml" />
 	<include package="zope.browserpage" />

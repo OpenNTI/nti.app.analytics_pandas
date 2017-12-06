@@ -14,9 +14,8 @@ import argparse
 
 from zope import interface
 
-from zope.configuration import xmlconfig, config
-
-import nti.analytics_pandas
+from zope.configuration import config
+from zope.configuration import xmlconfig
 
 from nti.app.analytics_pandas.reports.interfaces import IPandasReport
 
@@ -75,6 +74,7 @@ setup_configs = _setup_configs
 
 
 def _configure_config():
+    import nti.analytics_pandas
     context = config.ConfigurationMachine()
     xmlconfig.registerCommonDirectives(context)
     xmlconfig.file('configure.zcml',
@@ -138,7 +138,8 @@ class Report(object):
 
     def __init__(self, Context, View, start_date, end_date, courses,
                  period_breaks, minor_period_breaks, theme_bw_,
-                 filepath, period=u'daily'):  # pylint: disable=unused-argument
+                 filepath, period=u'daily'):
+        logger.debug('period %s', period)
         if not courses:
             self.context = Context(start_date=start_date,
                                    end_date=end_date,
