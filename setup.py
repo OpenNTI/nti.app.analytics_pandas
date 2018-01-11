@@ -36,7 +36,9 @@ setup(
 	namespace_packages=['nti', 'nti.app'],
 	install_requires=[
 		'setuptools',
-		'nti.analytics_pandas'
+        'nti.app.contenttypes.reports',
+		'nti.analytics_pandas',
+        'nti.contenttypes.reports',
 	],
 	entry_points=entry_points
 )

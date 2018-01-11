@@ -10,6 +10,7 @@
 
 	<include package="nti.mimetype" />
 
+	<include package=".views" />
 	<include package=".reports" />
 
 	<adapter name="pandas_reports"
