@@ -22,6 +22,10 @@ from nti.app.analytics_pandas.views.mixins import AbstractReportView
 from nti.analytics_pandas.analysis import ResourceViewsTimeseries
 from nti.analytics_pandas.analysis import ResourceViewsTimeseriesPlot
 
+from nti.externalization.interfaces import StandardExternalFields
+
+MIMETYPE = StandardExternalFields.MIMETYPE
+
 logger = __import__('logging').getLogger(__name__)
 
 
@@ -31,7 +35,7 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
 
     @property
     def report_title(self):
-        return _('Resource Views')
+        return _(u'Resource Views')
 
     def _build_data(self, data=_('sample resource views report')):
         keys = self.options.keys()
@@ -56,12 +60,12 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
     def __call__(self):
         if not isinstance(self.context, ResourceViewsTimeseriesContext):
             values = self.readInput()
-            if "MimeType" not in values.keys():
-                values["MimeType"] = 'application/vnd.nextthought.reports.resourceviewstimeseriescontext'
-            self.context = self._build_context(context_class=ResourceViewsTimeseriesContext,
-                                               params=values)
+            if MIMETYPE not in values.keys():
+                values[MIMETYPE] = 'application/vnd.nextthought.reports.resourceviewstimeseriescontext'
+            self.context = self._build_context(ResourceViewsTimeseriesContext, 
+                                               values)
 
-        # pylint: disable=attribute-defined-outside-init 
+        # pylint: disable=attribute-defined-outside-init
         self.rvt = ResourceViewsTimeseries(self.db.session,
                                            self.context.start_date,
                                            self.context.end_date,
