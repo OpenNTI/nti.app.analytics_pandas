@@ -8,7 +8,21 @@
 	<include package="zope.component" />
 	<include package="zope.security" />
 
+	<!-- This should happen early -->
+	<include package="nti.app.pyramid_zope" />
 	<include package="nti.mimetype" />
+
+	<include package="z3c.macro" file="meta.zcml" /> <!-- z3c:macro -->
+	<include package="z3c.macro" />
+
+	<!-- z3c:template/layout -->
+	<include package="z3c.template" file="meta.zcml" />
+
+	<!-- It has no standard configure.zcml -->
+	<include package="z3c.pagelet" /> <!-- pagelet contentprovider -->
+
+	<include package="zope.viewlet" file="meta.zcml" /> <!-- zope:viewlet/Manager -->
+	<include package="zope.viewlet" />
 
 	<include package=".views" />
 	<include package=".reports" />
