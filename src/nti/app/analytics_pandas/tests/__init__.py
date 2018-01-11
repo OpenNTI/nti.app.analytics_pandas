@@ -1,33 +1,33 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
-# disable: accessing protected members, too many methods
-# pylint: disable=W0212,R0904
+# pylint: disable=protected-access,too-many-public-methods,arguments-differ
 
-from zope.testing import cleanup as testing_cleanup
+import unittest
+import functools
 
 from zope import component
 
 from zope.component import getGlobalSiteManager
 
-import unittest
-import functools
+from zope.testing import cleanup as testing_cleanup
+
+from nti.app.analytics_pandas.reports.interfaces import IPandasReport
 
 from nti.app.analytics_pandas.reports.report import PandasReport
 
-from nti.app.analytics_pandas.reports.interfaces import IPandasReport
+from nti.app.contenttypes.reports.interfaces import IReportLinkProvider
+
+from nti.app.contenttypes.reports.tests import TestPredicate
+from nti.app.contenttypes.reports.tests import TestReportContext
 
 from nti.contenttypes.reports.interfaces import IReportAvailablePredicate
 
 from nti.contenttypes.reports.tests import ITestReportContext
-
-from nti.app.contenttypes.reports.interfaces import IReportLinkProvider
-
-from nti.app.contenttypes.reports.tests import TestReportContext
-from nti.app.contenttypes.reports.tests import TestPredicate
 
 from nti.dataserver.authorization import ACT_NTI_ADMIN
 
@@ -40,9 +40,7 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
                                  GCLayerMixin,
                                  ConfiguringLayerMixin):
 
-    set_up_packages = ('nti.app.analytics_pandas.reports',
-                       'nti.app.analytics_pandas.views',
-                       'nti.app.analytics_pandas')
+    set_up_packages = ('nti.app.analytics_pandas',)
 
     @classmethod
     def setUp(cls):
@@ -62,46 +60,24 @@ class SharedConfiguringTestLayer(ZopeComponentLayer,
         pass
 
 
-from sqlalchemy.pool import StaticPool
-from sqlalchemy.orm import sessionmaker, scoped_session
-from sqlalchemy import create_engine as sqlalchemy_create_engine
-
-
-def create_engine(dburi, pool_size=30, max_overflow=10, pool_recycle=300):
-    try:
-        if dburi == 'sqlite://':
-            result = sqlalchemy_create_engine(dburi,
-                                              connect_args={
-                                                  'check_same_thread': False},
-                                              poolclass=StaticPool)
-
-        else:
-            result = sqlalchemy_create_engine(dburi,
-                                              pool_size=pool_size,
-                                              max_overflow=max_overflow,
-                                              pool_recycle=pool_recycle)
-    except TypeError:
-        # SQLite does not use pooling anymore.
-        result = sqlalchemy_create_engine(dburi)
-    return result
-
-
-def create_sessionmaker(engine, autoflush=True, twophase=True):
-    result = sessionmaker(bind=engine,
-                          autoflush=autoflush,
-                          twophase=twophase)
-    return result
-
-
-def create_session(sessionmaker):
-    return scoped_session(sessionmaker)
-
-
 from nti.analytics_database import Base
 
-from nti.analytics_pandas.databases.db_connection import DBConnection
-
 from nti.analytics_pandas.databases.interfaces import IDBConnection
+
+from nti.analytics_pandas.tests import create_engine
+from nti.analytics_pandas.tests import create_session
+from nti.analytics_pandas.tests import read_sample_data
+from nti.analytics_pandas.tests import create_sessionmaker
+
+
+def setup_database(self):
+    dburi = "sqlite://"
+    self.engine = create_engine(dburi=dburi)
+    self.metadata = getattr(Base, 'metadata')
+    self.metadata.create_all(bind=self.engine)
+    read_sample_data(self.engine)
+    self.sessionmaker = create_sessionmaker(self.engine)
+    self.session = create_session(self.sessionmaker)
 
 
 class AppAnalyticsTestBase(unittest.TestCase):
@@ -109,22 +85,23 @@ class AppAnalyticsTestBase(unittest.TestCase):
     layer = SharedConfiguringTestLayer
 
     def setUp(self):
-        # TODO: Fix URI
-        self.db = DBConnection()
-        component.getGlobalSiteManager().registerUtility(self.db, IDBConnection)
+        setup_database(self)
+        component.getGlobalSiteManager().registerUtility(self, IDBConnection)
 
     def tearDown(self):
-        self.db.session.close()
-        component.getGlobalSiteManager().unregisterUtility(self.db)
+        self.close()
+        component.getGlobalSiteManager().unregisterUtility(self, IDBConnection)
 
+    def close(self):
+        # pylint: disable=no-member
+        self.session.close()
 
 from nti.app.testing.application_webtest import ApplicationLayerTest
 
 
 class PandasReportsLayerTest(ApplicationLayerTest):
 
-    set_up_packages = ('nti.app.analytics_pandas',
-                       'nti.app.analytics_pandas.reports')
+    set_up_packages = ('nti.app.analytics_pandas',)
 
     utils = []
     factory = None
@@ -178,14 +155,14 @@ class PandasReportsLayerTest(ApplicationLayerTest):
         gsm.registerSubscriptionAdapter(self.predicate,
                                         (TestReportContext,),
                                         IReportAvailablePredicate)
-        self.db = DBConnection()
-        component.getGlobalSiteManager().registerUtility(self.db, IDBConnection)
+
+        setup_database(self)
+        component.getGlobalSiteManager().registerUtility(self, IDBConnection)
 
     @classmethod
     def tearDown(self):
         """
-        Unregister all test utilities and
-        subscribers
+        Unregister all test utilities and subscribers
         """
         sm = component.getGlobalSiteManager()
         for util in self.utils:
@@ -204,5 +181,11 @@ class PandasReportsLayerTest(ApplicationLayerTest):
         sm.unregisterSubscriptionAdapter(factory=self.link_provider,
                                          required=(PandasReport,),
                                          provided=IReportLinkProvider)
-        self.db.session.close()
-        component.getGlobalSiteManager().unregisterUtility(self.db)
+        # pylint: disable=no-member
+        self.close()
+        component.getGlobalSiteManager().unregisterUtility(self, IDBConnection)
+
+    @classmethod
+    def close(self):
+        # pylint: disable=no-member
+        self.session.close()
