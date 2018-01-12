@@ -8,12 +8,14 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import pytz
 import textwrap
 from datetime import datetime
 
+import pytz
+
 from pyramid.view import view_defaults
 
+from zope import component
 from zope import interface
 
 from z3c.pagelet.browser import BrowserPagelet
@@ -25,7 +27,7 @@ from nti.app.analytics_pandas.views import PandasReportAdapter
 
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
-from nti.analytics_pandas.databases import get_analytics_db
+from nti.analytics_database.interfaces import IAnalyticsDatabase
 
 from nti.dataserver.authorization import ACT_NTI_ADMIN
 
@@ -33,6 +35,11 @@ from nti.externalization.internalization import find_factory_for
 from nti.externalization.internalization import update_from_external_object
 
 logger = __import__('logging').getLogger(__name__)
+
+
+def get_analytics_db(strict=True):
+    method = component.getUtility if strict else component.queryUtility
+    return method(IAnalyticsDatabase)
 
 
 def adjust_date(date):
