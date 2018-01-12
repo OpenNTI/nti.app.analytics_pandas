@@ -37,8 +37,27 @@ setup(
 	install_requires=[
 		'setuptools',
         'nti.app.contenttypes.reports',
+        'nti.app.pyramid_zope',
 		'nti.analytics_pandas',
         'nti.contenttypes.reports',
+        'nti.externalization',
+        'nti.mimetype',
+        'pyramid',
+        'pytz',
+        'z3c.macro',
+        'z3c.pagelet',
+        'z3c.rml',
+        'z3c.template',
+        'zope.browserpage',
+        'zope.component',
+        'zope.container',
+        'zope.i18nmessageid',
+        'zope.interface',
+        'zope.location',
+        'zope.security',
+        'zope.traversing',
+        'zope.viewlet',
 	],
 	entry_points=entry_points
 )
+
