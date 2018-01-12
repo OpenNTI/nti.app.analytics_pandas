@@ -1,17 +1,17 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
-# disable: accessing protected members, too many methods
-# pylint: disable=W0212,R0904
+# pylint: disable=protected-access,too-many-public-methods,arguments-differ
+
+from hamcrest import has_item
+from hamcrest import has_entry
+from hamcrest import assert_that
 
 import json
-
-from hamcrest import assert_that
-from hamcrest import has_entry
-from hamcrest import has_item
 
 from nti.app.analytics_pandas.tests import PandasReportsLayerTest
 
@@ -19,9 +19,9 @@ from nti.app.contenttypes.reports.tests import TestReportContext
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
-from nti.ntiids.oids import to_external_ntiid_oid
-
 from nti.dataserver.tests import mock_dataserver
+
+from nti.ntiids.oids import to_external_ntiid_oid
 
 
 class TestPandasDecorators(PandasReportsLayerTest):
