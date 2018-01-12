@@ -65,8 +65,7 @@ class BookmarksTimeseriesReportView(AbstractReportView):
 		values = self.readInput()
 		if "MimeType" not in values.keys():
 			values["MimeType"] = 'application/vnd.nextthought.reports.bookmarkstimeseriescontext'
-		self.context = self._build_context(context_class=BookmarksTimeseriesContext, 
-										   params=values)
+		self.context = self._build_context(BookmarksTimeseriesContext, values)
 		
 		self.bct = BookmarkCreationTimeseries(self.db.session,
 										   	  self.context.start_date,

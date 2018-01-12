@@ -79,8 +79,7 @@ class SocialTimeseriesReportView(AbstractReportView):
 		values = self.readInput()
 		if "MimeType" not in values.keys():
 			values["MimeType"] = 'application/vnd.nextthought.reports.socialtimeseriescontext'
-		self.context = self._build_context(context_class=SocialTimeseriesContext, 
-										   params=values)
+		self.context = self._build_context(SocialTimeseriesContext, values)
 		
 		data = {}
 		self.cat = ContactsAddedTimeseries(self.db.session,
