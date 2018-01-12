@@ -63,8 +63,7 @@ class HighlightsTimeseriesReportView(AbstractReportView):
 		values = self.readInput()
 		if "MimeType" not in values.keys():
 			values["MimeType"] = 'application/vnd.nextthought.reports.highlightstimeseriescontext'
-		self.context = self._build_context(context_class=HighlightsTimeseriesContext, 
-										   params=values)
+		self.context = self._build_context(HighlightsTimeseriesContext, values)
 		
 		self.hct = HighlightsCreationTimeseries(self.db.session,
 										   		self.context.start_date,

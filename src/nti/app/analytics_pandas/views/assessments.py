@@ -72,8 +72,7 @@ class AssessmentsEventsTimeseriesReportView(AbstractReportView):
 		values = self.readInput()
 		if "MimeType" not in values.keys():
 			values["MimeType"] = 'application/vnd.nextthought.reports.assessmentseventstimeseriescontext'
-		self.context = self._build_context(context_class=AssessmentsEventsTimeseriesContext, 
-										   params=values)
+		self.context = self._build_context(AssessmentsEventsTimeseriesContext, values)
 		
 		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))

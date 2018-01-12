@@ -65,8 +65,7 @@ class EnrollmentTimeseriesReportView(AbstractReportView):
 		values = self.readInput()
 		if "MimeType" not in values.keys():
 			values["MimeType"] = 'application/vnd.nextthought.reports.enrollmenttimeseriescontext'
-		self.context = self._build_context(context_class=EnrollmentTimeseriesContext, 
-										   params=values)
+		self.context = self._build_context(EnrollmentTimeseriesContext, values)
 		
 		course_names = get_course_names(self.db.session, self.context.courses)
 		self.options['course_names'] = ", ".join(map(str, course_names))
