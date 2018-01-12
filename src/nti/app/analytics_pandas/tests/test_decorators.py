@@ -7,11 +7,11 @@ from __future__ import absolute_import
 
 # pylint: disable=protected-access,too-many-public-methods,arguments-differ
 
-import json
-
-from hamcrest import assert_that
-from hamcrest import has_entry
 from hamcrest import has_item
+from hamcrest import has_entry
+from hamcrest import assert_that
+
+import json
 
 from nti.app.analytics_pandas.tests import PandasReportsLayerTest
 
@@ -19,9 +19,9 @@ from nti.app.contenttypes.reports.tests import TestReportContext
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
-from nti.ntiids.oids import to_external_ntiid_oid
-
 from nti.dataserver.tests import mock_dataserver
+
+from nti.ntiids.oids import to_external_ntiid_oid
 
 
 class TestPandasDecorators(PandasReportsLayerTest):
