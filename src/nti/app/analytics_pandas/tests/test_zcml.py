@@ -7,10 +7,8 @@ from __future__ import absolute_import
 
 # pylint: disable=protected-access,too-many-public-methods,arguments-differ
 
-import unittest
-
+from hamcrest import is_
 from hamcrest import not_none
-from hamcrest import has_length
 from hamcrest import assert_that
 from hamcrest import has_property
 from hamcrest import contains_inanyorder
@@ -21,11 +19,14 @@ from zope import interface
 from zope.configuration import config
 from zope.configuration import xmlconfig
 
+from zope.dottedname import resolve as dottedname
+
 from nti.app.analytics_pandas.reports.interfaces import IPandasReport
 
 from nti.contenttypes.reports.tests import ITestReportContext
 
-from nti.testing.base import AbstractTestBase
+from nti.app.analytics_pandas.tests import PandasReportsLayerTest
+
 
 HEAD_ZCML_STRING = u"""
 <configure  xmlns="http://namespaces.zope.org/zope"
@@ -34,18 +35,20 @@ HEAD_ZCML_STRING = u"""
             xmlns:rep="http://nextthought.com/reports">
 
     <include package="zope.component" file="meta.zcml" />
-    <include package="zope.security" file="meta.zcml" />
     <include package="zope.component" />
+    <include package="zope.vocabularyregistry" />
+
     <include package=".reports" file="meta.zcml"/>
 
     <configure>
-        <rep:registerPandasReport name="TestReport"
-                            title="Test Report"
-                            description="TestDescription"
-                            contexts="nti.contenttypes.reports.tests.ITestReportContext"
-                            permission="TestPermission"
-                            supported_types="csv pdf" />
+        <rep:registerPandasReport name="ZCML_TestReport"
+                                  title="Test Report"
+                                  description="TestDescription"
+                                  contexts="nti.contenttypes.reports.tests.ITestReportContext"
+                                  permission="zope.View"
+                                  supported_types="csv pdf" />
     </configure>
+
 </configure>
 """
 
@@ -59,33 +62,26 @@ class TestReportContext(object):
     pass
 
 
-class TestPandasZCML(unittest.TestCase):
+class TestPandasZCML(PandasReportsLayerTest):
     """
-    Test that analytics_pandas reports are registered
-    correctly
+    Test that analytics_pandas reports are registered correctly
     """
-
-    get_config_package = AbstractTestBase.get_configuration_package.__func__
 
     def _test_for_test_report(self, report):
-        assert_that(report, has_property("name", "TestReport"))
+        assert_that(report, has_property("name", "ZCML_TestReport"))
         assert_that(report, has_property("title", "Test Report"))
         assert_that(report, has_property("description", "TestDescription"))
         assert_that(report, has_property("contexts", not_none()))
         assert_that(report, has_property("supported_types",
                                          contains_inanyorder("pdf", "csv")))
-        assert_that(report, has_property("permission", "TestPermission"))
+        assert_that(report, has_property("permission", "zope.View"))
 
     def test_zcml_registration(self):
         context = config.ConfigurationMachine()
-        context.package = self.get_config_package()
+        context.package = dottedname.resolve("nti.app.analytics_pandas")
         xmlconfig.registerCommonDirectives(context)
         xmlconfig.string(HEAD_ZCML_STRING, context)
 
-        report = component.subscribers((TestReportContext(),), IPandasReport)
-        assert_that(report, has_length(1))
-        self._test_for_test_report(report[0])
-
-        report = list(component.getAllUtilitiesRegisteredFor(IPandasReport))
-        assert_that(report, has_length(1))
-        self._test_for_test_report(report[0])
+        report = component.getUtility(IPandasReport, "ZCML_TestReport")
+        assert_that(report, is_(not_none()))
+        self._test_for_test_report(report)
