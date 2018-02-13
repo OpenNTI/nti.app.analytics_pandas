@@ -9,9 +9,12 @@ from __future__ import absolute_import
 
 from hamcrest import is_
 from hamcrest import not_none
+from hamcrest import has_length
 from hamcrest import assert_that
-from hamcrest import has_property
+from hamcrest import has_properties
 from hamcrest import contains_inanyorder
+
+import unittest
 
 from zope import component
 from zope import interface
@@ -23,9 +26,9 @@ from zope.dottedname import resolve as dottedname
 
 from nti.app.analytics_pandas.reports.interfaces import IPandasReport
 
-from nti.contenttypes.reports.tests import ITestReportContext
+from nti.app.analytics_pandas.tests import SharedConfiguringTestLayer
 
-from nti.app.analytics_pandas.tests import PandasReportsLayerTest
+from nti.contenttypes.reports.tests import ITestReportContext
 
 
 HEAD_ZCML_STRING = u"""
@@ -59,22 +62,24 @@ class TestReportContext(object):
     For the purpose have grabbing registered
     reports
     """
-    pass
 
 
-class TestPandasZCML(PandasReportsLayerTest):
+class TestPandasZCML(unittest.TestCase):
     """
     Test that analytics_pandas reports are registered correctly
     """
 
+    layer = SharedConfiguringTestLayer
+
     def _test_for_test_report(self, report):
-        assert_that(report, has_property("name", "ZCML_TestReport"))
-        assert_that(report, has_property("title", "Test Report"))
-        assert_that(report, has_property("description", "TestDescription"))
-        assert_that(report, has_property("contexts", not_none()))
-        assert_that(report, has_property("supported_types",
-                                         contains_inanyorder("pdf", "csv")))
-        assert_that(report, has_property("permission", "zope.View"))
+        assert_that(report,
+                    has_properties("name", "ZCML_TestReport",
+                                   "title", "Test Report",
+                                   "description", "TestDescription",
+                                   "contexts", has_length(1),
+                                   "supported_types", contains_inanyorder("pdf", "csv"),
+                                   "permission", "zope.View"))
+        assert_that(report.contexts[0], is_(ITestReportContext))
 
     def test_zcml_registration(self):
         context = config.ConfigurationMachine()
