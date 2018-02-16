@@ -19,8 +19,8 @@ from zope.viewlet.interfaces import IViewletManager
 from nti.contenttypes.reports.interfaces import IReport
 
 from nti.schema.field import Bool
-from nti.schema.field import TextLine
 from nti.schema.field import ListOrTuple
+from nti.schema.field import DecodingValidTextLine as TextLine
 
 
 class IPDFReportView(interface.Interface):
