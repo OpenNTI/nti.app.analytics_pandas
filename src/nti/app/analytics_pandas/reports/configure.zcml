@@ -12,15 +12,15 @@
 
 	<include package="zope.browserpage" file="meta.zcml" />
 	<include package="zope.browserpage" />
-	
+
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
 	<include package="nti.externalization" />
-	
+
 	<ext:registerAutoPackageIO
 		root_interfaces=".interfaces.IPandasReportContext"
 		modules=".model" />
-	
+
 	<!-- Default link provider for reports -->
 	<adapter factory="nti.app.contenttypes.reports.reports.DefaultReportLinkProvider"
 			 provides="nti.app.contenttypes.reports.interfaces.IReportLinkProvider"
@@ -31,25 +31,28 @@
 			 	provides="nti.contenttypes.reports.interfaces.IReportPredicate"
 			 	for="nti.app.analytics_pandas.reports.interfaces.IPandasReport
 			 	  	 nti.dataserver.interfaces.IUser" />
-			 	  	 
+
 	<!-- z3c:macro -->
-	<include package="z3c.macro" file="meta.zcml" /> 
+	<include package="z3c.macro" file="meta.zcml" />
+
 	<!-- regular pagetemplate usage uses chamelean engine -->
-	<include package="z3c.ptcompat" /> 
+	<include package="z3c.ptcompat" />
 	<include package="z3c.macro" />
 
 	<!-- z3c:template/layout -->
 	<include package="z3c.template" file="meta.zcml" />
 
-	<!-- Pagelet renderer is used for calling the pagelets render method.
-		 Don't include z3c.pagelet directly -->
+	<!-- 
+	Pagelet renderer is used for calling the pagelets render method.
+	Don't include z3c.pagelet directly
+	-->
  	<adapter name="pagelet"
       		 for="zope.interface.Interface
            		  *
            		  z3c.pagelet.interfaces.IPagelet"
       		 provides="zope.contentprovider.interfaces.IContentProvider"
       		 factory="z3c.pagelet.provider.PageletRenderer" />
-      
+
 	<!-- Default macros for the reports -->
 	<z3c:macro
 		template="../templates/std_report_macros.pt"
