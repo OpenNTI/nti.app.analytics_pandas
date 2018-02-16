@@ -40,6 +40,7 @@ class BookmarksTimeseriesContext(PandasReportContext):
 class ForumsTimeseriesContext(PandasReportContext):
     pass
 
+
 @interface.implementer(IEnrollmentTimeseriesContext)
 class EnrollmentTimeseriesContext(PandasReportContext):
     pass

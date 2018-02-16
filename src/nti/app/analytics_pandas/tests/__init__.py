@@ -157,12 +157,12 @@ class PandasReportsLayerTest(ApplicationLayerTest,
             return report_obj
 
         # Register three reports to test with
-        cls.utils.append(_register_report(u"TestReport",
-                                          u"Test Report",
-                                          u"TestDescription",
+        cls.utils.append(_register_report("TestReport",
+                                          "Test Report",
+                                          "TestDescription",
                                           (ITestReportContext,),
                                           ACT_NTI_ADMIN.id,
-                                          [u"csv", u"pdf"]))
+                                          ["csv", "pdf"]))
 
         cls.predicate = functools.partial(TestPredicate)
 

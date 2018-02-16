@@ -32,11 +32,11 @@ class TestPandasDecorators(PandasReportsLayerTest):
     def test_pandas_report_decorators(self):
 
         with mock_dataserver.mock_db_trans(self.ds):
-            _user = self._create_user(self.basic_user)
+            user = self._create_user(self.basic_user)
             test_context = TestReportContext()
             test_context.containerId = u"tag:nti:foo"
             test_context.creator = self.basic_user
-            _user.addContainedObject(test_context)
+            user.addContainedObject(test_context)
             ntiid = to_external_ntiid_oid(test_context)
 
         response = self.testapp.get('/dataserver2/Objects/' + ntiid,
