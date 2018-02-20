@@ -20,8 +20,6 @@ from zope.cachedescriptors.property import Lazy
 
 from z3c.rml import rml2pdf
 
-from nti.app.analytics_pandas.views.commons import cleanup_temporary_file
-
 from nti.app.analytics_pandas.views.topics import TopicsTimeseriesReportView
 from nti.app.analytics_pandas.views.topics import TopicsTimeseriesContext
 
@@ -36,45 +34,46 @@ from nti.app.testing.decorators import WithSharedApplicationMockDS
 
 from nti.externalization.externalization import to_external_object
 
+
 class TestNoteEvents(AppAnalyticsTestBase):
 
-	@Lazy
-	def std_report_layout_rml(self):
-		path = os.path.join(
-                    os.path.dirname(__file__),
-                    '../../templates/std_report_layout.rml')
-		return path
+    @Lazy
+    def std_report_layout_rml(self):
+        path = os.path.join(
+            os.path.dirname(__file__),
+            '../../templates/std_report_layout.rml')
+        return path
 
-	def template(self, path):
-		result = ViewPageTemplateFile(path,
-                                auto_reload=(False,),
-                                debug=False)
-		return result
+    def template(self, path):
+        result = ViewPageTemplateFile(path,
+                                      auto_reload=(False,),
+                                      debug=False)
+        return result
 
-	def test_std_report_layout_rml(self):
-		# make sure  template exists
-		path = self.std_report_layout_rml
-		assert_that(os.path.exists(path), is_(True))
+    def test_std_report_layout_rml(self):
+        # make sure  template exists
+        path = self.std_report_layout_rml
+        assert_that(os.path.exists(path), is_(True))
 
-		# prepare view and context
-		context = TopicsTimeseriesContext()
-		view = TopicsTimeseriesReportView(context)
-		view._build_data('Bleach')
-		system = {'view': view, 'context': context}
-		rml = self.template(path).bind(view)(**system)
+        # prepare view and context
+        context = TopicsTimeseriesContext()
+        view = TopicsTimeseriesReportView(context)
+        view._build_data('Bleach')
+        system = {'view': view, 'context': context}
+        rml = self.template(path).bind(view)(**system)
 
-		pdf_stream = rml2pdf.parseString(rml)
-		result = pdf_stream.read()
-		assert_that(result, has_length(greater_than(1)))
+        pdf_stream = rml2pdf.parseString(rml)
+        result = pdf_stream.read()
+        assert_that(result, has_length(greater_than(1)))
 
 
 class TestTopicsReportView(PandasReportsLayerTest):
 
-	@WithSharedApplicationMockDS(testapp=True, users=True)
-	def test_topics_view(self):
-		context = _build_sample_context(TopicsTimeseriesContext)
-		params = to_external_object(context)
-		response = self.testapp.post('/dataserver2/pandas_reports/TopicsReport',
-                                    json.dumps(params),
-                                    extra_environ=self._make_extra_environ())
-		assert_that(response, has_property('content_type', 'application/pdf'))
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_topics_view(self):
+        context = _build_sample_context(TopicsTimeseriesContext)
+        params = to_external_object(context)
+        response = self.testapp.post('/dataserver2/pandas_reports/TopicsReport',
+                                     json.dumps(params),
+                                     extra_environ=self._make_extra_environ())
+        assert_that(response, has_property('content_type', 'application/pdf'))
