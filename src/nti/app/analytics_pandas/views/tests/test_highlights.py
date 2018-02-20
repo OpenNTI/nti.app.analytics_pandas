@@ -23,12 +23,12 @@ from z3c.rml import rml2pdf
 from nti.app.analytics_pandas.views.highlights import HighlightsTimeseriesReportView
 from nti.app.analytics_pandas.views.highlights import HighlightsTimeseriesContext
 
-from nti.app.analytics_pandas.reports.z3c_zpt import ViewPageTemplateFile
-
 from nti.app.analytics_pandas.tests import AppAnalyticsTestBase
 from nti.app.analytics_pandas.tests import PandasReportsLayerTest
 
 from nti.app.analytics_pandas.views.tests import _build_sample_context
+
+from nti.app.pyramid_zope.z3c_zpt import ViewPageTemplateFile
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
