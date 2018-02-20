@@ -25,12 +25,12 @@ from nti.app.analytics_pandas.views.commons import cleanup_temporary_file
 from nti.app.analytics_pandas.views.topics import TopicsTimeseriesReportView
 from nti.app.analytics_pandas.views.topics import TopicsTimeseriesContext
 
-from nti.app.analytics_pandas.reports.z3c_zpt import ViewPageTemplateFile
-
 from nti.app.analytics_pandas.tests import AppAnalyticsTestBase
 from nti.app.analytics_pandas.tests import PandasReportsLayerTest
 
 from nti.app.analytics_pandas.views.tests import _build_sample_context
+
+from nti.app.pyramid_zope.z3c_zpt import ViewPageTemplateFile
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
