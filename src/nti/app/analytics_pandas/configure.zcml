@@ -10,6 +10,7 @@
 
 	<!-- This should happen early -->
 	<include package="nti.app.pyramid_zope" />
+	<include package="nti.analytics_pandas" />
 	<include package="nti.mimetype" />
 
 	<include package="zope.browserpage" file="meta.zcml" />
