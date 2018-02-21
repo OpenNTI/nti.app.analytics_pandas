@@ -15,7 +15,7 @@ from pyramid.view import view_config
 
 from zope import interface
 
-from nti.app.analytics_pandas.reports.model import HighlightsTimeseriesContext
+from nti.app.analytics_pandas.model import HighlightsTimeseriesContext
 
 from nti.analytics_pandas.analysis import HighlightsCreationTimeseries
 from nti.analytics_pandas.analysis import HighlightsCreationTimeseriesPlot

@@ -10,7 +10,7 @@ from __future__ import absolute_import
 
 from pyramid.view import view_config
 
-from nti.app.analytics_pandas.reports.model import ResourceViewsTimeseriesContext
+from nti.app.analytics_pandas.model import ResourceViewsTimeseriesContext
 
 from nti.app.analytics_pandas.views import MessageFactory as _
 

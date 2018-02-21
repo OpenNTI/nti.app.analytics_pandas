@@ -16,7 +16,7 @@ from zope import interface
 from nti.analytics_pandas.analysis import VideoEventsTimeseries
 from nti.analytics_pandas.analysis import VideoEventsTimeseriesPlot
 
-from nti.app.analytics_pandas.reports.model import VideosTimeseriesContext
+from nti.app.analytics_pandas.model import VideosTimeseriesContext
 
 from nti.app.analytics_pandas import MessageFactory as _
 

@@ -20,16 +20,16 @@ from zope import interface
 
 from z3c.pagelet.browser import BrowserPagelet
 
-from nti.app.analytics_pandas.reports.interfaces import IPDFReportView
+from nti.app.analytics_pandas.interfaces import IPDFReportView
 
 from nti.app.analytics_pandas.views import MessageFactory as _
 from nti.app.analytics_pandas.views import PandasReportAdapter
 
+from nti.app.base.abstract_views import AbstractAuthenticatedView
+
 from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtilsMixin
 
 from nti.analytics_database.interfaces import IAnalyticsDatabase
-
-from nti.dataserver.authorization import ACT_NTI_ADMIN
 
 from nti.externalization.internalization import find_factory_for
 from nti.externalization.internalization import update_from_external_object
@@ -67,14 +67,15 @@ def format_datetime(local_date):
 
 
 @view_defaults(route_name='objects.generic.traversal',
-               request_method='POST',
-               context=PandasReportAdapter,
-               permission=ACT_NTI_ADMIN)
+               renderer="../templates/std_report_layout.rml",
+               context=PandasReportAdapter)
 @interface.implementer(IPDFReportView)
-class AbstractReportView(BrowserPagelet,
+class AbstractReportView(AbstractAuthenticatedView,
+                         BrowserPagelet,
                          ModeledContentUploadRequestUtilsMixin):
 
     def __init__(self, context=None, request=None):
+        AbstractAuthenticatedView.__init__(self, request)
         BrowserPagelet.__init__(self, context, request)
         self.db = get_analytics_db()
         self.options = {}
@@ -103,7 +104,7 @@ class AbstractReportView(BrowserPagelet,
         if self.request.body:
             values = super(AbstractReportView, self).readInput(value)
         else:
-            values = self.request.params
+            values = dict(self.request.params)
         return values
 
     def _create_object_from_external(self, map_obj, notify=False, _exec=True):

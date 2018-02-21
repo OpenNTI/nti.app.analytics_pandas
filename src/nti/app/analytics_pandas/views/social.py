@@ -15,7 +15,7 @@ from pyramid.view import view_config
 
 from zope import interface
 
-from nti.app.analytics_pandas.reports.model import SocialTimeseriesContext
+from nti.app.analytics_pandas.model import SocialTimeseriesContext
 
 from nti.analytics_pandas.analysis import ChatsTimeseriesPlot
 from nti.analytics_pandas.analysis import ChatsJoinedTimeseries
