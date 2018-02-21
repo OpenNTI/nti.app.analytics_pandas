@@ -31,6 +31,8 @@ from nti.app.externalization.view_mixins import ModeledContentUploadRequestUtils
 
 from nti.analytics_database.interfaces import IAnalyticsDatabase
 
+from nti.dataserver import authorization as nauth
+
 from nti.externalization.internalization import find_factory_for
 from nti.externalization.internalization import update_from_external_object
 
@@ -68,7 +70,8 @@ def format_datetime(local_date):
 
 @view_defaults(route_name='objects.generic.traversal',
                renderer="../templates/std_report_layout.rml",
-               context=PandasReportAdapter)
+               context=PandasReportAdapter,
+               permission=nauth.ACT_NTI_ADMIN)
 @interface.implementer(IPDFReportView)
 class AbstractReportView(AbstractAuthenticatedView,
                          BrowserPagelet,
