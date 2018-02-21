@@ -1,0 +1,123 @@
+<!-- -*- mode: nxml -*- -->
+<configure	xmlns="http://namespaces.zope.org/zope"
+			xmlns:browser="http://namespaces.zope.org/browser"
+			xmlns:i18n="http://namespaces.zope.org/i18n"
+			xmlns:zcml="http://namespaces.zope.org/zcml"
+			xmlns:z3c="http://namespaces.zope.org/z3c"
+			i18n_domain="nti.analytics_pandas.reports">
+
+	<include package="zope.component" file="meta.zcml" />
+	<include package="zope.component" />
+
+	<include package="zope.browserpage" file="meta.zcml" />
+	<include package="zope.browserpage" />
+
+	<!-- Default layout for reports -->
+	<z3c:layout
+		template="../templates/std_report_layout.rml"
+		for=".interfaces.IPDFReportView"
+		layer="pyramid.interfaces.IRequest"
+		/>
+
+	<!--
+		Report views must extend BrowserPagelet or implement IPagelet
+		and provide a render() method. If they extend BrowserPagelet
+		they can define a template attribute that is callable (often
+		template = getViewTemplate() as a class attribute) or they can
+		have a content template registered.
+	-->
+	<browser:viewletManager
+		name="header_manager"
+		permission="zope.Public"
+		provides=".interfaces.IPDFReportHeaderManager" />
+
+	<!-- Default macros for the reports -->
+	<!--
+		 NOTE: There is probably a better, more modern way
+		 with z3c.layout, content providers and the like. I may switch
+		 over to that before too long.
+	-->
+	<z3c:macro
+		template="../templates/std_report_macros.pt"
+		name="header_graphic"
+		for="zope.interface.Interface"
+		view=".interfaces.IPDFReportView"
+		layer="pyramid.interfaces.IRequest" />
+	<!--
+		 The name `header` is already taken with a registration that
+		 conflicts with ours in sub-sites (ou, mathcounts). It should be made more
+		 specific...
+	-->
+	<z3c:macro
+		template="../templates/std_report_macros.pt"
+		name="rpt_header"
+		macro="header"
+		for="zope.interface.Interface"
+		view=".interfaces.IPDFReportView"
+		layer="pyramid.interfaces.IRequest" />
+
+	<z3c:macro
+		template="../templates/std_report_macros.pt"
+		name="stylesheet"
+		for="zope.interface.Interface"
+		view=".interfaces.IPDFReportView"
+		layer="pyramid.interfaces.IRequest" />
+
+	<z3c:macro
+		template="../templates/std_report_macros.pt"
+		name="template"
+		for="zope.interface.Interface"
+		view=".interfaces.IPDFReportView"
+		layer="pyramid.interfaces.IRequest" />
+
+	<z3c:macro
+		template="../templates/std_report_macros.pt"
+		name="forum_participation_over_time"
+		for="zope.interface.Interface"
+		view="zope.interface.Interface"
+		layer="pyramid.interfaces.IRequest" />
+
+	<z3c:macro
+		template="../templates/std_report_macros.pt"
+		name="forum_top_commenters"
+		for="zope.interface.Interface"
+		view="zope.interface.Interface"
+		layer="pyramid.interfaces.IRequest" />
+
+	<z3c:macro
+		template="../templates/std_report_macros.pt"
+		name="comment_table"
+		for="zope.interface.Interface"
+		view="zope.interface.Interface"
+		layer="pyramid.interfaces.IRequest" />
+
+	<z3c:macro
+		template="../templates/std_report_macros.pt"
+		name="engagement_stats_table"
+		for="zope.interface.Interface"
+		view="zope.interface.Interface"
+		layer="pyramid.interfaces.IRequest" />
+
+	<z3c:macro
+		template="../templates/std_report_macros.pt"
+		name="engagement_stats_pie"
+		for="zope.interface.Interface"
+		view="zope.interface.Interface"
+		layer="pyramid.interfaces.IRequest" />
+
+	<z3c:macro
+		template="../templates/std_report_macros.pt"
+		name="section_page_templates"
+		for="zope.interface.Interface"
+		view="zope.interface.Interface"
+		layer="pyramid.interfaces.IRequest" />
+
+	<!-- A default header_table that does nothing -->
+	<adapter name="header_table"
+			 for="zope.interface.Interface
+				  pyramid.interfaces.IRequest
+				  zope.interface.Interface"
+			 provides="zope.contentprovider.interfaces.IContentProvider"
+			 factory=".contentproviders.DummyContentProvider" />
+
+</configure>
