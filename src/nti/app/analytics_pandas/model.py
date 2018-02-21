@@ -28,42 +28,42 @@ logger = __import__('logging').getLogger(__name__)
 
 @interface.implementer(IAssessmentsEventsTimeseriesContext)
 class AssessmentsEventsTimeseriesContext(PandasReportContext):
-    pass
+    mimeType = mime_type = 'application/vnd.nextthought.analytics.assessmentseventstimeseriesContext'
 
 
 @interface.implementer(IBookmarksTimeseriesContext)
 class BookmarksTimeseriesContext(PandasReportContext):
-    pass
+    mimeType = mime_type = 'application/vnd.nextthought.analytics.bookmarkstimeseriescontext'
 
 
 @interface.implementer(IForumsTimeseriesContext)
 class ForumsTimeseriesContext(PandasReportContext):
-    pass
+    mimeType = mime_type = 'application/vnd.nextthought.analytics.forumstimeseriescontext'
 
 
 @interface.implementer(IEnrollmentTimeseriesContext)
 class EnrollmentTimeseriesContext(PandasReportContext):
-    pass
+    mimeType = mime_type = 'application/vnd.nextthought.analytics.enrollmenttimeseriescontext'
 
 
 @interface.implementer(IHighlightsTimeseriesContext)
 class HighlightsTimeseriesContext(PandasReportContext):
-    pass
+    mimeType = mime_type = 'application/vnd.nextthought.analytics.highlightstimeseriescontext'
 
 
 @interface.implementer(INoteEventsTimeseriesContext)
 class NoteEventsTimeseriesContext(PandasReportContext):
-    pass
+    mimeType = mime_type = 'application/vnd.nextthought.analytics.noteeventstimeseriesContext'
 
 
 @interface.implementer(IResourceViewsTimeseriesContext)
 class ResourceViewsTimeseriesContext(PandasReportContext):
-    pass
+    mimeType = mime_type = 'application/vnd.nextthought.analytics.resourceviewstimeseriesContext'
 
 
 @interface.implementer(ISocialTimeseriesContext)
 class SocialTimeseriesContext(PandasReportContext):
-    pass
+    mimeType = mime_type = 'application/vnd.nextthought.analytics.socialtimeseriesContext'
 
 
 @interface.implementer(ITopicsTimeseriesContext)
@@ -73,4 +73,4 @@ class TopicsTimeseriesContext(PandasReportContext):
 
 @interface.implementer(IVideosTimeseriesContext)
 class VideosTimeseriesContext(PandasReportContext):
-    pass
+    mimeType = mime_type = 'application/vnd.nextthought.analytics.videostimeseriescontext'
