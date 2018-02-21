@@ -218,8 +218,8 @@
 	<!-- A default header_table that does nothing -->
 	<adapter name="header_table"
 		for="zope.interface.Interface
-		pyramid.interfaces.IRequest
-		zope.interface.Interface"
+			 pyramid.interfaces.IRequest
+			 zope.interface.Interface"
 		provides="zope.contentprovider.interfaces.IContentProvider"
 		factory=".contentproviders.DummyContentProvider" />
 		
