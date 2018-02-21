@@ -10,18 +10,18 @@ from __future__ import absolute_import
 
 from zope import interface
 
-from nti.app.analytics_pandas.views.interfaces import IForumsTimeseriesContext
-from nti.app.analytics_pandas.views.interfaces import ISocialTimeseriesContext
-from nti.app.analytics_pandas.views.interfaces import ITopicsTimeseriesContext
-from nti.app.analytics_pandas.views.interfaces import IVideosTimeseriesContext
-from nti.app.analytics_pandas.views.interfaces import IBookmarksTimeseriesContext
-from nti.app.analytics_pandas.views.interfaces import IEnrollmentTimeseriesContext
-from nti.app.analytics_pandas.views.interfaces import IHighlightsTimeseriesContext
-from nti.app.analytics_pandas.views.interfaces import INoteEventsTimeseriesContext
-from nti.app.analytics_pandas.views.interfaces import IResourceViewsTimeseriesContext
-from nti.app.analytics_pandas.views.interfaces import IAssessmentsEventsTimeseriesContext
+from nti.app.analytics_pandas.interfaces import IForumsTimeseriesContext
+from nti.app.analytics_pandas.interfaces import ISocialTimeseriesContext
+from nti.app.analytics_pandas.interfaces import ITopicsTimeseriesContext
+from nti.app.analytics_pandas.interfaces import IVideosTimeseriesContext
+from nti.app.analytics_pandas.interfaces import IBookmarksTimeseriesContext
+from nti.app.analytics_pandas.interfaces import IEnrollmentTimeseriesContext
+from nti.app.analytics_pandas.interfaces import IHighlightsTimeseriesContext
+from nti.app.analytics_pandas.interfaces import INoteEventsTimeseriesContext
+from nti.app.analytics_pandas.interfaces import IResourceViewsTimeseriesContext
+from nti.app.analytics_pandas.interfaces import IAssessmentsEventsTimeseriesContext
 
-from nti.app.analytics_pandas.reports.report import PandasReportContext
+from nti.app.analytics_pandas.report import PandasReportContext
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -68,7 +68,7 @@ class SocialTimeseriesContext(PandasReportContext):
 
 @interface.implementer(ITopicsTimeseriesContext)
 class TopicsTimeseriesContext(PandasReportContext):
-    pass
+    mimeType = mime_type = 'application/vnd.nextthought.analytics.topicstimeseriescontext'
 
 
 @interface.implementer(IVideosTimeseriesContext)

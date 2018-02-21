@@ -8,9 +8,9 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from nti.app.analytics_pandas.reports.interfaces import IPandasReport
+from nti.app.analytics_pandas.interfaces import IPandasReport
 
-from nti.app.analytics_pandas.reports.report import PandasReport
+from nti.app.analytics_pandas.report import PandasReport
 
 from nti.contenttypes.reports.zcml import registerReport
 from nti.contenttypes.reports.zcml import IRegisterReport

@@ -10,9 +10,9 @@ from __future__ import absolute_import
 
 from zope import interface
 
-from nti.app.analytics_pandas.reports.interfaces import IPandasReport
+from nti.app.analytics_pandas.interfaces import IPandasReport
 
-from nti.app.analytics_pandas.reports.interfaces import IPandasReportContext
+from nti.app.analytics_pandas.interfaces import IPandasReportContext
 
 from nti.schema.fieldproperty import createDirectFieldProperties
 
