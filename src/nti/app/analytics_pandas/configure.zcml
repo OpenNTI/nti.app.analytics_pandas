@@ -33,7 +33,7 @@
 	<include package="nti.contenttypes.reports" />
 	
 	<!-- Database -->
-	<include package="nti.analytics_pandas" />
+	<!-- <include package="nti.analytics_pandas" /> -->
 
 	<!-- Externalization -->
 	<include package="nti.externalization" file="meta.zcml" />
