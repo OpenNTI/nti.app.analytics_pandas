@@ -17,6 +17,7 @@ from zope.schema import Int
 from zope.viewlet.interfaces import IViewletManager
 
 from nti.contenttypes.reports.interfaces import IReport
+from nti.contenttypes.reports.interfaces import IReportContext
 
 from nti.schema.field import Bool
 from nti.schema.field import ListOrTuple
@@ -88,3 +89,42 @@ class IPandasReport(IReport):
     """
     An analytics_pandas report
     """
+
+
+class ITopicsTimeseriesContext(IPandasReportContext):
+    pass
+
+
+class IAssessmentsEventsTimeseriesContext(IReportContext):
+    pass
+
+
+class IBookmarksTimeseriesContext(IReportContext):
+    pass
+
+
+class IEnrollmentTimeseriesContext(IReportContext):
+    pass
+
+
+class IForumsTimeseriesContext(IReportContext):
+    pass
+
+
+class IHighlightsTimeseriesContext(IReportContext):
+    pass
+
+
+class INoteEventsTimeseriesContext(IReportContext):
+    pass
+
+
+class IResourceViewsTimeseriesContext(IReportContext):
+    pass
+
+
+class ISocialTimeseriesContext(IReportContext):
+    pass
+
+class IVideosTimeseriesContext(IReportContext):
+    pass

@@ -12,7 +12,7 @@ from pyramid.view import view_config
 
 from nti.app.analytics_pandas import MessageFactory as _
 
-from nti.app.analytics_pandas.reports.model import NoteEventsTimeseriesContext
+from nti.app.analytics_pandas.model import NoteEventsTimeseriesContext
 
 from nti.app.analytics_pandas.views.commons import get_course_names
 from nti.app.analytics_pandas.views.commons import build_plot_images_dictionary

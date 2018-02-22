@@ -15,7 +15,7 @@ from pyramid.view import view_config
 
 from zope import interface
 
-from nti.app.analytics_pandas.reports.model import EnrollmentTimeseriesContext
+from nti.app.analytics_pandas.model import EnrollmentTimeseriesContext
 
 from nti.analytics_pandas.analysis import CourseDropsTimeseries
 from nti.analytics_pandas.analysis import CourseDropsTimeseriesPlot

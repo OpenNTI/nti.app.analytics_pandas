@@ -18,7 +18,7 @@ from zope import interface
 from nti.analytics_pandas.analysis import BookmarksTimeseriesPlot
 from nti.analytics_pandas.analysis import BookmarkCreationTimeseries
 
-from nti.app.analytics_pandas.reports.model import BookmarksTimeseriesContext
+from nti.app.analytics_pandas.model import BookmarksTimeseriesContext
 
 from nti.app.analytics_pandas.views.interfaces import IBookmarksTimeseriesContext
 
