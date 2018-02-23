@@ -54,61 +54,13 @@
 			 	for="nti.app.analytics_pandas.interfaces.IPandasReport
 			 	  	 nti.dataserver.interfaces.IUser" />
 
-	<!-- Reports -->
-	<include package="." file="configure_reports.zcml" />
-
 	<!-- Adapters -->
 	<adapter name="pandas_reports"
 			 for="nti.dataserver.interfaces.IDataserverFolder pyramid.interfaces.IRequest"
 			 factory=".views.PandasReportAdapter"
 			 provides="zope.traversing.interfaces.IPathAdapter" />
 
-	<!-- Macro -->
-	<z3c:macro
-		template="templates/std_report_macros.pt"
-		name="header_graphic"
-		for="zope.interface.Interface"
-		view=".interfaces.IPDFReportView"
-		layer="pyramid.interfaces.IRequest" />
-	<!--
-		 The name `header` is already taken with a registration that
-		 conflicts with ours in sub-sites (ou, mathcounts). It should be made more
-		 specific...
-	-->
-	<z3c:macro
-		template="templates/std_report_macros.pt"
-		name="rpt_header"
-		macro="header"
-		for="zope.interface.Interface"
-		view=".interfaces.IPDFReportView"
-		layer="pyramid.interfaces.IRequest" />
-
-	<z3c:macro
-		template="templates/std_report_macros.pt"
-		name="stylesheet"
-		for="zope.interface.Interface"
-		view=".interfaces.IPDFReportView"
-		layer="pyramid.interfaces.IRequest" />
-
-	<z3c:macro
-		template="templates/std_report_macros.pt"
-		name="template"
-		for="zope.interface.Interface"
-		view=".interfaces.IPDFReportView"
-		layer="pyramid.interfaces.IRequest" />
-
-	<z3c:macro
-		template="templates/std_report_macros.pt"
-		name="events_table"
-		for="zope.interface.Interface"
-		view="zope.interface.Interface"
-		layer="pyramid.interfaces.IRequest" />
-
-	<z3c:macro
-		template="templates/std_report_macros.pt"
-		name="line_chart_event_creation"
-		for="zope.interface.Interface"
-		view="zope.interface.Interface"
-		layer="pyramid.interfaces.IRequest" />
+	<!-- Reports -->
+	<include package="." file="configure_reports.zcml" />
 
 </configure>
