@@ -172,45 +172,17 @@
 		for="zope.interface.Interface"
 		view=".interfaces.IPDFReportView"
 		layer="pyramid.interfaces.IRequest" />
-	
+
 	<z3c:macro
 		template="templates/std_report_macros.pt"
-		name="forum_participation_over_time"
+		name="events_table"
 		for="zope.interface.Interface"
 		view="zope.interface.Interface"
 		layer="pyramid.interfaces.IRequest" />
-	
+
 	<z3c:macro
 		template="templates/std_report_macros.pt"
-		name="forum_top_commenters"
-		for="zope.interface.Interface"
-		view="zope.interface.Interface"
-		layer="pyramid.interfaces.IRequest" />
-	
-	<z3c:macro
-		template="templates/std_report_macros.pt"
-		name="comment_table"
-		for="zope.interface.Interface"
-		view="zope.interface.Interface"
-		layer="pyramid.interfaces.IRequest" />
-	
-	<z3c:macro
-		template="templates/std_report_macros.pt"
-		name="engagement_stats_table"
-		for="zope.interface.Interface"
-		view="zope.interface.Interface"
-		layer="pyramid.interfaces.IRequest" />
-	
-	<z3c:macro
-		template="templates/std_report_macros.pt"
-		name="engagement_stats_pie"
-		for="zope.interface.Interface"
-		view="zope.interface.Interface"
-		layer="pyramid.interfaces.IRequest" />
-	
-	<z3c:macro
-		template="templates/std_report_macros.pt"
-		name="section_page_templates"
+		name="line_chart_event_creation"
 		for="zope.interface.Interface"
 		view="zope.interface.Interface"
 		layer="pyramid.interfaces.IRequest" />
