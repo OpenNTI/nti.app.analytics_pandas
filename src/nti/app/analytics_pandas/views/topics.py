@@ -10,6 +10,10 @@ from __future__ import absolute_import
 
 from pyramid.view import view_config
 
+from nti.analytics_pandas.analysis import TopicsCreationTimeseries
+
+from nti.analytics_pandas.analysis.common import get_data
+
 from nti.app.analytics_pandas.views import MessageFactory as _
 
 from nti.app.analytics_pandas.model import TopicsTimeseriesContext
@@ -18,13 +22,6 @@ from nti.app.analytics_pandas.views.commons import iternamedtuples
 from nti.app.analytics_pandas.views.commons import get_course_names
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
-
-from nti.analytics_pandas.analysis import TopicLikesTimeseries
-from nti.analytics_pandas.analysis import TopicViewsTimeseries
-from nti.analytics_pandas.analysis import TopicFavoritesTimeseries
-from nti.analytics_pandas.analysis import TopicsCreationTimeseries
-
-from nti.analytics_pandas.analysis.common import get_data
 
 logger = __import__('logging').getLogger(__name__)
 
@@ -64,30 +61,34 @@ class TopicsTimeseriesReportView(AbstractReportView):
         values = self.readInput()
         if "MimeType" not in values.keys():
             values["MimeType"] = 'application/vnd.nextthought.analytics.topicstimeseriescontext'
+        # pylint: disable=attribute-defined-outside-init
         self.report = self._build_context(TopicsTimeseriesContext, values)
 
-        course_names = get_course_names(self.db.session, self.report.courses or ())
+        course_names = get_course_names(self.db.session,
+                                        self.report.courses or ())
         self.options['course_names'] = ", ".join(map(str, course_names or ()))
         self.options['start_date'] = values['start_date']
         self.options['end_date'] = values['end_date']
-        data = {}
+
         tct = TopicsCreationTimeseries(self.db.session,
                                        self.report.start_date,
                                        self.report.end_date,
                                        self.report.courses or (),
                                        period=self.report.period)
+
+        data = {}
         if not tct.dataframe.empty:
             self.options['has_topics_created_data'] = True
             data['topics_created'] = self.build_topic_creation_data(tct)
         self._build_data(data)
         return self.options
 
-    def build_topic_creation_data(self,tct):
+    def build_topic_creation_data(self, tct):
+        topics_created = {}
         dataframes = get_data(tct)
-        topics_created={}
-        topics_created['number_of_events'] = dataframes['df_by_timestamp'].number_of_topics_created.values.tolist()
-        topics_created['date_of_events'] = dataframes['df_by_timestamp'].timestamp_period.values.tolist()
-        topics_created['number_of_unique_users'] = dataframes['df_by_timestamp'].number_of_unique_users.values.tolist()
-        topics_created['ratio'] = dataframes['df_by_timestamp'].ratio.values.tolist()
         topics_created['tuples'] = iternamedtuples(dataframes['df_by_timestamp'])
+        topics_created['ratio'] = dataframes['df_by_timestamp'].ratio.values.tolist()
+        topics_created['date_of_events'] = dataframes['df_by_timestamp'].timestamp_period.values.tolist()
+        topics_created['number_of_events'] = dataframes['df_by_timestamp'].number_of_topics_created.values.tolist()
+        topics_created['number_of_unique_users'] = dataframes['df_by_timestamp'].number_of_unique_users.values.tolist()
         return topics_created
