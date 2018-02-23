@@ -7,14 +7,19 @@
 		<para style="normal" spaceAfter=".5in" >
 			This document presents an overview of topics related events.
 			It includes plots of topics created, topics views, topics likes and topics favorites events.
-			Each related note event plot is grouped by device, resource and sharing types.
+			Each related topic event plot is grouped by device, resource and sharing types.
 		</para>
 	</tal:block>	
 	
 	<tal:block tal:condition="python: options['has_topics_created_data']">
 		<para style="normal" spaceAfter=".5in" >
-			This document presents an overview of topics related events in <u>${options/course_names}</u> from <strong>${context/start_date}</strong> through <strong>${context/end_date}</strong>.
+			This document presents an overview of topics related events in <u>${options/course_names}</u> from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
 		</para>
+		
+		<illustration width="4in" height="5in" 
+					  tal:define="events options/data/topics_created/tuples"
+		              metal:use-macro="macro:events_table">
+		</illustration>
 	</tal:block>
 	
 	<tal:block tal:condition="python: options['has_topics_created_data']">
