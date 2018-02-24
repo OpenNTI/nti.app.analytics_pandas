@@ -8,16 +8,17 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import shutil
-import base64
 import tempfile
 
 from pyramid.view import view_config
 
-
 from nti.analytics_pandas.analysis import TopicsCreationTimeseries
 
 from nti.analytics_pandas.analysis.common import get_data
+
+from nti.app.analytics_pandas.charts.colors import three_lines_colors
+
+from nti.app.analytics_pandas.charts.line_chart import TimeSeriesChart
 
 from nti.app.analytics_pandas.views import MessageFactory as _
 
@@ -28,12 +29,8 @@ from nti.app.analytics_pandas.views.commons import get_course_names
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
-from nti.app.analytics_pandas.charts.colors import three_lines_colors
-
-from nti.app.analytics_pandas.charts.line_chart import TimeSeriesChart
-
-
 logger = __import__('logging').getLogger(__name__)
+
 
 @view_config(name="TopicsReport")
 class TopicsTimeseriesReportView(AbstractReportView):
@@ -67,7 +64,6 @@ class TopicsTimeseriesReportView(AbstractReportView):
         return self.options
 
     def __call__(self):
-        from IPython.terminal.debugger import set_trace;set_trace()
         values = self.readInput()
         if "MimeType" not in values.keys():
             values["MimeType"] = 'application/vnd.nextthought.analytics.topicstimeseriescontext'
@@ -96,21 +92,33 @@ class TopicsTimeseriesReportView(AbstractReportView):
     def build_topic_creation_data(self, tct):
         topics_created = {}
         dataframes = get_data(tct)
-        
-        ##Building table data
-        df_column_list = ['date', 'number_of_unique_users', 'number_of_events', 'ratio']
-        topics_created['tuples'] = iternamedtuples(dataframes['df_by_timestamp'].astype(str), df_column_list)
-        
-        ##Building chart Data
-        events_df = dataframes['df_by_timestamp'][['timestamp_period', 'number_of_topics_created']]
+
+        # Building table data
+        df_column_list = ['date', 'number_of_unique_users',
+                          'number_of_events', 'ratio']
+        topics_created['tuples'] = iternamedtuples(
+            dataframes['df_by_timestamp'].astype(str), df_column_list
+        )
+
+        # Building chart Data
+        events_df = dataframes['df_by_timestamp'][
+            ['timestamp_period', 'number_of_topics_created']
+        ]
         events = [tuple(i) for i in events_df.values]
-        users_df = dataframes['df_by_timestamp'][['timestamp_period', 'number_of_unique_users']]
+        users_df = dataframes['df_by_timestamp'][
+            ['timestamp_period', 'number_of_unique_users']
+        ]
         users = [tuple(i) for i in users_df.values]
         ratio_df = dataframes['df_by_timestamp'][['timestamp_period', 'ratio']]
         ratio = [tuple(i) for i in ratio_df.values]
         chart_data = [events, users, ratio]
-        legend = [(three_lines_colors[0], 'Topics Created'), (three_lines_colors[1], 'Unique Users'), (three_lines_colors[2], 'Ratio')]
-        chart = TimeSeriesChart(data=chart_data, legend_color_name_pairs=legend)
+        legend = [
+            (three_lines_colors[0], 'Topics Created'),
+            (three_lines_colors[1], 'Unique Users'),
+            (three_lines_colors[2], 'Ratio')
+        ]
+        chart = TimeSeriesChart(data=chart_data,
+                                legend_color_name_pairs=legend)
 
         temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
         with temp_file as fp:
