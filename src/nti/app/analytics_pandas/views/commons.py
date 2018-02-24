@@ -136,7 +136,7 @@ def alternate_lists(list1, list2):
 
 def iternamedtuples(df, column_list):
     """
-    convert a dataframe to a list of namedTuples
+    convert a dataframe to namedTuples
     """
     df.columns = column_list
     Row = namedtuple('Row', df.columns)

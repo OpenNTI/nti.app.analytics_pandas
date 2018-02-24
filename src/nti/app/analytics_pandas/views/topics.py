@@ -8,7 +8,13 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import shutil
+import base64
+import tempfile
+
 from pyramid.view import view_config
+
+from reportlab.lib.colors import PCMYKColor
 
 from nti.analytics_pandas.analysis import TopicsCreationTimeseries
 
@@ -23,8 +29,9 @@ from nti.app.analytics_pandas.views.commons import get_course_names
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
-logger = __import__('logging').getLogger(__name__)
+from nti.app.analytics_pandas.charts.line_chart import TimeSeriesChart
 
+logger = __import__('logging').getLogger(__name__)
 
 @view_config(name="TopicsReport")
 class TopicsTimeseriesReportView(AbstractReportView):
@@ -86,9 +93,22 @@ class TopicsTimeseriesReportView(AbstractReportView):
     def build_topic_creation_data(self, tct):
         topics_created = {}
         dataframes = get_data(tct)
-        topics_created['tuples'] = iternamedtuples(dataframes['df_by_timestamp'])
+        df_column_list = ['date', 'number_of_unique_users', 'number_of_events', 'ratio']
+        topics_created['tuples'] = iternamedtuples(dataframes['df_by_timestamp'].astype(str), df_column_list)
         topics_created['ratio'] = dataframes['df_by_timestamp'].ratio.values.tolist()
         topics_created['date_of_events'] = dataframes['df_by_timestamp'].timestamp_period.values.tolist()
         topics_created['number_of_events'] = dataframes['df_by_timestamp'].number_of_topics_created.values.tolist()
         topics_created['number_of_unique_users'] = dataframes['df_by_timestamp'].number_of_unique_users.values.tolist()
+        
+        ##for sample 
+        ##todo : replace chart data with topics data
+        chart_data = [[(19010706, 3.3900000000000001), (19010806, 3.29), (19010906, 3.2999999999999998), (19011006, 3.29), (19011106, 3.3399999999999999), (19011206, 3.4100000000000001), (19020107, 3.3700000000000001), (19020207, 3.3700000000000001), (19020307, 3.3700000000000001), (19020407, 3.5), (19020507, 3.6200000000000001), (19020607, 3.46), (19020707, 3.3900000000000001)], [(19010706, 3.2000000000000002), (19010806, 3.1200000000000001), (19010906, 3.1400000000000001), (19011006, 3.1400000000000001), (19011106, 3.1699999999999999), (19011206, 3.23), (19020107, 3.1899999999999999), (19020207, 3.2000000000000002), (19020307, 3.1899999999999999), (19020407, 3.3100000000000001), (19020507, 3.4300000000000002), (19020607, 3.29), (19020707, 3.2200000000000002)]]
+        legend = [(PCMYKColor(0,100,100,40,alpha=100), 'Bovis Homes'), (PCMYKColor(100,0,90,50,alpha=100), 'HSBC Holdings')]
+        chart = TimeSeriesChart(data=chart_data, legend_color_name_pairs=legend)
+        #chart_base64 = base64.b64encode(chart.asString('png'))
+        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
+        with temp_file as fp:
+            fp.write(chart.asString('png'))
+            fp.seek(0)
+            topics_created['events_chart'] = temp_file.name
         return topics_created
