@@ -34,7 +34,7 @@
 		This is necessary to get the section_name header to change dynamically.
 		Used in topic reports.
 	-->
-	<metal:block metal:define-macro="section_page_templates">
+	<metal:block metal:define-macro="pandas_section_page_templates">
 		<tal:block tal:repeat="section_template_name options/section_scoped_comments/keys"
 					tal:condition="options/section_scoped_comments | nothing">
 			<pageTemplate id="" tal:attributes="id section_template_name">
