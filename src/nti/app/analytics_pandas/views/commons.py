@@ -118,21 +118,24 @@ def cleanup_temporary_file(data):
         for value in data.values():
             cleanup_temporary_file(value)
 
+
 def series_to_string(series1, series2):
     list1 = series1.values.tolist()
     list2 = series2.values.tolist()
     new_list = alternate_lists(list1, list2)
     return u' '.join(str(item) for item in new_list)
 
+
 def alternate_lists(list1, list2):
     """
     Combine two pandas series into a new list whose even-index values come from the first list 
     and whose odd-index values come from the second list.
     """
-    new_list = [None]*(len(list1) + len(list2))
+    new_list = [None] * (len(list1) + len(list2))
     new_list[::2] = list1
     new_list[1::2] = list2
     return new_list
+
 
 def iternamedtuples(df, column_list):
     """

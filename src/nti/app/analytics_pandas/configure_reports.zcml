@@ -175,7 +175,7 @@
 
 	<z3c:macro
  		template="templates/std_report_macros.pt"
-		name="section_page_templates"
+		name="pandas_section_page_templates"
  		for="zope.interface.Interface"
  		view="zope.interface.Interface"
  		layer="pyramid.interfaces.IRequest" />

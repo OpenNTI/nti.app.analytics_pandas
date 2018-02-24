@@ -82,7 +82,7 @@
 		<!--
 		A header to show each section we are in when displaying comments; uses defined 'section_name'
 		-->
-		<metal:block metal:use-macro="macro:section_page_templates" />
+		<metal:block metal:use-macro="macro:pandas_section_page_templates" />
 
 	</template>
 
