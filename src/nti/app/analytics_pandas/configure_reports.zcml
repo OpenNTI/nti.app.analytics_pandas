@@ -182,7 +182,7 @@
 
 	<z3c:macro
 		template="templates/std_report_macros.pt"
-		name="events_table"
+		name="pandas_events_table"
 		for="zope.interface.Interface"
 		view="zope.interface.Interface"
 		layer="pyramid.interfaces.IRequest" />

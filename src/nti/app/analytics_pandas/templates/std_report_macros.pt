@@ -232,7 +232,7 @@
 			<nextFrame />
 		</tal:block>
 
-		<metal:macro metal:define-macro="events_table" >
+		<metal:macro metal:define-macro="pandas_events_table" >
 			<blockTable style='default'
 						alignment="left"
 						colWidths="25% 25% 25% 25%"
