@@ -252,22 +252,21 @@
 			</blockTable>
 		</metal:macro>
 
-		<illustration width="4.5in" height="3.5in"
+		<illustration width="2in" height="2.5in"
 					  metal:define-macro="line_chart_event_creation">
 			<linePlot
 				  dx="0.5in" dy="0in"
 				  dwidth="5in" dheight="3in"
 				  x="0" y="0"
-				  width="8in"
-				  height="2.8in" direction="vertical"
-				  joinedLines="true" lineLabelFormat="%2.0f" 
-				  tal:define="data events" >
+				  width="4in"
+				  height="2.5in" direction="vertical"
+				  joinedLines="true" lineLabelFormat="%2.0f" >
 				<lines >
 					<line strokeColor="#53a2db" symbol="FilledSquare" />
 				</lines>
-				<xValueAxis>
+				<xValueAxis valueMin="19010706" valueMax="19011106" >
 					<labels fontName="OpenSansBold" boxAnchor="autox"/>
-				<xValueAxis>
+				</xValueAxis>
 				<yValueAxis>
 					<labels fontName="OpenSansBold" />
 				</yValueAxis>

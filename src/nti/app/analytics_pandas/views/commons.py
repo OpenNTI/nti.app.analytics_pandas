@@ -134,11 +134,11 @@ def alternate_lists(list1, list2):
     new_list[1::2] = list2
     return new_list
 
-def iternamedtuples(df):
+def iternamedtuples(df, column_list):
     """
-    convert a dataframe to a list of namedTuples
+    convert a dataframe to namedTuples
     """
-    df.columns = ['date', 'number_of_events', 'number_of_unique_users', 'ratio']
+    df.columns = column_list
     Row = namedtuple('Row', df.columns)
     for row in df.itertuples():
         yield Row(*row[1:])
