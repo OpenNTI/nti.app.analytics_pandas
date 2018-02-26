@@ -27,6 +27,11 @@
 			<frame id="callout" x1="6in" y1="1in" width="8in" height="5in" showBoundary="1" />
 		</pageTemplate>
 
+		<pageTemplate id="pandas_table_chart">
+			<frame id="pandas_table_frame" x1="0.5in" y1="0in" width="5in" height="8in" showBoundary="0"/>
+			<frame id="pandas_chart_frame" x1="5.5in" y1="0in" width="5in" height="7in" showBoundary="0" />
+		</pageTemplate>
+
 	</template>
 
 	<!--
@@ -239,8 +244,8 @@
 						tal:condition="events" >
 				<tr>
 					<td>Date</td>
-					<td>Number of Events</td>
-					<td>Number of Unique Users</td>
+					<td>Events</td>
+					<td>Unique Users</td>
 					<td>Ratio</td>
 				</tr>
 				<tr tal:repeat="item events">
