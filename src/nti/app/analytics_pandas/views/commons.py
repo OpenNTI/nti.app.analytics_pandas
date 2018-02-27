@@ -159,7 +159,7 @@ def save_chart_to_temporary_file(chart):
         return fname
 
 def build_event_chart_data(df, event_unique_col_name, col_name_alias, legend_colors=three_lines_colors):
-    # Building chart Data
+    # Building line chart 
     events_df = df[['timestamp_period', event_unique_col_name]]
     events = [tuple(i) for i in events_df.values]
     users_df = df[['timestamp_period', 'number_of_unique_users']]

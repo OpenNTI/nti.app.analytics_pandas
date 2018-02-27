@@ -13,6 +13,7 @@ from collections import namedtuple
 from pyramid.view import view_config
 
 from nti.analytics_pandas.analysis import TopicsCreationTimeseries
+from nti.analytics_pandas.analysis import TopicViewsTimeseries
 
 from nti.analytics_pandas.analysis.common import get_data
 
@@ -77,16 +78,26 @@ class TopicsTimeseriesReportView(AbstractReportView):
         self.options['start_date'] = values['start_date']
         self.options['end_date'] = values['end_date']
 
+        data = {}
         tct = TopicsCreationTimeseries(self.db.session,
                                        self.report.start_date,
                                        self.report.end_date,
                                        self.report.courses or (),
                                        period=self.report.period)
 
-        data = {}
         if not tct.dataframe.empty:
             self.options['has_topics_created_data'] = True
             data['topics_created'] = self.build_topic_creation_data(tct)
+
+        tvt = TopicViewsTimeseries(self.db.session,
+                                   self.report.start_date,
+                                   self.report.end_date,
+                                   self.report.courses or (),
+                                   period=self.report.period)
+        if not tvt.dataframe.empty:
+            self.options['has_topic_views_data'] = True
+            data['topics_viewed'] = self.build_topic_view_data(tvt)
+        
         self._build_data(data)
         return self.options
 
@@ -107,3 +118,20 @@ class TopicsTimeseriesReportView(AbstractReportView):
         chart = build_event_chart_data(dataframes['df_by_timestamp'], 'number_of_topics_created', 'Topics Created')
         topics_created['events_chart'] = save_chart_to_temporary_file(chart)
         return topics_created
+
+    def build_topic_view_data(self, tvt):
+        topics_viewed = {}
+        dataframes = get_data(tvt)
+        # Building table data
+        df_column_list = ['date', 'number_of_unique_users',
+                          'number_of_events', 'ratio']
+        topics_viewed['tuples'] = iternamedtuples(
+            dataframes['df_by_timestamp'].astype(str), df_column_list
+        )
+
+        topics_viewed['column_name'] = u'Topics Viewed'
+
+        # Building chart Data
+        chart = build_event_chart_data(dataframes['df_by_timestamp'], 'number_of_topics_viewed', 'Topics Viewed')
+        topics_viewed['events_chart'] = save_chart_to_temporary_file(chart)
+        return topics_viewed
