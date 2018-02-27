@@ -11,8 +11,10 @@ from __future__ import absolute_import
 
 from pyramid.view import view_config
 
-from nti.analytics_pandas.analysis import TopicsCreationTimeseries
 from nti.analytics_pandas.analysis import TopicViewsTimeseries
+from nti.analytics_pandas.analysis import TopicLikesTimeseries
+from nti.analytics_pandas.analysis import TopicsCreationTimeseries
+from nti.analytics_pandas.analysis import TopicFavoritesTimeseries
 
 from nti.analytics_pandas.analysis.common import get_data
 
@@ -96,6 +98,16 @@ class TopicsTimeseriesReportView(AbstractReportView):
         if not tvt.dataframe.empty:
             self.options['has_topic_views_data'] = True
             data['topics_viewed'] = self.build_topic_view_data(tvt)
+
+        tlt = TopicLikesTimeseries(self.db.session,
+                                   self.report.start_date,
+                                   self.report.end_date,
+                                   self.report.courses or (),
+                                   period=self.report.period)
+        if not tlt.dataframe.empty:
+            self.options['has_topic_likes_data'] = True
+            data['topics_liked'] = self.build_topic_like_data(tlt)
+            from IPython.terminal.debugger import set_trace;set_trace()
         
         self._build_data(data)
         return self.options
@@ -124,3 +136,16 @@ class TopicsTimeseriesReportView(AbstractReportView):
         chart = build_event_chart_data(dataframes['df_by_timestamp'], 'number_of_topics_viewed', 'Topics Viewed')
         topics_viewed['events_chart'] = save_chart_to_temporary_file(chart)
         return topics_viewed
+
+    def build_topic_like_data(self, tlt):
+        topics_liked = {}
+        dataframes = get_data(tlt)
+        # Building table data
+        topics_liked['tuples'] = build_event_table_data(dataframes['df_by_timestamp'])
+        topics_liked['column_name'] = u'Topics Liked'
+
+        # Building chart Data
+        chart = build_event_chart_data(dataframes['df_by_timestamp'], 'number_of_topic_likes', 'Topics Liked')
+        topics_liked['events_chart'] = save_chart_to_temporary_file(chart)
+        return topics_liked
+
