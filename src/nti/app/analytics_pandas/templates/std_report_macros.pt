@@ -245,7 +245,7 @@
 						tal:condition="events" >
 				<tr>
 					<td>Date</td>
-					<td>Events</td>
+					<td tal:content="column_name">Events</td>
 					<td>Unique Users</td>
 					<td>Ratio</td>
 				</tr>

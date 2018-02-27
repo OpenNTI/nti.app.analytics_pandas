@@ -27,7 +27,7 @@
 		<nextFrame name="pandas_table_frame" />
 
 		<illustration width="2in" height="2.5in" 
-				  	  tal:define="events options/data/topics_created/tuples"
+				  	  tal:define="events options/data/topics_created/tuples; column_name options/data/topics_created/column_name"
 					  metal:use-macro="macro:pandas_events_table">
 		</illustration>
 

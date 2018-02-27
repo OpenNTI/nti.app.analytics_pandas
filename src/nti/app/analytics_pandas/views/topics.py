@@ -8,7 +8,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-
+from collections import namedtuple
 
 from pyramid.view import view_config
 
@@ -102,6 +102,8 @@ class TopicsTimeseriesReportView(AbstractReportView):
             dataframes['df_by_timestamp'].astype(str), df_column_list
         )
 
+        topics_created['column_name'] = u'Topics Created'
+
         # Building chart Data
         events_df = dataframes['df_by_timestamp'][
             ['timestamp_period', 'number_of_topics_created']
@@ -121,6 +123,5 @@ class TopicsTimeseriesReportView(AbstractReportView):
         ]
         chart = TimeSeriesChart(data=chart_data,
                                 legend_color_name_pairs=legend)
-        
         topics_created['events_chart'] = save_chart_to_temporary_file(chart)
         return topics_created
