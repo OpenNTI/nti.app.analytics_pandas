@@ -8,7 +8,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-from collections import namedtuple
 
 from pyramid.view import view_config
 
@@ -23,7 +22,6 @@ from nti.app.analytics_pandas.views import MessageFactory as _
 
 from nti.app.analytics_pandas.model import TopicsTimeseriesContext
 
-from nti.app.analytics_pandas.views.commons import iternamedtuples
 from nti.app.analytics_pandas.views.commons import get_course_names
 from nti.app.analytics_pandas.views.commons import build_event_table_data
 from nti.app.analytics_pandas.views.commons import build_event_chart_data
