@@ -107,6 +107,15 @@ class TopicsTimeseriesReportView(AbstractReportView):
         if not tlt.dataframe.empty:
             self.options['has_topic_likes_data'] = True
             data['topics_liked'] = self.build_topic_like_data(tlt)
+
+        tft = TopicFavoritesTimeseries(self.db.session,
+                                       self.report.start_date,
+                                       self.report.end_date,
+                                       self.report.courses or (),
+                                       period=self.report.period)
+        if not tft.dataframe.empty:
+            self.options['has_topic_favorites_data'] = True
+            data['topics_favorite'] = self.build_topic_favorite_data(tft)
         
         self._build_data(data)
         return self.options
@@ -147,4 +156,16 @@ class TopicsTimeseriesReportView(AbstractReportView):
         chart = build_event_chart_data(dataframes['df_by_timestamp'], 'number_of_topic_likes', 'Topics Liked')
         topics_liked['events_chart'] = save_chart_to_temporary_file(chart)
         return topics_liked
+
+    def build_topic_favorite_data(self, tft):
+        topics_favorite = {}
+        dataframes = get_data(tft)
+        # Building table data
+        topics_favorite['tuples'] = build_event_table_data(dataframes['df_by_timestamp'])
+        topics_favorite['column_name'] = u'Topics Favorite'
+
+        # Building chart Data
+        chart = build_event_chart_data(dataframes['df_by_timestamp'], 'number_of_topic_favorites', 'Topics Favorite')
+        topics_favorite['events_chart'] = save_chart_to_temporary_file(chart)
+        return topics_favorite
 
