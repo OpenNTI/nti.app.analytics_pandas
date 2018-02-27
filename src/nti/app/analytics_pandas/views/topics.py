@@ -25,6 +25,7 @@ from nti.app.analytics_pandas.model import TopicsTimeseriesContext
 
 from nti.app.analytics_pandas.views.commons import iternamedtuples
 from nti.app.analytics_pandas.views.commons import get_course_names
+from nti.app.analytics_pandas.views.commons import build_event_table_data
 from nti.app.analytics_pandas.views.commons import build_event_chart_data
 from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
 
@@ -106,12 +107,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
         dataframes = get_data(tct)
 
         # Building table data
-        df_column_list = ['date', 'number_of_unique_users',
-                          'number_of_events', 'ratio']
-        topics_created['tuples'] = iternamedtuples(
-            dataframes['df_by_timestamp'].astype(str), df_column_list
-        )
-
+        topics_created['tuples'] = build_event_table_data(dataframes['df_by_timestamp'])
         topics_created['column_name'] = u'Topics Created'
 
         # Building chart Data
@@ -123,12 +119,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
         topics_viewed = {}
         dataframes = get_data(tvt)
         # Building table data
-        df_column_list = ['date', 'number_of_unique_users',
-                          'number_of_events', 'ratio']
-        topics_viewed['tuples'] = iternamedtuples(
-            dataframes['df_by_timestamp'].astype(str), df_column_list
-        )
-
+        topics_viewed['tuples'] = build_event_table_data(dataframes['df_by_timestamp'])
         topics_viewed['column_name'] = u'Topics Viewed'
 
         # Building chart Data

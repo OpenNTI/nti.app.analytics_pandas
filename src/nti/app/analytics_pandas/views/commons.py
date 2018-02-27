@@ -176,3 +176,9 @@ def build_event_chart_data(df, event_unique_col_name, col_name_alias, legend_col
                             legend_color_name_pairs=legend)
     return chart
 
+def build_event_table_data(df):
+    df_column_list = ['date', 'number_of_unique_users',
+                      'number_of_events', 'ratio']
+    df_table = df.round({'ratio' : 2})
+    tuples = iternamedtuples(df_table.astype(str), df_column_list) 
+    return tuples
