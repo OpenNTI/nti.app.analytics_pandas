@@ -18,14 +18,13 @@ from nti.analytics_pandas.analysis.common import get_data
 
 from nti.app.analytics_pandas.charts.colors import three_lines_colors
 
-from nti.app.analytics_pandas.charts.line_chart import TimeSeriesChart
-
 from nti.app.analytics_pandas.views import MessageFactory as _
 
 from nti.app.analytics_pandas.model import TopicsTimeseriesContext
 
 from nti.app.analytics_pandas.views.commons import iternamedtuples
 from nti.app.analytics_pandas.views.commons import get_course_names
+from nti.app.analytics_pandas.views.commons import build_event_chart_data
 from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
@@ -105,23 +104,6 @@ class TopicsTimeseriesReportView(AbstractReportView):
         topics_created['column_name'] = u'Topics Created'
 
         # Building chart Data
-        events_df = dataframes['df_by_timestamp'][
-            ['timestamp_period', 'number_of_topics_created']
-        ]
-        events = [tuple(i) for i in events_df.values]
-        users_df = dataframes['df_by_timestamp'][
-            ['timestamp_period', 'number_of_unique_users']
-        ]
-        users = [tuple(i) for i in users_df.values]
-        ratio_df = dataframes['df_by_timestamp'][['timestamp_period', 'ratio']]
-        ratio = [tuple(i) for i in ratio_df.values]
-        chart_data = [events, users, ratio]
-        legend = [
-            (three_lines_colors[0], 'Topics Created'),
-            (three_lines_colors[1], 'Unique Users'),
-            (three_lines_colors[2], 'Ratio')
-        ]
-        chart = TimeSeriesChart(data=chart_data,
-                                legend_color_name_pairs=legend)
+        chart = build_event_chart_data(dataframes['df_by_timestamp'], 'number_of_topics_created', 'Topics Created')
         topics_created['events_chart'] = save_chart_to_temporary_file(chart)
         return topics_created
