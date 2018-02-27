@@ -63,20 +63,9 @@
 		</pageTemplate>
 
 		<pageTemplate id="pandas_table_chart">
-			<frame id="pandas_table_frame" x1="0.5in" y1="0in" width="5in" height="8in" showBoundary="0"/>
-			<frame id="pandas_chart_frame" x1="5.5in" y1="0in" width="5in" height="7in" showBoundary="0" />
-			<pageGraphics>
-				<place x=".5in" y="0.1in" width="7in" height=".3in">
-                	<para 	style="footer"
-                			tal:attributes="fontSize python: '8' if len( view.generate_footer() ) > 100 else '10'"
-                			tal:content="view/generate_footer">
-                			Student Participation Report - jzuech - CHEM4970 - Apr 11, 2014 01:06 PM
-                	</para>
-				</place>
-				<drawCentredString x="10.8in" y="0.3in">
-					<pageNumber/>
-   				</drawCentredString>
-   			</pageGraphics>
+			<frame id="pandas_table_chart_desc" x1="25" y1="475" width="800" height="80" showBoundary="0"/>
+			<frame id="pandas_table_frame" x1="25" y1="25" width="300" height="450" showBoundary="0"/>
+			<frame id="pandas_chart_frame" x1="337" y1="25" width="480" height="450" showBoundary="0" />
 		</pageTemplate>
 
 		<!--

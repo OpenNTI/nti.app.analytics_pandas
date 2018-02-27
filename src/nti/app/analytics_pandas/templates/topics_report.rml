@@ -17,8 +17,10 @@
 		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
 			Overview of Topics Created
 		</h1>
+		
+		<nextFrame name="pandas_table_chart_desc" />
 
-		<para style="normal" spaceAfter=".5in" >
+		<para style="subdesc">
 			This document presents an overview of topics created in <u>${options/course_names}</u> from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
 		</para>
 

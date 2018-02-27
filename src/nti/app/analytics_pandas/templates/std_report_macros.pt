@@ -28,8 +28,9 @@
 		</pageTemplate>
 
 		<pageTemplate id="pandas_table_chart">
-			<frame id="pandas_table_frame" x1="0.5in" y1="0in" width="5in" height="8in" showBoundary="0"/>
-			<frame id="pandas_chart_frame" x1="5.5in" y1="0in" width="5in" height="7in" showBoundary="0" />
+			<frame id="pandas_table_chart_desc" x1="25" y1="475" width="800" height="80" showBoundary="0"/>
+			<frame id="pandas_table_frame" x1="25" y1="25" width="300" height="450" showBoundary="0"/>
+			<frame id="pandas_chart_frame" x1="337" y1="25" width="480" height="450" showBoundary="0" />
 		</pageTemplate>
 
 	</template>
