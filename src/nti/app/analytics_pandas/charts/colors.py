@@ -10,7 +10,11 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import random
+
 from reportlab.lib.colors import PCMYKColor
+
+from reportlab.lib.colors import HexColor
 
 # color names as comments at the end of each line are as a memory jogger ONLY
 # NOT HTML named colors!
@@ -55,3 +59,12 @@ color10Dark = PCMYKColor(0, 100, 0, 49)   # Dark Purple
 backgroundGrey = PCMYKColor(0, 0, 0, 24)
 
 three_lines_colors = (color01, color05, color07,)
+
+def generate_random_hex_colors(number_of_colors):
+	r = lambda: random.randint(0,255)
+	colorsList = []
+	for i in range(0,number_of_colors):
+		color = '#%02X%02X%02X' % (r(),r(),r())
+		colorsList.append(HexColor(color))
+	return colorsList
+
