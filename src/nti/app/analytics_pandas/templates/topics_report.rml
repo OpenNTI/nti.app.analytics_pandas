@@ -39,8 +39,36 @@
 		    	   showBoundary="no" preserveAspectRatio="yes">
 		    </image>
 		</illustration>
-
 	</tal:block>
-	
-	
+
+	<tal:block tal:condition="python: options['has_topic_views_data']">
+		<setNextTemplate name="pandas_table_chart"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Overview of Topics Viewed
+		</h1>
+		
+		<nextFrame name="pandas_table_chart_desc" />
+
+		<para style="subdesc">
+			This document presents an overview of topics viewed in <u>${options/course_names}</u> from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
+		</para>
+
+		<nextFrame name="pandas_table_frame" />
+
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/topics_viewed/tuples; column_name options/data/topics_viewed/column_name"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+
+		<nextFrame name="pandas_chart_frame" />
+
+		<illustration width="2in" height="2.5in" 
+			tal:define="echart options/data/topics_viewed/events_chart" >
+		    <image tal:attributes="file echart" x="0" y="10" width="6in" height="3in" 
+		    	   showBoundary="no" preserveAspectRatio="yes">
+		    </image>
+		</illustration>
+	</tal:block>
+
 </metal:block>
