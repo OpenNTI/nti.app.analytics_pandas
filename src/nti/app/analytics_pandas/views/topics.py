@@ -107,7 +107,6 @@ class TopicsTimeseriesReportView(AbstractReportView):
         if not tlt.dataframe.empty:
             self.options['has_topic_likes_data'] = True
             data['topics_liked'] = self.build_topic_like_data(tlt)
-            from IPython.terminal.debugger import set_trace;set_trace()
         
         self._build_data(data)
         return self.options
