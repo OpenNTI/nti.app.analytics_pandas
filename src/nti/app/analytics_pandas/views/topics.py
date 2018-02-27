@@ -8,7 +8,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-import tempfile
+
 
 from pyramid.view import view_config
 
@@ -26,6 +26,7 @@ from nti.app.analytics_pandas.model import TopicsTimeseriesContext
 
 from nti.app.analytics_pandas.views.commons import iternamedtuples
 from nti.app.analytics_pandas.views.commons import get_course_names
+from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
@@ -64,6 +65,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
         return self.options
 
     def __call__(self):
+        from IPython.terminal.debugger import set_trace;set_trace()
         values = self.readInput()
         if "MimeType" not in values.keys():
             values["MimeType"] = 'application/vnd.nextthought.analytics.topicstimeseriescontext'
@@ -119,10 +121,6 @@ class TopicsTimeseriesReportView(AbstractReportView):
         ]
         chart = TimeSeriesChart(data=chart_data,
                                 legend_color_name_pairs=legend)
-
-        temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
-        with temp_file as fp:
-            fp.write(chart.asString('png'))
-            fp.seek(0)
-            topics_created['events_chart'] = temp_file.name
+        
+        topics_created['events_chart'] = save_chart_to_temporary_file(chart)
         return topics_created

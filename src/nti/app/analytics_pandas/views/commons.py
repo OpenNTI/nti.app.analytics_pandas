@@ -145,3 +145,12 @@ def iternamedtuples(df, column_list):
     Row = namedtuple('Row', df.columns)
     for row in df.itertuples():
         yield Row(*row[1:])
+
+def save_chart_to_temporary_file(chart):
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
+    with temp_file as fp:
+        fp.write(chart.asString('png'))
+        fp.seek(0)
+        fname= temp_file.name
+        return fname
+
