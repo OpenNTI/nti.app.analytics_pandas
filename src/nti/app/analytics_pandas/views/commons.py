@@ -27,7 +27,7 @@ from nti.analytics_pandas.queries import QueryCourses
 
 from nti.app.analytics_pandas.charts.colors import three_lines_colors
 
-from nti.app.analytics_pandas.charts.line_chart import TimeSeriesChart
+from nti.app.analytics_pandas.charts.line_chart import TimeSeriesSimpleChart
 
 from nti.analytics_pandas.utils import Plot
 from nti.analytics_pandas.utils import save_plot_
@@ -172,7 +172,7 @@ def build_event_chart_data(df, event_unique_col_name, col_name_alias, legend_col
         (three_lines_colors[1], 'Unique Users'),
         (three_lines_colors[2], 'Ratio')
     ]
-    chart = TimeSeriesChart(data=chart_data,
+    chart = TimeSeriesSimpleChart(data=chart_data,
                             legend_color_name_pairs=legend)
     return chart
 

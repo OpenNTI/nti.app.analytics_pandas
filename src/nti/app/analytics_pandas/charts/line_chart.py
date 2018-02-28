@@ -28,7 +28,7 @@ from nti.app.analytics_pandas.charts.colors import generate_random_hex_colors
 logger = __import__('logging').getLogger(__name__)
 
 
-class TimeSeriesChart(_DrawingEditorMixin, Drawing):
+class TimeSeriesSimpleChart(_DrawingEditorMixin, Drawing):
     """
     Chart Features
     ==============
@@ -118,7 +118,7 @@ class TimeSeriesChart(_DrawingEditorMixin, Drawing):
         self.chart.lines.symbol.angle = 45
 
 
-class TimeSeriesChart2(_DrawingEditorMixin, Drawing):
+class TimeSeriesGroupedChart(_DrawingEditorMixin, Drawing):
 
     def __init__(self, data, legend, width=558, height=140):
         Drawing.__init__(self, width, height)
