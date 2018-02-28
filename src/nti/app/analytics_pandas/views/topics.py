@@ -8,7 +8,6 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
-
 from pyramid.view import view_config
 
 from nti.analytics_pandas.analysis import TopicViewsTimeseries
@@ -18,11 +17,9 @@ from nti.analytics_pandas.analysis import TopicFavoritesTimeseries
 
 from nti.analytics_pandas.analysis.common import get_data
 
-from nti.app.analytics_pandas.charts.colors import three_lines_colors
+from nti.app.analytics_pandas.model import TopicsTimeseriesContext
 
 from nti.app.analytics_pandas.views import MessageFactory as _
-
-from nti.app.analytics_pandas.model import TopicsTimeseriesContext
 
 from nti.app.analytics_pandas.views.commons import get_course_names
 from nti.app.analytics_pandas.views.commons import build_event_table_data
@@ -66,7 +63,8 @@ class TopicsTimeseriesReportView(AbstractReportView):
         return self.options
 
     def __call__(self):
-        from IPython.terminal.debugger import set_trace;set_trace()
+        from IPython.terminal.debugger import set_trace
+        set_trace()
         values = self.readInput()
         if "MimeType" not in values.keys():
             values["MimeType"] = 'application/vnd.nextthought.analytics.topicstimeseriescontext'
@@ -116,7 +114,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
         if not tft.dataframe.empty:
             self.options['has_topic_favorites_data'] = True
             data['topics_favorite'] = self.build_topic_favorite_data(tft)
-        
+
         self._build_data(data)
         return self.options
 
@@ -125,11 +123,14 @@ class TopicsTimeseriesReportView(AbstractReportView):
         dataframes = get_data(tct)
 
         # Building table data
-        topics_created['tuples'] = build_event_table_data(dataframes['df_by_timestamp'])
+        topics_created['tuples'] = build_event_table_data(
+            dataframes['df_by_timestamp'])
         topics_created['column_name'] = u'Topics Created'
 
         # Building chart Data
-        chart = build_event_chart_data(dataframes['df_by_timestamp'], 'number_of_topics_created', 'Topics Created')
+        chart = build_event_chart_data(dataframes['df_by_timestamp'],
+                                       'number_of_topics_created',
+                                       'Topics Created')
         topics_created['events_chart'] = save_chart_to_temporary_file(chart)
         return topics_created
 
@@ -141,7 +142,9 @@ class TopicsTimeseriesReportView(AbstractReportView):
         topics_viewed['column_name'] = u'Topics Viewed'
 
         # Building chart Data
-        chart = build_event_chart_data(dataframes['df_by_timestamp'], 'number_of_topics_viewed', 'Topics Viewed')
+        chart = build_event_chart_data(dataframes['df_by_timestamp'],
+                                       'number_of_topics_viewed',
+                                       'Topics Viewed')
         topics_viewed['events_chart'] = save_chart_to_temporary_file(chart)
         return topics_viewed
 
@@ -153,7 +156,9 @@ class TopicsTimeseriesReportView(AbstractReportView):
         topics_liked['column_name'] = u'Topics Liked'
 
         # Building chart Data
-        chart = build_event_chart_data(dataframes['df_by_timestamp'], 'number_of_topic_likes', 'Topics Liked')
+        chart = build_event_chart_data(dataframes['df_by_timestamp'],
+                                       'number_of_topic_likes',
+                                       'Topics Liked')
         topics_liked['events_chart'] = save_chart_to_temporary_file(chart)
         return topics_liked
 
@@ -165,7 +170,8 @@ class TopicsTimeseriesReportView(AbstractReportView):
         topics_favorite['column_name'] = u'Topics Favorite'
 
         # Building chart Data
-        chart = build_event_chart_data(dataframes['df_by_timestamp'], 'number_of_topic_favorites', 'Topics Favorite')
+        chart = build_event_chart_data(dataframes['df_by_timestamp'],
+                                       'number_of_topic_favorites',
+                                       'Topics Favorite')
         topics_favorite['events_chart'] = save_chart_to_temporary_file(chart)
         return topics_favorite
-
