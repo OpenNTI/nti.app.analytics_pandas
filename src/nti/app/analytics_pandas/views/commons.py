@@ -182,6 +182,8 @@ def build_event_table_data(df, column_list = ('date', 'number_of_unique_users','
     return tuples
 
 def build_event_grouped_table_data(df, column_list=('date', 'group_type', 'number_of_events')):
+    if 'timestamp_period' in df.columns:
+        df['timestamp_period']= df['timestamp_period'].astype(str) 
     tuples = iternamedtuples(df, column_list) 
     return tuples
 
