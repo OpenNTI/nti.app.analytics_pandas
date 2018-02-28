@@ -25,6 +25,10 @@ from z3c.rml import rml2pdf
 
 from nti.analytics_pandas.queries import QueryCourses
 
+from nti.app.analytics_pandas.charts.colors import three_lines_colors
+
+from nti.app.analytics_pandas.charts.line_chart import TimeSeriesChart
+
 from nti.analytics_pandas.utils import Plot
 from nti.analytics_pandas.utils import save_plot_
 
@@ -145,3 +149,36 @@ def iternamedtuples(df, column_list):
     Row = namedtuple('Row', df.columns)
     for row in df.itertuples():
         yield Row(*row[1:])
+
+def save_chart_to_temporary_file(chart):
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.png')
+    with temp_file as fp:
+        fp.write(chart.asString('png'))
+        fp.seek(0)
+        fname= temp_file.name
+        return fname
+
+def build_event_chart_data(df, event_unique_col_name, col_name_alias, legend_colors=three_lines_colors):
+    # Building line chart 
+    events_df = df[['timestamp_period', event_unique_col_name]]
+    events = [tuple(i) for i in events_df.values]
+    users_df = df[['timestamp_period', 'number_of_unique_users']]
+    users = [tuple(i) for i in users_df.values]
+    ratio_df = df[['timestamp_period', 'ratio']]
+    ratio = [tuple(i) for i in ratio_df.values]
+    chart_data = [events, users, ratio]
+    legend = [
+        (three_lines_colors[0], col_name_alias),
+        (three_lines_colors[1], 'Unique Users'),
+        (three_lines_colors[2], 'Ratio')
+    ]
+    chart = TimeSeriesChart(data=chart_data,
+                            legend_color_name_pairs=legend)
+    return chart
+
+def build_event_table_data(df):
+    df_column_list = ['date', 'number_of_unique_users',
+                      'number_of_events', 'ratio']
+    df_table = df.round({'ratio' : 2})
+    tuples = iternamedtuples(df_table.astype(str), df_column_list) 
+    return tuples
