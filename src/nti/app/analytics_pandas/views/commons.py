@@ -185,23 +185,23 @@ def build_event_grouped_table_data(df, column_list=('date', 'group_type', 'numbe
     tuples = iternamedtuples(df.astype(str), column_list) 
     return tuples
 
-def build_event_grouped_chart_data(df, group_col_name):
+def build_event_grouped_chart_data(df, group_col, group):
     ## Building grouped line chart
-    chart_data = extract_group_dataframe(df, group_col_name)
-    chart = TimeSeriesGroupedChart(data=chart_data,legend=group)
+    chart_data, groups = extract_group_dataframe(df, group_col)
+    chart = TimeSeriesGroupedChart(data=chart_data,legend=groups)
     return chart
 
-def extract_group_dataframe(df, group_col_name):
+def extract_group_dataframe(df, group_col):
     """
     Given a column name, extract dataframe into a data list.
     'data' list consist of list of tuple 
     The number of item in the data list would be the same with the number of unique values in the given column name
     """
-    groups = df[group_col_name].unique()
+    groups = df[group_col].unique()
     data = []
     for group in groups:
-        temp_df = df.loc[df[group_col_name]==group]
-        temp_df = temp_df.loc[:, temp_df.columns != group]
+        temp_df = df.loc[df[group_col]==group]
+        temp_df = temp_df.loc[:, temp_df.columns != group_col]
         tuples = [tuple(i) for i in temp_df.values]
         data.append(tuples)
-    return data
+    return data, groups
