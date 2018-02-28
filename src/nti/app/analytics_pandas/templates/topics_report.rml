@@ -65,7 +65,7 @@
 
 		<illustration width="480" height="450" 
 			tal:define="echart options/data/topics_created/by_enrollment_chart" >
-		    <image tal:attributes="file echart" x="0" y="10" width="6in" height="3in" 
+		    <image tal:attributes="file echart" x="0" y="150" width="480" height="450" 
 		    	   showBoundary="no" preserveAspectRatio="yes">
 		    </image>
 		</illustration>
