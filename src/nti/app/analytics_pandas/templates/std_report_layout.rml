@@ -68,6 +68,12 @@
 			<frame id="pandas_chart_frame" x1="337" y1="25" width="480" height="450" showBoundary="0" />
 		</pageTemplate>
 
+		<pageTemplate id="pandas_table_chart_group">
+			<frame id="pandas_table_chart_desc_group" x1="25" y1="475" width="800" height="80" showBoundary="0"/>
+			<frame id="pandas_table_frame_group" x1="25" y1="25" width="300" height="450" showBoundary="0"/>
+			<frame id="pandas_chart_frame_group" x1="337" y1="25" width="480" height="450" showBoundary="0" />
+		</pageTemplate>
+
 		<!--
 		A header to show each section we are in when displaying comments; uses defined 'section_name'
 		-->

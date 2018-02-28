@@ -33,6 +33,12 @@
 			<frame id="pandas_chart_frame" x1="337" y1="25" width="480" height="450" showBoundary="0" />
 		</pageTemplate>
 
+		<pageTemplate id="pandas_table_chart_group">
+			<frame id="pandas_table_chart_desc_group" x1="25" y1="475" width="800" height="80" showBoundary="0"/>
+			<frame id="pandas_table_frame_group" x1="25" y1="25" width="300" height="450" showBoundary="0"/>
+			<frame id="pandas_chart_frame_group" x1="337" y1="25" width="480" height="450" showBoundary="0" />
+		</pageTemplate>
+
 	</template>
 
 	<!--
@@ -254,6 +260,24 @@
 					<td tal:content="item/number_of_events">25</td>
 					<td tal:content="item/number_of_unique_users">10</td>
 					<td tal:content="item/ratio">2.5</td>
+				</tr>
+			</blockTable>
+		</metal:macro>
+
+		<metal:macro metal:define-macro="pandas_events_grouped_table" >
+			<blockTable style='default'
+						alignment="left"
+						colWidths="25% 50% 25%"
+						tal:condition="events" >
+				<tr>
+					<td>Date</td>
+					<td tal:content="group_name">Group</td>
+					<td tal:content="column_name">Events</td>
+				</tr>
+				<tr tal:repeat="item events">
+					<td tal:content="item/date">2015-12-01</td>
+					<td tal:content="item/group_type">ForNonCredit</td>
+					<td tal:content="item/number_of_events">10</td>
 				</tr>
 			</blockTable>
 		</metal:macro>
