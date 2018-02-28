@@ -139,7 +139,6 @@ class TopicsTimeseriesReportView(AbstractReportView):
         if not dataframes['df_per_enrollment_type'].empty:
             self.build_topic_created_by_enrollment_type(dataframes['df_per_enrollment_type'], topics_created)
             self.options['has_topics_created_per_enrollment_types'] = True
-
         return topics_created
 
     def build_topic_created_by_enrollment_type(self, df, topics_created):
