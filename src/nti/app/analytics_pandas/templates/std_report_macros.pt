@@ -267,7 +267,7 @@
 		<metal:macro metal:define-macro="pandas_events_grouped_table" >
 			<blockTable style='default'
 						alignment="left"
-						colWidths="25% 25% 25% 25%"
+						colWidths="25% 50% 25%"
 						tal:condition="events" >
 				<tr>
 					<td>Date</td>
