@@ -7,8 +7,9 @@ from __future__ import absolute_import
 
 # pylint: disable=protected-access,too-many-public-methods,arguments-differ
 
-from hamcrest import is_
+from hamcrest import has_length
 from hamcrest import assert_that
+from hamcrest import greater_than_or_equal_to
 
 import unittest
 
@@ -40,7 +41,8 @@ class TestLineChart(unittest.TestCase):
         legend = [(color01, 'Bovis Homes'), (color02, 'HSBC Holdings')]
         chart = TimeSeriesSimpleChart(data=data,
                                       legend_color_name_pairs=legend)
-        assert_that(chart.asString('png'), is_(str))
+        assert_that(chart.asString('png'), 
+                    has_length(greater_than_or_equal_to(1)))
 
     def test_time_series_grouped_chart_1(self):
         data = [
@@ -70,7 +72,8 @@ class TestLineChart(unittest.TestCase):
                   'Persimmon', 'Royal Bank of Scotland', ]
         chart = TimeSeriesGroupedChart(data=data,
                                        group_legend=legend)
-        assert_that(chart.asString('png'), is_(str))
+        assert_that(chart.asString('png'), 
+                    has_length(greater_than_or_equal_to(1)))
 
     def test_time_series_grouped_chart_2(self):
         data = [
@@ -99,4 +102,5 @@ class TestLineChart(unittest.TestCase):
                   'Persimmon', 'Royal Bank of Scotland', ]
         chart = TimeSeriesGroupedChart(data=data,
                                        group_legend=legend)
-        assert_that(chart.asString('png'), is_(str))
+        assert_that(chart.asString('png'), 
+                    has_length(greater_than_or_equal_to(1)))
