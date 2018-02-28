@@ -66,6 +66,7 @@ class TimeSeriesSimpleChart(_DrawingEditorMixin, Drawing):
         self.chart.xValueAxis.hiLLen = 5
         self.chart.xValueAxis.gridEnd = self.width
         self.chart.xValueAxis.gridStart = self.chart.x - 10
+        #self.chart.xValueAxis.labels.angle = 45
         # y axis
         self.chart.yValueAxis.visibleGrid = 1
         self.chart.yValueAxis.visibleAxis = 0
