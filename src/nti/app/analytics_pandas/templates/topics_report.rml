@@ -56,14 +56,14 @@
 
 		<nextFrame name="pandas_table_frame_group" />
 
-		<illustration width="2in" height="2.5in" 
+		<illustration width="300" height="450" 
 				  	  tal:define="events options/data/topics_created/tuples_enrollment_type; column_name options/data/topics_created/column_name; group_name options/data/topics_created/by_enrollment_chart"
 					  metal:use-macro="macro:pandas_events_grouped_table">
 		</illustration>
 
 		<nextFrame name="pandas_chart_frame_group" />
 
-		<illustration width="2in" height="2.5in" 
+		<illustration width="480" height="450" 
 			tal:define="echart options/data/topics_created/by_enrollment_chart" >
 		    <image tal:attributes="file echart" x="0" y="10" width="6in" height="3in" 
 		    	   showBoundary="no" preserveAspectRatio="yes">

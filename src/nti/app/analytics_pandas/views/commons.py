@@ -190,7 +190,7 @@ def build_event_grouped_table_data(df, column_list=('date', 'group_type', 'numbe
 def build_event_grouped_chart_data(df, group_col):
     ## Building grouped line chart
     chart_data, groups = extract_group_dataframe(df, group_col)
-    chart = TimeSeriesGroupedChart(data=chart_data,legend=groups)
+    chart = TimeSeriesGroupedChart(data=chart_data, group_legend=groups)
     return chart
 
 def extract_group_dataframe(df, group_col):
