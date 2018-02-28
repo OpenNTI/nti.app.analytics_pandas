@@ -13,7 +13,8 @@ from hamcrest import greater_than_or_equal_to
 
 import unittest
 
-from nti.app.analytics_pandas.charts.colors import color01, color02
+from nti.app.analytics_pandas.charts.colors import color01
+from nti.app.analytics_pandas.charts.colors import color02
 
 from nti.app.analytics_pandas.charts.line_chart import TimeSeriesSimpleChart
 from nti.app.analytics_pandas.charts.line_chart import TimeSeriesGroupedChart
