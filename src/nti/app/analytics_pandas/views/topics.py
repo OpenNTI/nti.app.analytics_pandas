@@ -139,6 +139,12 @@ class TopicsTimeseriesReportView(AbstractReportView):
         if not dataframes['df_per_enrollment_type'].empty:
             self.build_topic_created_by_enrollment_type(dataframes['df_per_enrollment_type'], topics_created)
             self.options['has_topics_created_per_enrollment_types'] = True
+
+        #Building chart grouped by device type
+        if not dataframes['df_per_device_types'].empty:
+            self.options['has_topics_created_per_device_types'] = True
+            self.build_topic_created_by_device_type(dataframes['df_per_device_types'], topics_created)
+        
         return topics_created
 
     def build_topic_created_by_enrollment_type(self, df, topics_created):
@@ -152,6 +158,14 @@ class TopicsTimeseriesReportView(AbstractReportView):
         #building chart
         chart = build_event_grouped_chart_data(new_df, 'enrollment_type')
         topics_created['by_enrollment_chart'] = save_chart_to_temporary_file(chart)
+
+    def build_topic_created_by_device_type(self, df, topics_created):
+        columns = ['timestamp_period', 'device_type', 'number_of_topics_created']
+        new_df = df[columns]
+        topics_created['tuples_device_type'] = build_event_grouped_table_data(new_df)
+        topics_created['device_col'] = 'Device Type'
+        chart = build_event_grouped_chart_data(new_df, 'device_type')
+        topics_created['by_device_chart'] = save_chart_to_temporary_file(chart)
 
     def build_topic_view_data(self, tvt):
         topics_viewed = {}
