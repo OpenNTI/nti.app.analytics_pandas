@@ -41,6 +41,36 @@
 		</illustration>
 	</tal:block>
 
+	<tal:block tal:condition="python: options['has_topics_created_per_enrollment_types']">
+		<setNextTemplate name="pandas_table_chart_group"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Topics Created per Enrollment Type
+		</h1>
+		
+		<nextFrame name="pandas_table_chart_desc_group" />
+
+		<para style="subdesc">
+			This page shows the number of topics created per student enrollment types in <u>${options/course_names}</u> from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
+		</para>
+
+		<nextFrame name="pandas_table_frame_group" />
+
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/topics_created/tuples_enrollment_type; column_name options/data/topics_created/column_name; group_name options/data/topics_created/by_enrollment_chart"
+					  metal:use-macro="macro:pandas_events_grouped_table">
+		</illustration>
+
+		<nextFrame name="pandas_chart_frame_group" />
+
+		<illustration width="2in" height="2.5in" 
+			tal:define="echart options/data/topics_created/by_enrollment_chart" >
+		    <image tal:attributes="file echart" x="0" y="10" width="6in" height="3in" 
+		    	   showBoundary="no" preserveAspectRatio="yes">
+		    </image>
+		</illustration>
+	</tal:block>
+
 	<tal:block tal:condition="python: options['has_topic_views_data']">
 		<setNextTemplate name="pandas_table_chart"/>
 		<nextPage />

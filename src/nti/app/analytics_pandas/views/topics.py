@@ -136,7 +136,10 @@ class TopicsTimeseriesReportView(AbstractReportView):
         topics_created['events_chart'] = save_chart_to_temporary_file(chart)
         
         #Building chart grouped by enrollment type
-        self.build_topic_created_by_enrollment_type(dataframes['df_per_enrollment_type'], topics_created)             
+        if not dataframes['df_per_enrollment_type'].empty:
+            self.build_topic_created_by_enrollment_type(dataframes['df_per_enrollment_type'], topics_created)
+            self.options['has_topics_created_per_enrollment_types'] = True
+
         return topics_created
 
     def build_topic_created_by_enrollment_type(self, df, topics_created):
@@ -148,8 +151,8 @@ class TopicsTimeseriesReportView(AbstractReportView):
         topics_created['enrollment_col'] = 'Enrollment Type'
 
         #building chart
-        topics_created['by_enrollment_chart'] = build_event_grouped_chart_data(new_df, 'enrollment_type')
-        
+        chart = build_event_grouped_chart_data(new_df, 'enrollment_type')
+        topics_created['by_enrollment_chart'] = save_chart_to_temporary_file(chart)
 
     def build_topic_view_data(self, tvt):
         topics_viewed = {}
