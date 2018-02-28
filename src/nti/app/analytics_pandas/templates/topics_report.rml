@@ -57,7 +57,7 @@
 		<nextFrame name="pandas_table_frame_group" />
 
 		<illustration width="300" height="450" 
-				  	  tal:define="events options/data/topics_created/tuples_enrollment_type; column_name options/data/topics_created/column_name; group_name options/data/topics_created/by_enrollment_chart"
+				  	  tal:define="events options/data/topics_created/tuples_enrollment_type; column_name options/data/topics_created/column_name; group_name options/data/topics_created/enrollment_col"
 					  metal:use-macro="macro:pandas_events_grouped_table">
 		</illustration>
 
