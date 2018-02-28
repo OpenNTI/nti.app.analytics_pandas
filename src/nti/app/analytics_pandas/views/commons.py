@@ -182,10 +182,10 @@ def build_event_table_data(df, column_list = ('date', 'number_of_unique_users','
     return tuples
 
 def build_event_grouped_table_data(df, column_list=('date', 'group_type', 'number_of_events')):
-    tuples = iternamedtuples(df.astype(str), column_list) 
+    tuples = iternamedtuples(df, column_list) 
     return tuples
 
-def build_event_grouped_chart_data(df, group_col, group):
+def build_event_grouped_chart_data(df, group_col):
     ## Building grouped line chart
     chart_data, groups = extract_group_dataframe(df, group_col)
     chart = TimeSeriesGroupedChart(data=chart_data,legend=groups)
