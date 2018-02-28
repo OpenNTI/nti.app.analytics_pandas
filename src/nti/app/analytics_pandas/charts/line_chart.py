@@ -121,7 +121,7 @@ class TimeSeriesSimpleChart(_DrawingEditorMixin, Drawing):
 
 class TimeSeriesGroupedChart(_DrawingEditorMixin, Drawing):
 
-    def __init__(self, data, legend, width=600, height=400):
+    def __init__(self, data, group_legend, width=600, height=400):
         Drawing.__init__(self, width, height)
         # font
         fontName = 'Helvetica'
@@ -133,7 +133,7 @@ class TimeSeriesGroupedChart(_DrawingEditorMixin, Drawing):
         # chart
         self._add(self, LinePlot(), name='chart', validate=None, desc=None)
         # colours
-        colorsList = generate_random_hex_colors(len(legend))
+        colorsList = generate_random_hex_colors(len(group_legend))
         # pylint: disable=no-member
         for i, color in enumerate(colorsList[:3]):
             self.chart.lines[i].strokeColor = color
@@ -183,7 +183,7 @@ class TimeSeriesGroupedChart(_DrawingEditorMixin, Drawing):
         # chart data
         self.chart.data = data
         for i in range(len(self.chart.data)):
-            self.chart.lines[i].name = legend[i]
+            self.chart.lines[i].name = group_legend[i]
 
         self.chart.x               = 50
         self.chart.xValueAxis.visible                 = 1
