@@ -264,6 +264,24 @@
 			</blockTable>
 		</metal:macro>
 
+		<metal:macro metal:define-macro="pandas_events_grouped_table" >
+			<blockTable style='default'
+						alignment="left"
+						colWidths="25% 25% 25% 25%"
+						tal:condition="events" >
+				<tr>
+					<td>Date</td>
+					<td tal:content="group_name">Group</td>
+					<td tal:content="column_name">Events</td>
+				</tr>
+				<tr tal:repeat="item events">
+					<td tal:content="item/date">2015-12-01</td>
+					<td tal:content="item/group_type">ForNonCredit</td>
+					<td tal:content="item/number_of_events">10</td>
+				</tr>
+			</blockTable>
+		</metal:macro>
+
 		<illustration width="2in" height="2.5in"
 					  metal:define-macro="line_chart_event_creation">
 			<linePlot

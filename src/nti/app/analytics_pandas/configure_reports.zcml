@@ -189,6 +189,13 @@
 
 	<z3c:macro
 		template="templates/std_report_macros.pt"
+		name="pandas_events_grouped_table"
+		for="zope.interface.Interface"
+		view="zope.interface.Interface"
+		layer="pyramid.interfaces.IRequest" />
+
+	<z3c:macro
+		template="templates/std_report_macros.pt"
 		name="line_chart_event_creation"
 		for="zope.interface.Interface"
 		view="zope.interface.Interface"
