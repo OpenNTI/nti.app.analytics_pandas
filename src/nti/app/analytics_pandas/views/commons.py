@@ -28,6 +28,7 @@ from nti.analytics_pandas.queries import QueryCourses
 from nti.app.analytics_pandas.charts.colors import three_lines_colors
 
 from nti.app.analytics_pandas.charts.line_chart import TimeSeriesSimpleChart
+from nti.app.analytics_pandas.charts.line_chart import TimeSeriesGroupedChart
 
 from nti.analytics_pandas.utils import Plot
 from nti.analytics_pandas.utils import save_plot_
@@ -140,7 +141,6 @@ def alternate_lists(list1, list2):
     new_list[1::2] = list2
     return new_list
 
-
 def iternamedtuples(df, column_list):
     """
     convert a dataframe to namedTuples
@@ -176,9 +176,32 @@ def build_event_chart_data(df, event_unique_col_name, col_name_alias, legend_col
                             legend_color_name_pairs=legend)
     return chart
 
-def build_event_table_data(df):
-    df_column_list = ['date', 'number_of_unique_users',
-                      'number_of_events', 'ratio']
+def build_event_table_data(df, column_list = ('date', 'number_of_unique_users','number_of_events', 'ratio')):
     df_table = df.round({'ratio' : 2})
-    tuples = iternamedtuples(df_table.astype(str), df_column_list) 
+    tuples = iternamedtuples(df_table.astype(str), column_list) 
     return tuples
+
+def build_event_grouped_table_data(df, column_list=('date', 'group_type', 'number_of_events')):
+    tuples = iternamedtuples(df.astype(str), column_list) 
+    return tuples
+
+def build_event_grouped_chart_data(df, group_col_name):
+    ## Building grouped line chart
+    chart_data = extract_group_dataframe(df, group_col_name)
+    chart = TimeSeriesGroupedChart(data=chart_data,legend=group)
+    return chart
+
+def extract_group_dataframe(df, group_col_name):
+    """
+    Given a column name, extract dataframe into a data list.
+    'data' list consist of list of tuple 
+    The number of item in the data list would be the same with the number of unique values in the given column name
+    """
+    groups = df[group_col_name].unique()
+    data = []
+    for group in groups:
+        temp_df = df.loc[df[group_col_name]==group]
+        temp_df = temp_df.loc[:, temp_df.columns != group]
+        tuples = [tuple(i) for i in temp_df.values]
+        data.append(tuples)
+    return data
