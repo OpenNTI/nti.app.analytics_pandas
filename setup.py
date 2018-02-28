@@ -61,6 +61,7 @@ setup(
         'nti.schema',
         'pyramid',
         'pytz',
+        'reportlab',
         'z3c.macro',
         'z3c.pagelet',
         'z3c.rml',
