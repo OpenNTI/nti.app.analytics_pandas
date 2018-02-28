@@ -60,11 +60,12 @@ backgroundGrey = PCMYKColor(0, 0, 0, 24)
 
 three_lines_colors = (color01, color05, color07,)
 
-def generate_random_hex_colors(number_of_colors):
-	r = lambda: random.randint(0,255)
-	colorsList = []
-	for i in range(0,number_of_colors):
-		color = '#%02X%02X%02X' % (r(),r(),r())
-		colorsList.append(HexColor(color))
-	return colorsList
 
+def generate_random_hex_colors(number_of_colors):
+    def r(): 
+        return random.randint(0, 255)
+    colorsList = []
+    for _ in range(0, number_of_colors):
+        color = '#%02X%02X%02X' % (r(), r(), r())
+        colorsList.append(HexColor(color))
+    return colorsList
