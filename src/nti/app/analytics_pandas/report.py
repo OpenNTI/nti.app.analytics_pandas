@@ -31,6 +31,6 @@ class PandasReport(SchemaConfigured):
     createDirectFieldProperties(IPandasReport)
 
     # pylint: disable=unused-argument
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *unused_args, **kwargs):
         # NOTE: Must ignore args
         SchemaConfigured.__init__(self, **kwargs)
