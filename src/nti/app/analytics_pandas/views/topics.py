@@ -25,6 +25,8 @@ from nti.app.analytics_pandas.views.commons import get_course_names
 from nti.app.analytics_pandas.views.commons import build_event_table_data
 from nti.app.analytics_pandas.views.commons import build_event_chart_data
 from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
+from nti.app.analytics_pandas.views.commons import build_event_grouped_table_data
+from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
@@ -132,7 +134,22 @@ class TopicsTimeseriesReportView(AbstractReportView):
                                        'number_of_topics_created',
                                        'Topics Created')
         topics_created['events_chart'] = save_chart_to_temporary_file(chart)
+        
+        #Building chart grouped by enrollment type
+        self.build_topic_created_by_enrollment_type(dataframes['df_per_enrollment_type'], topics_created)             
         return topics_created
+
+    def build_topic_created_by_enrollment_type(self, df, topics_created):
+        columns = ['timestamp_period', 'enrollment_type', 'number_of_topics_created']
+        new_df = df[columns]
+        
+        #building table data
+        topics_created['tuples_enrollment_type'] = build_event_grouped_table_data(new_df)
+        topics_created['enrollment_col'] = 'Enrollment Type'
+
+        #building chart
+        topics_created['by_enrollment_chart'] = build_event_grouped_chart_data(new_df, 'enrollment_type')
+        
 
     def build_topic_view_data(self, tvt):
         topics_viewed = {}
