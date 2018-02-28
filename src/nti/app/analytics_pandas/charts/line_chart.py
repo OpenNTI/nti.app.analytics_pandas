@@ -139,63 +139,63 @@ class TimeSeriesGroupedChart(_DrawingEditorMixin, Drawing):
             self.chart.lines[i].strokeColor = color
         # x axis
         self.chart.xValueAxis = NormalDateXValueAxis()
-        self.chart.xValueAxis.labels.fontName       = fontName
-        self.chart.xValueAxis.labels.fontSize       = fontSize - 3
-        self.chart.xValueAxis.labels.boxAnchor      ='autox'
-        self.chart.xValueAxis.labels.angle          = 60
-        self.chart.xValueAxis.labels.rightPadding   = 2
-        self.chart.xValueAxis.xLabelFormat          = '{mm}/{dd}/{yy}'
-        self.chart.xValueAxis.strokeDashArray       = dashArray
-        self.chart.xValueAxis.strokeLineCap         = lineCap
-        self.chart.xValueAxis.maximumTicks          = 20
-        self.chart.xValueAxis.forceFirstDate        = 1
-        self.chart.xValueAxis.dailyFreq             =0
-        self.chart.xValueAxis.forceEndDate          =1
-        self.chart.xValueAxis.minimumTickSpacing    = 15
+        self.chart.xValueAxis.labels.fontName = fontName
+        self.chart.xValueAxis.labels.fontSize = fontSize - 3
+        self.chart.xValueAxis.labels.boxAnchor = 'autox'
+        self.chart.xValueAxis.labels.angle = 60
+        self.chart.xValueAxis.labels.rightPadding = 2
+        self.chart.xValueAxis.xLabelFormat = '{mm}/{dd}/{yy}'
+        self.chart.xValueAxis.strokeDashArray = dashArray
+        self.chart.xValueAxis.strokeLineCap = lineCap
+        self.chart.xValueAxis.maximumTicks = 20
+        self.chart.xValueAxis.forceFirstDate = 1
+        self.chart.xValueAxis.dailyFreq = 0
+        self.chart.xValueAxis.forceEndDate = 1
+        self.chart.xValueAxis.minimumTickSpacing = 15
         # self.chart.xValueAxis.niceMonth=0
         # y axis
         #self.chart.yValueAxis = AdjYValueAxis()
-        self.chart.yValueAxis.labels.fontName       = fontName
-        self.chart.yValueAxis.labels.fontSize       = fontSize - 3
-        self.chart.yValueAxis.strokeWidth           = 0.5
-        self.chart.yValueAxis.strokeDashArray       = dashArray
-        self.chart.yValueAxis.strokeLineCap         = lineCap
+        self.chart.yValueAxis.labels.fontName = fontName
+        self.chart.yValueAxis.labels.fontSize = fontSize - 3
+        self.chart.yValueAxis.strokeWidth = 0.5
+        self.chart.yValueAxis.strokeDashArray = dashArray
+        self.chart.yValueAxis.strokeLineCap = lineCap
         #self.chart.yValueAxis.origShiftIPC         = 1
-        self.chart.yValueAxis.maximumTicks          = 15
-        self.chart.yValueAxis.rangeRound            ='both'
-        self.chart.yValueAxis.avoidBoundFrac        = 0.1
-        self.chart.yValueAxis.gridStrokeWidth       = strokeWidth
-        self.chart.yValueAxis.gridStrokeDashArray   = dashArray
-        self.chart.yValueAxis.gridStrokeLineCap     = lineCap
-        self.chart.yValueAxis.visibleAxis           = 0
-        self.chart.yValueAxis.visibleGrid           = 1
-       # legend
-        self._add(self,LineLegend(),name='legend',validate=None,desc=None)
-        self.legend.colorNamePairs   =  Auto(obj=self.chart)
-        self.legend.fontName         = fontName
-        self.legend.fontSize         = fontSize - 3
-        self.legend.alignment        ='right'
-        self.legend.columnMaximum    = 1
-        self.legend.dxTextSpace      = 5
-        self.legend.variColumn       = 1
-        self.legend.autoXPadding     = 15
+        self.chart.yValueAxis.maximumTicks = 15
+        self.chart.yValueAxis.rangeRound = 'both'
+        self.chart.yValueAxis.avoidBoundFrac = 0.1
+        self.chart.yValueAxis.gridStrokeWidth = strokeWidth
+        self.chart.yValueAxis.gridStrokeDashArray = dashArray
+        self.chart.yValueAxis.gridStrokeLineCap = lineCap
+        self.chart.yValueAxis.visibleAxis = 0
+        self.chart.yValueAxis.visibleGrid = 1
+        # legend
+        self._add(self, LineLegend(), name='legend', validate=None, desc=None)
+        self.legend.colorNamePairs = Auto(obj=self.chart)
+        self.legend.fontName = fontName
+        self.legend.fontSize = fontSize - 3
+        self.legend.alignment = 'right'
+        self.legend.columnMaximum = 1
+        self.legend.dxTextSpace = 5
+        self.legend.variColumn = 1
+        self.legend.autoXPadding = 15
 
         # chart data
         self.chart.data = data
         for i in range(len(self.chart.data)):
             self.chart.lines[i].name = group_legend[i]
 
-        self.chart.x               = 50
-        self.chart.xValueAxis.visible                 = 1
-        self.chart.xValueAxis.visibleGrid             = 0
-        self.chart.xValueAxis.visibleTicks            = 1
-        self.chart.xValueAxis.subGridStrokeWidth      = 0.25
-        self.chart.xValueAxis.strokeWidth             = 0.5
-        self.chart.xValueAxis.gridStrokeWidth         = 0.25
-        
-        self.chart.y               = 50
-        self.chart.width           = 500
-        self.chart.height          = 250
+        self.chart.x = 50
+        self.chart.xValueAxis.visible = 1
+        self.chart.xValueAxis.visibleGrid = 0
+        self.chart.xValueAxis.visibleTicks = 1
+        self.chart.xValueAxis.subGridStrokeWidth = 0.25
+        self.chart.xValueAxis.strokeWidth = 0.5
+        self.chart.xValueAxis.gridStrokeWidth = 0.25
+
+        self.chart.y = 50
+        self.chart.width = 500
+        self.chart.height = 250
         self.chart.yValueAxis.tickLeft = 0
-        self.legend.y              = 325
-        self.legend.x              = 100
+        self.legend.y = 325
+        self.legend.x = 100
