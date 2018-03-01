@@ -193,13 +193,20 @@
 
 		<tal:block tal:define="echart options/data/topics_favorite/events_chart"
 				   tal:condition="echart">
-			<nextFrame name="pandas_chart_frame" />
+			<tal:block tal:condition="python: options['data']['topics_favorite']['num_rows'] < 22" >	
+				<nextFrame name="pandas_chart_frame" />
 
-			<illustration width="2in" height="2.5in">
-			    <image tal:attributes="file echart" x="0" y="10" width="6in" height="3in" 
-			    	   showBoundary="no" preserveAspectRatio="yes">
-			    </image>
-			</illustration>
+				<illustration width="2in" height="2.5in" 
+					  metal:use-macro="macro:pandas_right_side_chart">
+				</illustration>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['data']['topics_favorite']['num_rows'] >= 22" >	
+				<nextPage />
+				<illustration width="2in" height="2.5in" 
+					  metal:use-macro="macro:pandas_one_page_chart">
+				</illustration>
+			</tal:block>
 		</tal:block>
 	</tal:block>
 
