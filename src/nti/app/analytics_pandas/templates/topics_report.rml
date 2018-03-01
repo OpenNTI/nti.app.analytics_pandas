@@ -61,14 +61,16 @@
 					  metal:use-macro="macro:pandas_events_grouped_table">
 		</illustration>
 
-		<nextFrame name="pandas_chart_frame_group" />
+		<tal:block tal:condition="python: options['data']['topics_created']['num_rows_enrollment'] > 1">
+			<nextFrame name="pandas_chart_frame_group" />
 
-		<illustration width="480" height="450" 
-			tal:define="echart options/data/topics_created/by_enrollment_chart" >
-		    <image tal:attributes="file echart" x="0" y="150" width="480" height="450" 
-		    	   showBoundary="no" preserveAspectRatio="yes">
-		    </image>
-		</illustration>
+			<illustration width="480" height="450" 
+				tal:define="echart options/data/topics_created/by_enrollment_chart" >
+			    <image tal:attributes="file echart" x="0" y="150" width="480" height="450" 
+			    	   showBoundary="no" preserveAspectRatio="yes">
+			    </image>
+			</illustration>
+		</tal:block>
 	</tal:block>
 
 	<tal:block tal:condition="python: options['has_topics_created_per_device_types']">
@@ -91,14 +93,16 @@
 					  metal:use-macro="macro:pandas_events_grouped_table">
 		</illustration>
 
-		<nextFrame name="pandas_chart_frame_group" />
+		<tal:block tal:condition="python: options['data']['topics_created']['num_rows_device'] > 1">
+			<nextFrame name="pandas_chart_frame_group" />
 
-		<illustration width="480" height="450" 
-			tal:define="echart options/data/topics_created/by_device_chart" >
-		    <image tal:attributes="file echart" x="0" y="150" width="480" height="450" 
-		    	   showBoundary="no" preserveAspectRatio="yes">
-		    </image>
-		</illustration>
+			<illustration width="480" height="450" 
+				tal:define="echart options/data/topics_created/by_device_chart" >
+			    <image tal:attributes="file echart" x="0" y="150" width="480" height="450" 
+			    	   showBoundary="no" preserveAspectRatio="yes">
+			    </image>
+			</illustration>
+		</tal:block>
 	</tal:block>
 
 	<tal:block tal:condition="python: options['has_topic_views_data']">
