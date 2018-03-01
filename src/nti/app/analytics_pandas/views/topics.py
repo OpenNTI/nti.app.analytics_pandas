@@ -78,12 +78,13 @@ class TopicsTimeseriesReportView(AbstractReportView):
         self.options['course_names'] = ", ".join(map(str, course_names or ()))
         self.options['start_date'] = values['start_date']
         self.options['end_date'] = values['end_date']
+        self.options['courses'] = values['courses']
 
         data = {}
         tct = TopicsCreationTimeseries(self.db.session,
-                                       self.report.start_date,
-                                       self.report.end_date,
-                                       self.report.courses or (),
+                                       self.options['start_date'],
+                                       self.options['end_date'],
+                                       self.options['courses'] or (),
                                        period=self.report.period)
 
         if not tct.dataframe.empty:
@@ -91,27 +92,27 @@ class TopicsTimeseriesReportView(AbstractReportView):
             data['topics_created'] = self.build_topic_creation_data(tct)
 
         tvt = TopicViewsTimeseries(self.db.session,
-                                   self.report.start_date,
-                                   self.report.end_date,
-                                   self.report.courses or (),
+                                   self.options['start_date'],
+                                   self.options['end_date'],
+                                   self.options['courses'] or (),
                                    period=self.report.period)
         if not tvt.dataframe.empty:
             self.options['has_topic_views_data'] = True
             data['topics_viewed'] = self.build_topic_view_data(tvt)
 
         tlt = TopicLikesTimeseries(self.db.session,
-                                   self.report.start_date,
-                                   self.report.end_date,
-                                   self.report.courses or (),
+                                   self.options['start_date'],
+                                   self.options['end_date'],
+                                   self.options['courses'] or (),
                                    period=self.report.period)
         if not tlt.dataframe.empty:
             self.options['has_topic_likes_data'] = True
             data['topics_liked'] = self.build_topic_like_data(tlt)
 
         tft = TopicFavoritesTimeseries(self.db.session,
-                                       self.report.start_date,
-                                       self.report.end_date,
-                                       self.report.courses or (),
+                                       self.options['start_date'],
+                                       self.options['end_date'],
+                                       self.options['courses'] or (),
                                        period=self.report.period)
         if not tft.dataframe.empty:
             self.options['has_topic_favorites_data'] = True
