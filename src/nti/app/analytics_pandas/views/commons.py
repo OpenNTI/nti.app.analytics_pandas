@@ -104,6 +104,16 @@ def get_course_names(session, courses_id):
         course_names = df['context_name'].tolist()
     return course_names
 
+def get_course_id_and_name_given_ntiid(session, course_ntiid):
+    qc = QueryCourses(session)
+    df = qc.get_course_given_ntiid(course_ntiid)
+
+    course_ids = []
+    course_names = []
+    if not df.empty:
+        course_ids = df['context_id'].tolist()
+        course_names = df['context_name'].tolist()
+    return course_ids, course_names
 
 def create_pdf_file_from_rml(rml, filepath):
     pdf_stream = rml2pdf.parseString(rml)

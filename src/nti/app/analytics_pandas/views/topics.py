@@ -17,16 +17,14 @@ from nti.analytics_pandas.analysis import TopicFavoritesTimeseries
 
 from nti.analytics_pandas.analysis.common import get_data
 
-from nti.app.analytics_pandas.model import TopicsTimeseriesContext
-
 from nti.app.analytics_pandas.views import MessageFactory as _
 
-from nti.app.analytics_pandas.views.commons import get_course_names
 from nti.app.analytics_pandas.views.commons import build_event_table_data
 from nti.app.analytics_pandas.views.commons import build_event_chart_data
 from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
 from nti.app.analytics_pandas.views.commons import build_event_grouped_table_data
 from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
+from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
@@ -70,52 +68,56 @@ class TopicsTimeseriesReportView(AbstractReportView):
         values = self.readInput()
         if "MimeType" not in values.keys():
             values["MimeType"] = 'application/vnd.nextthought.analytics.topicstimeseriescontext'
-        # pylint: disable=attribute-defined-outside-init
-        self.report = self._build_context(TopicsTimeseriesContext, values)
-
-        course_names = get_course_names(self.db.session,
-                                        self.report.courses or ())
-        self.options['course_names'] = ", ".join(map(str, course_names or ()))
-        self.options['start_date'] = values['start_date']
-        self.options['end_date'] = values['end_date']
-
+        self.options['ntiid'] = values['ntiid']
+        course_ids, course_names = get_course_id_and_name_given_ntiid(self.db.session,
+                                                                      self.options['ntiid'])
         data = {}
-        tct = TopicsCreationTimeseries(self.db.session,
-                                       self.report.start_date,
-                                       self.report.end_date,
-                                       self.report.courses or (),
-                                       period=self.report.period)
+        if course_ids and course_names:
+            self.options['course_ids'] = course_ids
+            self.options['course_names'] = ", ".join(map(str, course_names or ()))
+            self.options['start_date'] = values['start_date']
+            self.options['end_date'] = values['end_date']
+            if 'period' in values.keys():
+                self.options['period'] = values['period']
+            else:
+                self.options['period'] = u'daily'
 
-        if not tct.dataframe.empty:
-            self.options['has_topics_created_data'] = True
-            data['topics_created'] = self.build_topic_creation_data(tct)
+            tct = TopicsCreationTimeseries(self.db.session,
+                                           self.options['start_date'],
+                                           self.options['end_date'],
+                                           self.options['course_ids'] or (),
+                                           period=self.options['period'])
 
-        tvt = TopicViewsTimeseries(self.db.session,
-                                   self.report.start_date,
-                                   self.report.end_date,
-                                   self.report.courses or (),
-                                   period=self.report.period)
-        if not tvt.dataframe.empty:
-            self.options['has_topic_views_data'] = True
-            data['topics_viewed'] = self.build_topic_view_data(tvt)
+            if not tct.dataframe.empty:
+                self.options['has_topics_created_data'] = True
+                data['topics_created'] = self.build_topic_creation_data(tct)
 
-        tlt = TopicLikesTimeseries(self.db.session,
-                                   self.report.start_date,
-                                   self.report.end_date,
-                                   self.report.courses or (),
-                                   period=self.report.period)
-        if not tlt.dataframe.empty:
-            self.options['has_topic_likes_data'] = True
-            data['topics_liked'] = self.build_topic_like_data(tlt)
+            tvt = TopicViewsTimeseries(self.db.session,
+                                       self.options['start_date'],
+                                       self.options['end_date'],
+                                       self.options['course_ids'] or (),
+                                       period=self.options['period'])
+            if not tvt.dataframe.empty:
+                self.options['has_topic_views_data'] = True
+                data['topics_viewed'] = self.build_topic_view_data(tvt)
 
-        tft = TopicFavoritesTimeseries(self.db.session,
-                                       self.report.start_date,
-                                       self.report.end_date,
-                                       self.report.courses or (),
-                                       period=self.report.period)
-        if not tft.dataframe.empty:
-            self.options['has_topic_favorites_data'] = True
-            data['topics_favorite'] = self.build_topic_favorite_data(tft)
+            tlt = TopicLikesTimeseries(self.db.session,
+                                       self.options['start_date'],
+                                       self.options['end_date'],
+                                       self.options['course_ids'] or (),
+                                       period=self.options['period'])
+            if not tlt.dataframe.empty:
+                self.options['has_topic_likes_data'] = True
+                data['topics_liked'] = self.build_topic_like_data(tlt)
+
+            tft = TopicFavoritesTimeseries(self.db.session,
+                                           self.options['start_date'],
+                                           self.options['end_date'],
+                                           self.options['course_ids'] or (),
+                                           period=self.options['period'])
+            if not tft.dataframe.empty:
+                self.options['has_topic_favorites_data'] = True
+                data['topics_favorite'] = self.build_topic_favorite_data(tft)
 
         self._build_data(data)
         return self.options
