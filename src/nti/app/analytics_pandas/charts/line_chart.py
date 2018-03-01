@@ -34,8 +34,8 @@ class TimeSeriesSimpleChart(_DrawingEditorMixin, Drawing):
     ==============
     """
 
-    def __init__(self, data=(), legend_color_name_pairs=(), width=650, height=300,
-                 chart_width=600, chart_height=250, chart_y=16, chart_x=32):
+    def __init__(self, data=(), legend_color_name_pairs=(), width=700, height=300,
+                 chart_width=600, chart_height=250, chart_y=25, chart_x=32):
         Drawing.__init__(self, width, height)
         # font
         fontName = 'Helvetica'

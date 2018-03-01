@@ -296,7 +296,7 @@
 		<metal:macro metal:define-macro="pandas_right_side_chart" >
 			<illustration width="2in" height="2.5in" >
 			    <image tal:attributes="file echart" 
-			    	   x="0" y="10" width="480" height="450" 
+			    	   x="0" y="10" width="6in" height="3in"  
 			    	   showBoundary="no" preserveAspectRatio="yes">
 			    </image>
 			</illustration>
