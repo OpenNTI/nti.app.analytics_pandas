@@ -31,14 +31,26 @@
 					  metal:use-macro="macro:pandas_events_table">
 		</illustration>
 
-		<nextFrame name="pandas_chart_frame" />
+		<tal:block tal:define="echart options/data/topics_created/events_chart"
+				   tal:condition="echart">
+			<tal:block tal:condition="python: options['data']['topics_created']['num_rows'] <=25" >	
+				<nextFrame name="pandas_chart_frame" />
 
-		<illustration width="2in" height="2.5in" 
-			tal:define="echart options/data/topics_created/events_chart" >
-		    <image tal:attributes="file echart" x="0" y="10" width="6in" height="3in" 
-		    	   showBoundary="no" preserveAspectRatio="yes">
-		    </image>
-		</illustration>
+				<illustration width="2in" height="2.5in" 
+					  metal:use-macro="macro:pandas_right_side_chart">
+				</illustration>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['data']['topics_created']['num_rows'] > 25" >	
+				<nextPage />
+				<para style="subdesc">
+					This page presents an overview of topics created in <u>${options/course_names}</u> from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
+				</para>
+				<illustration width="2in" height="2.5in" 
+					  metal:use-macro="macro:pandas_one_page_chart">
+				</illustration>
+			</tal:block>
+		</tal:block>
 	</tal:block>
 
 	<tal:block tal:condition="python: options['has_topics_created_per_enrollment_types']">
@@ -61,14 +73,16 @@
 					  metal:use-macro="macro:pandas_events_grouped_table">
 		</illustration>
 
-		<nextFrame name="pandas_chart_frame_group" />
+		<tal:block tal:condition="python: options['data']['topics_created']['num_rows_enrollment'] > 1">
+			<nextFrame name="pandas_chart_frame_group" />
 
-		<illustration width="480" height="450" 
-			tal:define="echart options/data/topics_created/by_enrollment_chart" >
-		    <image tal:attributes="file echart" x="0" y="150" width="480" height="450" 
-		    	   showBoundary="no" preserveAspectRatio="yes">
-		    </image>
-		</illustration>
+			<illustration width="480" height="450" 
+				tal:define="echart options/data/topics_created/by_enrollment_chart" >
+			    <image tal:attributes="file echart" x="0" y="150" width="480" height="450" 
+			    	   showBoundary="no" preserveAspectRatio="yes">
+			    </image>
+			</illustration>
+		</tal:block>
 	</tal:block>
 
 	<tal:block tal:condition="python: options['has_topics_created_per_device_types']">
@@ -91,14 +105,16 @@
 					  metal:use-macro="macro:pandas_events_grouped_table">
 		</illustration>
 
-		<nextFrame name="pandas_chart_frame_group" />
+		<tal:block tal:condition="python: options['data']['topics_created']['num_rows_device'] > 1">
+			<nextFrame name="pandas_chart_frame_group" />
 
-		<illustration width="480" height="450" 
-			tal:define="echart options/data/topics_created/by_device_chart" >
-		    <image tal:attributes="file echart" x="0" y="150" width="480" height="450" 
-		    	   showBoundary="no" preserveAspectRatio="yes">
-		    </image>
-		</illustration>
+			<illustration width="480" height="450" 
+				tal:define="echart options/data/topics_created/by_device_chart" >
+			    <image tal:attributes="file echart" x="0" y="150" width="480" height="450" 
+			    	   showBoundary="no" preserveAspectRatio="yes">
+			    </image>
+			</illustration>
+		</tal:block>
 	</tal:block>
 
 	<tal:block tal:condition="python: options['has_topic_views_data']">
@@ -121,14 +137,26 @@
 					  metal:use-macro="macro:pandas_events_table">
 		</illustration>
 
-		<nextFrame name="pandas_chart_frame" />
+		<tal:block tal:define="echart options/data/topics_viewed/events_chart"
+				   tal:condition="echart">
+			<tal:block tal:condition="python: options['data']['topics_viewed']['num_rows'] <=25" >	
+				<nextFrame name="pandas_chart_frame" />
 
-		<illustration width="2in" height="2.5in" 
-			tal:define="echart options/data/topics_viewed/events_chart" >
-		    <image tal:attributes="file echart" x="0" y="10" width="6in" height="3in" 
-		    	   showBoundary="no" preserveAspectRatio="yes">
-		    </image>
-		</illustration>
+				<illustration width="2in" height="2.5in" 
+					  metal:use-macro="macro:pandas_right_side_chart">
+				</illustration>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['data']['topics_viewed']['num_rows'] > 25" >	
+				<nextPage />
+				<para style="subdesc">
+					This page presents an overview of topics viewed in <u>${options/course_names}</u> from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
+				</para>
+				<illustration width="2in" height="2.5in" 
+					  metal:use-macro="macro:pandas_one_page_chart">
+				</illustration>
+			</tal:block>
+		</tal:block>
 	</tal:block>
 
 	<tal:block tal:condition="python: options['has_topic_likes_data']">
@@ -151,14 +179,26 @@
 					  metal:use-macro="macro:pandas_events_table">
 		</illustration>
 
-		<nextFrame name="pandas_chart_frame" />
+		<tal:block tal:define="echart options/data/topics_liked/events_chart"
+				   tal:condition="echart">
+			<tal:block tal:condition="python: options['data']['topics_liked']['num_rows'] <=25" >	
+				<nextFrame name="pandas_chart_frame" />
 
-		<illustration width="2in" height="2.5in" 
-			tal:define="echart options/data/topics_liked/events_chart" >
-		    <image tal:attributes="file echart" x="0" y="10" width="6in" height="3in" 
-		    	   showBoundary="no" preserveAspectRatio="yes">
-		    </image>
-		</illustration>
+				<illustration width="2in" height="2.5in" 
+					  metal:use-macro="macro:pandas_right_side_chart">
+				</illustration>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['data']['topics_liked']['num_rows'] > 25" >	
+				<nextPage />
+				<para style="subdesc">
+					This page presents an overview of topics created in <u>${options/course_names}</u> from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
+				</para>
+				<illustration width="2in" height="2.5in" 
+					  metal:use-macro="macro:pandas_one_page_chart">
+				</illustration>
+			</tal:block>
+		</tal:block>
 	</tal:block>
 
 	<tal:block tal:condition="python: options['has_topic_favorites_data']">
@@ -181,14 +221,23 @@
 					  metal:use-macro="macro:pandas_events_table">
 		</illustration>
 
-		<nextFrame name="pandas_chart_frame" />
+		<tal:block tal:define="echart options/data/topics_favorite/events_chart"
+				   tal:condition="echart">
+			<tal:block tal:condition="python: options['data']['topics_favorite']['num_rows'] <=25" >	
+				<nextFrame name="pandas_chart_frame" />
 
-		<illustration width="2in" height="2.5in" 
-			tal:define="echart options/data/topics_favorite/events_chart" >
-		    <image tal:attributes="file echart" x="0" y="10" width="6in" height="3in" 
-		    	   showBoundary="no" preserveAspectRatio="yes">
-		    </image>
-		</illustration>
+				<illustration width="2in" height="2.5in" 
+					  metal:use-macro="macro:pandas_right_side_chart">
+				</illustration>
+			</tal:block>
+
+			<tal:block tal:condition="python: options['data']['topics_favorite']['num_rows'] > 25" >	
+				<nextPage />
+				<illustration width="2in" height="2.5in" 
+					  metal:use-macro="macro:pandas_one_page_chart">
+				</illustration>
+			</tal:block>
+		</tal:block>
 	</tal:block>
 
 </metal:block>

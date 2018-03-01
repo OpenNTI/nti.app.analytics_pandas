@@ -248,7 +248,8 @@
 			<blockTable style='default'
 						alignment="left"
 						colWidths="25% 25% 25% 25%"
-						tal:condition="events" >
+						tal:condition="events" 
+						repeatRows="1" >
 				<tr>
 					<td>Date</td>
 					<td tal:content="column_name">Events</td>
@@ -256,61 +257,50 @@
 					<td>Ratio</td>
 				</tr>
 				<tr tal:repeat="item events">
-					<td tal:content="item/date">2015-12-01</td>
-					<td tal:content="item/number_of_events">25</td>
-					<td tal:content="item/number_of_unique_users">10</td>
-					<td tal:content="item/ratio">2.5</td>
+					<td fontSize="8" tal:content="item/date">2015-12-01</td>
+					<td fontSize="8" tal:content="item/number_of_events">25</td>
+					<td fontSize="8" tal:content="item/number_of_unique_users">10</td>
+					<td fontSize="8" tal:content="item/ratio">2.5</td>
 				</tr>
 			</blockTable>
 		</metal:macro>
 
 		<metal:macro metal:define-macro="pandas_events_grouped_table" >
-			<blockTable style='default'
+			<blockTable style="default"
 						alignment="left"
 						colWidths="25% 50% 25%"
-						tal:condition="events" >
+						tal:condition="events" 
+						repeatRows="1">
 				<tr>
 					<td>Date</td>
 					<td tal:content="group_name">Group</td>
 					<td tal:content="column_name">Events</td>
 				</tr>
 				<tr tal:repeat="item events">
-					<td tal:content="item/date">2015-12-01</td>
-					<td tal:content="item/group_type">ForNonCredit</td>
-					<td tal:content="item/number_of_events">10</td>
+					<td fontSize="8" tal:content="item/date">2015-12-01</td>
+					<td fontSize="8" tal:content="item/group_type">ForNonCredit</td>
+					<td fontSize="8" tal:content="item/number_of_events">10</td>
 				</tr>
 			</blockTable>
 		</metal:macro>
 
-		<illustration width="2in" height="2.5in"
-					  metal:define-macro="line_chart_event_creation">
-			<linePlot
-				  dx="0.5in" dy="0in"
-				  dwidth="5in" dheight="3in"
-				  x="0" y="0"
-				  width="4in"
-				  height="2.5in" direction="vertical"
-				  joinedLines="true" lineLabelFormat="%2.0f" >
-				<lines >
-					<line strokeColor="#53a2db" symbol="FilledSquare" />
-				</lines>
-				<xValueAxis valueMin="19010706" valueMax="19011106" >
-					<labels fontName="OpenSansBold" boxAnchor="autox"/>
-				</xValueAxis>
-				<yValueAxis>
-					<labels fontName="OpenSansBold" />
-				</yValueAxis>
-				<lineLabels font="OpenSansBold" fontSize="10"/>
-				<data>
-					<series>
-						19010706   1
-						19010806   2
-						19010906   1
-						19011006   3
-						19011106   5
-					</series>
-				</data>
-			</linePlot>
-		</illustration>
+		<metal:macro metal:define-macro="pandas_one_page_chart" >
+			<illustration width="620" height="420">
+			    <image tal:attributes="file echart" 
+			    	   x="121" y="100" width="600" height="400" 
+			    	   showBoundary="no" preserveAspectRatio="yes">
+			    </image>
+			</illustration>
+		</metal:macro>
+
+		<metal:macro metal:define-macro="pandas_right_side_chart" >
+			<illustration width="2in" height="2.5in" >
+			    <image tal:attributes="file echart" 
+			    	   x="0" y="10" width="6in" height="3in"  
+			    	   showBoundary="no" preserveAspectRatio="yes">
+			    </image>
+			</illustration>
+		</metal:macro>
+
 	</story>
 </document>
