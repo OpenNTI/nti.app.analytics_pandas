@@ -95,9 +95,9 @@ class AppAnalyticsTestBase(unittest.TestCase):
     layer = SharedConfiguringTestLayer
 
 
-from nti.app.analytics_pandas.reports.interfaces import IPandasReport
+from nti.app.analytics_pandas.interfaces import IPandasReport
 
-from nti.app.analytics_pandas.reports.report import PandasReport
+from nti.app.analytics_pandas.report import PandasReport
 
 from nti.app.contenttypes.reports.interfaces import IReportLinkProvider
 
