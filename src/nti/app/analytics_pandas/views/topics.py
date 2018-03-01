@@ -17,8 +17,6 @@ from nti.analytics_pandas.analysis import TopicFavoritesTimeseries
 
 from nti.analytics_pandas.analysis.common import get_data
 
-from nti.app.analytics_pandas.model import TopicsTimeseriesContext
-
 from nti.app.analytics_pandas.views import MessageFactory as _
 
 from nti.app.analytics_pandas.views.commons import get_course_names
@@ -70,22 +68,23 @@ class TopicsTimeseriesReportView(AbstractReportView):
         values = self.readInput()
         if "MimeType" not in values.keys():
             values["MimeType"] = 'application/vnd.nextthought.analytics.topicstimeseriescontext'
-        # pylint: disable=attribute-defined-outside-init
-        self.report = self._build_context(TopicsTimeseriesContext, values)
-
+        self.options['courses'] = values['courses']
         course_names = get_course_names(self.db.session,
-                                        self.report.courses or ())
+                                        self.options['courses'] or ())
         self.options['course_names'] = ", ".join(map(str, course_names or ()))
         self.options['start_date'] = values['start_date']
         self.options['end_date'] = values['end_date']
-        self.options['courses'] = values['courses']
+        if 'period' in values.keys():
+            self.options['period'] = values['period']
+        else:
+            self.options['period'] = u'daily'
 
         data = {}
         tct = TopicsCreationTimeseries(self.db.session,
                                        self.options['start_date'],
                                        self.options['end_date'],
                                        self.options['courses'] or (),
-                                       period=self.report.period)
+                                       period=self.options['period'])
 
         if not tct.dataframe.empty:
             self.options['has_topics_created_data'] = True
@@ -95,7 +94,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
                                    self.options['start_date'],
                                    self.options['end_date'],
                                    self.options['courses'] or (),
-                                   period=self.report.period)
+                                   period=self.options['period'])
         if not tvt.dataframe.empty:
             self.options['has_topic_views_data'] = True
             data['topics_viewed'] = self.build_topic_view_data(tvt)
@@ -104,7 +103,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
                                    self.options['start_date'],
                                    self.options['end_date'],
                                    self.options['courses'] or (),
-                                   period=self.report.period)
+                                   period=self.options['period'])
         if not tlt.dataframe.empty:
             self.options['has_topic_likes_data'] = True
             data['topics_liked'] = self.build_topic_like_data(tlt)
@@ -113,7 +112,7 @@ class TopicsTimeseriesReportView(AbstractReportView):
                                        self.options['start_date'],
                                        self.options['end_date'],
                                        self.options['courses'] or (),
-                                       period=self.report.period)
+                                       period=self.options['period'])
         if not tft.dataframe.empty:
             self.options['has_topic_favorites_data'] = True
             data['topics_favorite'] = self.build_topic_favorite_data(tft)
