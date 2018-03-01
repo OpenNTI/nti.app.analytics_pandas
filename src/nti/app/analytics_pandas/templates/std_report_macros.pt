@@ -281,5 +281,15 @@
 				</tr>
 			</blockTable>
 		</metal:macro>
+
+		<metal:macro metal:define-macro="pandas_one_page_chart" >
+			<illustration width="620" height="420">
+			    <image tal:attributes="file echart" 
+			    	   x="121" y="100" width="600" height="400" 
+			    	   showBoundary="no" preserveAspectRatio="yes">
+			    </image>
+			</illustration>
+		</metal:macro>
+
 	</story>
 </document>
