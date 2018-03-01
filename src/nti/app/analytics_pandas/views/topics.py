@@ -185,36 +185,48 @@ class TopicsTimeseriesReportView(AbstractReportView):
         topics_viewed['column_name'] = u'Topics Viewed'
 
         # Building chart Data
-        chart = build_event_chart_data(dataframes['df_by_timestamp'],
-                                       'number_of_topics_viewed',
-                                       'Topics Viewed')
-        topics_viewed['events_chart'] = save_chart_to_temporary_file(chart)
+        if topics_viewed['num_rows'] > 1:
+            chart = build_event_chart_data(dataframes['df_by_timestamp'],
+                                           'number_of_topics_viewed',
+                                           'Topics Viewed')
+            topics_viewed['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            topics_viewed['events_chart'] = False
         return topics_viewed
 
     def build_topic_like_data(self, tlt):
         topics_liked = {}
         dataframes = get_data(tlt)
+        topics_liked['num_rows'] = dataframes['df_by_timestamp'].shape[0]
+
         # Building table data
         topics_liked['tuples'] = build_event_table_data(dataframes['df_by_timestamp'])
         topics_liked['column_name'] = u'Topics Liked'
 
         # Building chart Data
-        chart = build_event_chart_data(dataframes['df_by_timestamp'],
-                                       'number_of_topic_likes',
-                                       'Topics Liked')
-        topics_liked['events_chart'] = save_chart_to_temporary_file(chart)
+        if topics_liked['num_rows'] > 1:
+            chart = build_event_chart_data(dataframes['df_by_timestamp'],
+                                           'number_of_topic_likes',
+                                           'Topics Liked')
+            topics_liked['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            topics_liked['events_chart'] = False
         return topics_liked
 
     def build_topic_favorite_data(self, tft):
         topics_favorite = {}
         dataframes = get_data(tft)
+        topics_favorite['num_rows'] = dataframes['df_by_timestamp'].shape[0]
         # Building table data
         topics_favorite['tuples'] = build_event_table_data(dataframes['df_by_timestamp'])
         topics_favorite['column_name'] = u'Topics Favorite'
 
         # Building chart Data
-        chart = build_event_chart_data(dataframes['df_by_timestamp'],
-                                       'number_of_topic_favorites',
-                                       'Topics Favorite')
-        topics_favorite['events_chart'] = save_chart_to_temporary_file(chart)
+        if topics_favorite['num_rows'] > 1:
+            chart = build_event_chart_data(dataframes['df_by_timestamp'],
+                                           'number_of_topic_favorites',
+                                           'Topics Favorite')
+            topics_favorite['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            topics_favorite['events_chart'] = False
         return topics_favorite
