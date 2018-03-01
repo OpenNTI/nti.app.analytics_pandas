@@ -256,10 +256,10 @@
 					<td>Ratio</td>
 				</tr>
 				<tr tal:repeat="item events">
-					<td tal:content="item/date">2015-12-01</td>
-					<td tal:content="item/number_of_events">25</td>
-					<td tal:content="item/number_of_unique_users">10</td>
-					<td tal:content="item/ratio">2.5</td>
+					<td fontSize="10" tal:content="item/date">2015-12-01</td>
+					<td fontSize="10" tal:content="item/number_of_events">25</td>
+					<td fontSize="10" tal:content="item/number_of_unique_users">10</td>
+					<td fontSize="10" tal:content="item/ratio">2.5</td>
 				</tr>
 			</blockTable>
 		</metal:macro>
@@ -275,9 +275,9 @@
 					<td tal:content="column_name">Events</td>
 				</tr>
 				<tr tal:repeat="item events">
-					<td tal:content="item/date">2015-12-01</td>
-					<td tal:content="item/group_type">ForNonCredit</td>
-					<td tal:content="item/number_of_events">10</td>
+					<td fontSize="10" tal:content="item/date">2015-12-01</td>
+					<td fontSize="10" tal:content="item/group_type">ForNonCredit</td>
+					<td fontSize="10" tal:content="item/number_of_events">10</td>
 				</tr>
 			</blockTable>
 		</metal:macro>
