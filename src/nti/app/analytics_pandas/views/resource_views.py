@@ -11,10 +11,9 @@ from __future__ import absolute_import
 from pyramid.view import view_config
 
 from nti.app.analytics_pandas.views import MessageFactory as _
-from nti.app.analytics_pandas.views.commons import build_event_table_data
+
 from nti.app.analytics_pandas.views.commons import build_event_chart_data
 from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
-from nti.app.analytics_pandas.views.commons import build_event_grouped_table_data
 from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
 from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
 
@@ -75,21 +74,21 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
         self._build_data(data)
         return self.options
 
-    def build_topic_creation_data(self, rvt):
+    def build_resource_views_data(self, rvt):
         resource_views = {}
-        dataframes = get_data(tct)
+        dataframes = get_data(rvt)
         resource_views['num_rows'] = dataframes['df_by_timestamp'].shape[0]
 
         # Building table data
         resource_views['tuples'] = build_event_table_data(
             dataframes['df_by_timestamp'])
-        resource_views['column_name'] = u'Topics Created'
+        resource_views['column_name'] = u'Resource Viewed'
 
         # Building chart Data
         if resource_views['num_rows'] > 1:
             chart = build_event_chart_data(dataframes['df_by_timestamp'],
                                        'number_of_resource_views',
-                                       'Topics Created')
+                                       'Resource Viewed')
             resource_views['events_chart'] = save_chart_to_temporary_file(chart)
         else:
             resource_views['events_chart'] = False
