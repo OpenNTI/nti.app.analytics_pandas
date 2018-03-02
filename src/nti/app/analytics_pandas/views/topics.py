@@ -63,8 +63,6 @@ class TopicsTimeseriesReportView(AbstractReportView):
         return self.options
 
     def __call__(self):
-        from IPython.terminal.debugger import set_trace
-        set_trace()
         values = self.readInput()
         if "MimeType" not in values.keys():
             values["MimeType"] = 'application/vnd.nextthought.analytics.topicstimeseriescontext'

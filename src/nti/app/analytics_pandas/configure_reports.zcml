@@ -42,6 +42,20 @@
 		layer="pyramid.interfaces.IRequest"
 		permission="zope.Public"
 		manager=".interfaces.IPDFReportHeaderManager" />
+
+	<!-- Resource views report -->
+	<z3c:template
+		template="templates/resource_views_report.rml"
+		for=".views.resource_views.ResourceViewsTimeseriesReportView"
+		layer="pyramid.interfaces.IRequest" />
+
+	<browser:viewlet
+		name="resource_views_content_provider"
+		template="templates/resource_views_content_provider.rml"
+		view=".views.resource_views.ResourceViewsTimeseriesReportView"
+		layer="pyramid.interfaces.IRequest"
+		permission="zope.Public"
+		manager=".interfaces.IPDFReportHeaderManager" />
 	
 	<!--
 	Notes related events report
@@ -98,12 +112,6 @@
 	<z3c:template
 		template="templatessocial.rml"
 		for=".social.SocialTimeseriesReportView"
-		layer="pyramid.interfaces.IRequest" />
-	
-	Resource views report
-	<z3c:template
-		template="templatesresource_views.rml"
-		for=".resource_views.ResourceViewsTimeseriesReportView"
 		layer="pyramid.interfaces.IRequest" />
 	-->
 		

@@ -10,32 +10,27 @@ from __future__ import absolute_import
 
 from pyramid.view import view_config
 
-from nti.app.analytics_pandas.model import ResourceViewsTimeseriesContext
+from nti.analytics_pandas.analysis import ResourceViewsTimeseries
+
+from nti.analytics_pandas.analysis.common import get_data
 
 from nti.app.analytics_pandas.views import MessageFactory as _
 
-from nti.app.analytics_pandas.views.commons import get_course_names
-from nti.app.analytics_pandas.views.commons import build_plot_images_dictionary
+from nti.app.analytics_pandas.views.commons import build_event_chart_data
+from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
+from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
+from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
-from nti.analytics_pandas.analysis import ResourceViewsTimeseries
-from nti.analytics_pandas.analysis import ResourceViewsTimeseriesPlot
-
-from nti.externalization.interfaces import StandardExternalFields
-
-MIMETYPE = StandardExternalFields.MIMETYPE
-
 logger = __import__('logging').getLogger(__name__)
 
-
-@view_config(name="ResourceViews",
-             renderer="../templates/resource_views.rml")
+@view_config(name="ResourceViewsReport")
 class ResourceViewsTimeseriesReportView(AbstractReportView):
 
     @property
     def report_title(self):
-        return _(u'Resource Views')
+        return _(u'Resource Views Report')
 
     def _build_data(self, data=_('sample resource views report')):
         keys = self.options.keys()
@@ -58,75 +53,44 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
         return self.options
 
     def __call__(self):
-        if not isinstance(self.context, ResourceViewsTimeseriesContext):
-            values = self.readInput()
-            if MIMETYPE not in values.keys():
-                values[MIMETYPE] = 'application/vnd.nextthought.reports.resourceviewstimeseriescontext'
-            self.context = self._build_context(ResourceViewsTimeseriesContext, 
-                                               values)
+        if "MimeType" not in values.keys():
+            values["MimeType"] = 'application/vnd.nextthought.reports.resourceviewstimeseriescontext'
+        self.options['ntiid'] = values['ntiid']
+        course_ids, course_names = get_course_id_and_name_given_ntiid(self.db.session,
+                                                                      self.options['ntiid'])
+        data = {}
+        if course_ids and course_names:
+            self.options['course_ids'] = course_ids
+            self.options['course_names'] = ", ".join(map(str, course_names or ()))
+            self.options['start_date'] = values['start_date']
+            self.options['end_date'] = values['end_date']
+            if 'period' in values.keys():
+                self.options['period'] = values['period']
+            else:
+                self.options['period'] = u'daily'
+            rvt = ResourceViewsTimeseries(self.db.session,
+                                      self.options['start_date'],
+                                      self.options['end_date'],
+                                      self.options['course_ids'] or (),
+                                      period=self.options['period'])
+            if not rvt.dataframe.empty:
+                self.options['has_resource_view_events'] = True
+                data['resources_viewed'] = build_resources_viewed_data(rvt)
 
-        # pylint: disable=attribute-defined-outside-init
-        self.rvt = ResourceViewsTimeseries(self.db.session,
-                                           self.context.start_date,
-                                           self.context.end_date,
-                                           self.context.courses,
-                                           period=self.context.period)
-        if self.rvt.dataframe.empty:
-            self.options['has_resource_view_events'] = False
-            return self.options
-
-        self.options['has_resource_view_events'] = True
-
-        course_names = get_course_names(self.db.session, self.context.courses)
-        self.options['course_names'] = ",".join(map(str, course_names))
-
-        self.rvtp = ResourceViewsTimeseriesPlot(self.rvt)
-        data = self.get_resource_view_events(dict())
-        data = self.get_resource_views_per_device_types(data)
-        data = self.get_resource_views_per_resource_types(data)
-        data = self.get_the_most_active_users(data)
         self._build_data(data)
         return self.options
 
-    def get_resource_view_events(self, data):
-        plots = self.rvtp.explore_events(self.context.period_breaks,
-                                         self.context.minor_period_breaks,
-                                         self.context.theme_bw_)
-        if plots:
-            data['resource_view_events'] = build_plot_images_dictionary(plots)
-        return data
+    def build_resources_viewed_data(self, rvt):
+        resource_views = {}
+        dataframes = get_data(rvt)
+        resource_views['num_rows'] = dataframes['df_by_timestamp'].shape[0]
 
-    def get_resource_views_per_device_types(self, data):
-        plots = self.rvtp.analyze_device_type(self.context.period_breaks,
-                                              self.context.minor_period_breaks,
-                                              self.context.theme_bw_)
-        if plots:
-            data['resource_views_per_device_types'] = build_plot_images_dictionary(plots)
-            self.options['has_resource_views_per_device_types'] = True
-        return data
-
-    def get_resource_views_per_enrollment_types(self, data):
-        plots = self.rvtp.analyze_enrollment_type(self.context.period_breaks,
-                                                  self.context.minor_period_breaks,
-                                                  self.context.theme_bw_)
-        if plots:
-            data['resource_views_per_enrollment_types'] = build_plot_images_dictionary(plots)
-            self.options['has_resource_views_per_enrollment_types'] = True
-        return data
-
-    def get_resource_views_per_resource_types(self, data):
-        plots = self.rvtp.analyze_resource_type(self.context.period_breaks,
-                                                self.context.minor_period_breaks,
-                                                self.context.theme_bw_)
-        if plots:
-            data['resource_views_per_resource_types'] = build_plot_images_dictionary(plots)
-            self.options['has_resource_views_per_resource_types'] = True
-        return data
-
-    def get_the_most_active_users(self, data):
-        plots = self.rvtp.plot_most_active_users(
-            self.context.number_of_most_active_user)
-        if plots:
-            data['resource_view_users'] = build_plot_images_dictionary(plots)
-            self.options['has_resource_view_users'] = True
-        return data
+        # Building chart Data
+        if resource_views['num_rows'] > 1:
+            chart = build_event_chart_data(dataframes['df_by_timestamp'],
+                                       'number_of_resource_views',
+                                       'Resource Viewed')
+            resource_views['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            resource_views['events_chart'] = False
+        return resource_views

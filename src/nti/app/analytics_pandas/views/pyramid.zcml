@@ -7,6 +7,7 @@
 	<include package="pyramid_zcml" />
 
 	<pyramid:scan package=".topics" />
+	<pyramid:scan package=".resource_views" />
 
 	<!--
 	<pyramid:scan package=".notes" />
@@ -17,7 +18,6 @@
 	<pyramid:scan package=".highlights" />
 	<pyramid:scan package=".assessments" />
 	<pyramid:scan package=".enrollments" />
-	<pyramid:scan package=".resource_views" />
 	-->
 	
 </configure>

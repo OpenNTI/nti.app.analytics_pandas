@@ -1,0 +1,27 @@
+<metal:block
+	xmlns:tal="http://xml.zope.org/namespaces/tal"
+	xmlns:metal="http://xml.zope.org/namespaces/metal"
+	tal:define="options view/options">
+
+	<tal:block tal:condition="python: options['has_resource_view_events']">
+		<para style="normal" spaceAfter=".5in" >
+			This document presents an overview of resource views in <u>${options/course_names}</u> from <strong>${context/start_date}</strong> through <strong>${context/end_date}</strong>.
+			It includes total number of resource views and most active user viewing resource during the time period. It also shows resource views plots grouped by device and resource types.
+		</para>
+	</tal:block>	
+	<hr width="100%" />
+	
+	<tal:block tal:condition="python: options['has_resource_view_events']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Total Resource Views
+		</h1>
+		<hr width="100%" />
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/resources_viewed/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+	</tal:block>
+</metal:block>
