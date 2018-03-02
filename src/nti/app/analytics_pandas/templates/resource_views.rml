@@ -19,11 +19,9 @@
 		</h1>
 		<hr width="100%" />
 		<illustration width="5in" height="3in"
-					  tal:define="event options/data/resource_view_events/event_resource_views;
-								  user_event options/data/resource_view_events/user_resource_views;
-								  ratio_event options/data/resource_view_events/ratio_resource_views"
-					  tal:condition="options/data/resource_view_events"
-					  metal:use-macro="macro:three_plots_event">
+					  tal:define="echart options/data/resources_viewed/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
 		</illustration>
 	</tal:block>
 </metal:block>

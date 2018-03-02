@@ -10,6 +10,10 @@ from __future__ import absolute_import
 
 from pyramid.view import view_config
 
+from nti.analytics_pandas.analysis import ResourceViewsTimeseries
+
+from nti.analytics_pandas.analysis.common import get_data
+
 from nti.app.analytics_pandas.views import MessageFactory as _
 
 from nti.app.analytics_pandas.views.commons import build_event_chart_data
@@ -19,8 +23,6 @@ from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
-from nti.analytics_pandas.analysis import ResourceViewsTimeseries
-
 logger = __import__('logging').getLogger(__name__)
 
 @view_config(name="ResourceViewsReport")
@@ -28,7 +30,7 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
 
     @property
     def report_title(self):
-        return _(u'Resource Views')
+        return _(u'Resource Views Report')
 
     def _build_data(self, data=_('sample resource views report')):
         keys = self.options.keys()
@@ -51,6 +53,7 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
         return self.options
 
     def __call__(self):
+        from IPython.terminal.debugger import set_trace;set_trace()
         values = self.readInput()
         if "MimeType" not in values.keys():
             values["MimeType"] = 'application/vnd.nextthought.reports.resourceviewstimeseriescontext'
@@ -70,19 +73,15 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
                                       period=self.options['period'])
             if not rvt.dataframe.empty:
                 self.options['has_resource_view_events'] = True
+                data['resources_viewed'] = build_resources_viewed_data(rvt)
 
         self._build_data(data)
         return self.options
 
-    def build_resource_views_data(self, rvt):
+    def build_resources_viewed_data(self, rvt):
         resource_views = {}
         dataframes = get_data(rvt)
         resource_views['num_rows'] = dataframes['df_by_timestamp'].shape[0]
-
-        # Building table data
-        resource_views['tuples'] = build_event_table_data(
-            dataframes['df_by_timestamp'])
-        resource_views['column_name'] = u'Resource Viewed'
 
         # Building chart Data
         if resource_views['num_rows'] > 1:
@@ -92,5 +91,4 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
             resource_views['events_chart'] = save_chart_to_temporary_file(chart)
         else:
             resource_views['events_chart'] = False
-        
         return resource_views
