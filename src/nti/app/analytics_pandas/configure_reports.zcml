@@ -45,8 +45,8 @@
 
 	<!-- Resource views report -->
 	<z3c:template
-		template="templatesresource_views.rml"
-		for=".resource_views.ResourceViewsTimeseriesReportView"
+		template="templates/resource_views_report.rml"
+		for=".views.resource_views.ResourceViewsTimeseriesReportView"
 		layer="pyramid.interfaces.IRequest" />
 
 	<browser:viewlet
