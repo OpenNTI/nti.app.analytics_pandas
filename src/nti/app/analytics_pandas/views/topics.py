@@ -142,14 +142,18 @@ class TopicsTimeseriesReportView(AbstractReportView):
             topics_created['events_chart'] = False
         
         #Building table and chart grouped by enrollment type
-        if not dataframes['df_per_enrollment_type'].empty:
+        if 'df_per_enrollment_type' in dataframes.keys():
             self.options['has_topics_created_per_enrollment_types'] = True
             self.build_topic_created_by_enrollment_type(dataframes['df_per_enrollment_type'], topics_created)
+        else:
+            self.options['has_topics_created_per_enrollment_types'] = False
 
         #Building table and chart grouped by device type
-        if not dataframes['df_per_device_types'].empty:
+        if 'df_per_device_types' in dataframes.keys():
             self.options['has_topics_created_per_device_types'] = True
             self.build_topic_created_by_device_type(dataframes['df_per_device_types'], topics_created)
+        else:
+            self.options['has_topics_created_per_device_types'] = False
         
         return topics_created
 
