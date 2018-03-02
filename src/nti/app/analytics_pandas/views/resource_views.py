@@ -10,17 +10,12 @@ from __future__ import absolute_import
 
 from pyramid.view import view_config
 
-from nti.app.analytics_pandas.model import ResourceViewsTimeseriesContext
 
 from nti.app.analytics_pandas.views import MessageFactory as _
-
-from nti.app.analytics_pandas.views.commons import get_course_names
-from nti.app.analytics_pandas.views.commons import build_plot_images_dictionary
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
 from nti.analytics_pandas.analysis import ResourceViewsTimeseries
-from nti.analytics_pandas.analysis import ResourceViewsTimeseriesPlot
 
 from nti.externalization.interfaces import StandardExternalFields
 
@@ -87,46 +82,3 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
         data = self.get_the_most_active_users(data)
         self._build_data(data)
         return self.options
-
-    def get_resource_view_events(self, data):
-        plots = self.rvtp.explore_events(self.context.period_breaks,
-                                         self.context.minor_period_breaks,
-                                         self.context.theme_bw_)
-        if plots:
-            data['resource_view_events'] = build_plot_images_dictionary(plots)
-        return data
-
-    def get_resource_views_per_device_types(self, data):
-        plots = self.rvtp.analyze_device_type(self.context.period_breaks,
-                                              self.context.minor_period_breaks,
-                                              self.context.theme_bw_)
-        if plots:
-            data['resource_views_per_device_types'] = build_plot_images_dictionary(plots)
-            self.options['has_resource_views_per_device_types'] = True
-        return data
-
-    def get_resource_views_per_enrollment_types(self, data):
-        plots = self.rvtp.analyze_enrollment_type(self.context.period_breaks,
-                                                  self.context.minor_period_breaks,
-                                                  self.context.theme_bw_)
-        if plots:
-            data['resource_views_per_enrollment_types'] = build_plot_images_dictionary(plots)
-            self.options['has_resource_views_per_enrollment_types'] = True
-        return data
-
-    def get_resource_views_per_resource_types(self, data):
-        plots = self.rvtp.analyze_resource_type(self.context.period_breaks,
-                                                self.context.minor_period_breaks,
-                                                self.context.theme_bw_)
-        if plots:
-            data['resource_views_per_resource_types'] = build_plot_images_dictionary(plots)
-            self.options['has_resource_views_per_resource_types'] = True
-        return data
-
-    def get_the_most_active_users(self, data):
-        plots = self.rvtp.plot_most_active_users(
-            self.context.number_of_most_active_user)
-        if plots:
-            data['resource_view_users'] = build_plot_images_dictionary(plots)
-            self.options['has_resource_view_users'] = True
-        return data
