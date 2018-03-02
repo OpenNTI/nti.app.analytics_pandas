@@ -18,7 +18,6 @@
 	<pyramid:scan package=".highlights" />
 	<pyramid:scan package=".assessments" />
 	<pyramid:scan package=".enrollments" />
-	<pyramid:scan package=".resource_views" />
 	-->
 	
 </configure>

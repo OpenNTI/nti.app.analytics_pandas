@@ -66,6 +66,10 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
             self.options['course_names'] = ", ".join(map(str, course_names or ()))
             self.options['start_date'] = values['start_date']
             self.options['end_date'] = values['end_date']
+            if 'period' in values.keys():
+                self.options['period'] = values['period']
+            else:
+                self.options['period'] = u'daily'
             rvt = ResourceViewsTimeseries(self.db.session,
                                       self.options['start_date'],
                                       self.options['end_date'],
