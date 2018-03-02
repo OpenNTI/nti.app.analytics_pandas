@@ -108,8 +108,8 @@ def get_course_id_and_name_given_ntiid(session, course_ntiid):
     qc = QueryCourses(session)
     df = qc.get_course_given_ntiid(course_ntiid)
 
-    course_ids = []
-    course_names = []
+    course_ids = ()
+    course_names = ()
     if not df.empty:
         course_ids = df['context_id'].tolist()
         course_names = df['context_name'].tolist()
