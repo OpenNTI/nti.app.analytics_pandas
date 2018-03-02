@@ -7,6 +7,7 @@
 	<include package="pyramid_zcml" />
 
 	<pyramid:scan package=".topics" />
+	<pyramid:scan package=".resource_views" />
 
 	<!--
 	<pyramid:scan package=".notes" />
