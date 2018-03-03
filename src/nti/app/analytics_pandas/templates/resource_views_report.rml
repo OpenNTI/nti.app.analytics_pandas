@@ -5,7 +5,7 @@
 
 	<tal:block tal:condition="python: options['has_resource_view_events']">
 		<para style="normal" spaceAfter=".5in" >
-			This document presents an overview of resource views in <u>${options/course_names}</u> from <strong>${context/start_date}</strong> through <strong>${context/end_date}</strong>.
+			This document presents an overview of resource views in <u>${options/course_names}</u> from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
 			It includes total number of resource views and most active user viewing resource during the time period. It also shows resource views plots grouped by device and resource types.
 		</para>
 	</tal:block>	
