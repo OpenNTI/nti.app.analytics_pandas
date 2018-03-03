@@ -53,6 +53,7 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
         return self.options
 
     def __call__(self):
+        values = self.readInput()
         if "MimeType" not in values.keys():
             values["MimeType"] = 'application/vnd.nextthought.reports.resourceviewstimeseriescontext'
         self.options['ntiid'] = values['ntiid']
