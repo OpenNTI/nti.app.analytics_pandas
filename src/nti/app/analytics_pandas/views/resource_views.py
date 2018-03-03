@@ -75,8 +75,9 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
                                       period=self.options['period'])
             if not rvt.dataframe.empty:
                 self.options['has_resource_view_events'] = True
-                data['resources_viewed'] = build_resources_viewed_data(rvt)
+                data['resources_viewed'] = self.build_resources_viewed_data(rvt)
 
+        values = self.readInput()
         self._build_data(data)
         return self.options
 
