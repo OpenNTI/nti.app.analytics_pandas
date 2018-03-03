@@ -17,6 +17,7 @@ from nti.analytics_pandas.analysis.common import reset_dataframe_
 
 from nti.app.analytics_pandas.views import MessageFactory as _
 
+from nti.app.analytics_pandas.views.commons import iternamedtuples
 from nti.app.analytics_pandas.views.commons import build_event_chart_data
 from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
 from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
@@ -117,6 +118,7 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
         else:
             self.options['has_resource_views_per_enrollment_types'] = False
 
+        self.get_the_n_most_viewed_resources(rvt, resource_views, max_rank_number=20)
         return resource_views
 
     def build_resources_viewed_by_type_data(self, rvt, resource_views):
@@ -143,4 +145,11 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
         columns = ['timestamp_period', 'enrollment_type',
                    'number_of_resource_views']
         df = df[columns]
-        build_events_created_by_enrollment_type(df, resource_views)
+        resource_views = build_events_created_by_enrollment_type(df, resource_views)
+
+    def get_the_n_most_viewed_resources(self, rvt, resource_views, max_rank_number=10):
+        df = rvt.get_the_most_viewed_resources(max_rank_number)
+        columns = ['number_of_views', 'resource_display_name', 'resource_type']
+        df = df[columns]
+        tuples = iternamedtuples(df, columns)
+        resource_views['n_most_viewed_resources'] = tuples

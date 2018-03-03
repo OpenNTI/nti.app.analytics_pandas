@@ -28,6 +28,34 @@
 		</illustration>
 	</tal:block>
 
+	<tal:block tal:condition="python: options['has_resource_view_events']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			The Most Viewed Resources
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This pages shows the n most resources viewed during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
+		</para>
+		<blockTable style="default"
+					alignment="left"
+					colWidths="25% 50% 25%"
+					tal:define="tuples options/data/resources_viewed/n_most_viewed_resources"
+					repeatRows="1">
+			<tr>
+				<td>Number of Views</td>
+				<td>Resource Title</td>
+				<td>Resource Name</td>
+			</tr>
+			<tr tal:repeat="item tuples">
+				<td fontSize="8" tal:content="item/number_of_views">1</td>
+				<td fontSize="8" tal:content="item/resource_display_name">Reading 1</td>
+				<td fontSize="8" tal:content="item/resource_type">Reading</td>
+			</tr>
+		</blockTable>
+	</tal:block>
+
 	<tal:block tal:condition="python: options['has_resource_views_per_resource_types']">
 		<setNextTemplate name="main"/>
 		<nextPage />
