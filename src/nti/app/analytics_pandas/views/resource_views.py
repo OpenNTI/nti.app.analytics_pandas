@@ -21,6 +21,8 @@ from nti.app.analytics_pandas.views.commons import build_event_chart_data
 from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
 from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
 from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
+from nti.app.analytics_pandas.views.commons import build_events_created_by_device_type
+from nti.app.analytics_pandas.views.commons import build_events_created_by_enrollment_type
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
@@ -87,7 +89,6 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
         resource_views = {}
         dataframes = get_data(rvt)
         resource_views['num_rows'] = dataframes['df_by_timestamp'].shape[0]
-
         # Building chart Data
         if resource_views['num_rows'] > 1:
             chart = build_event_chart_data(dataframes['df_by_timestamp'],
@@ -96,7 +97,21 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
             resource_views['events_chart'] = save_chart_to_temporary_file(chart)
         else:
             resource_views['events_chart'] = False
+        
         self.build_resources_viewed_by_type_data(rvt, resource_views)
+
+        if 'df_per_device_types' in dataframes.keys():
+            self.options['has_resource_views_per_device_types'] = True
+            self.build_resources_viewed_by_device_type_data(dataframes['df_per_device_types'], resource_views)
+        else:
+            self.options['has_resource_views_per_device_types'] = False
+
+        if 'df_per_enrollment_type' in dataframes.keys():
+            self.options['has_resource_views_per_enrollment_types'] = True
+            self.build_resources_viewed_by_enrollment_type_data(dataframes['df_per_enrollment_type'], resource_views)
+        else:
+            self.options['has_resource_views_per_enrollment_types'] = False
+        
         return resource_views
 
     def build_resources_viewed_by_type_data(self, rvt, resource_views):
@@ -111,4 +126,13 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
             self.options['has_resource_views_per_resource_types'] = True
         else:
             resource_views['by_resource_type_chart'] = False
-        
+
+    def build_resources_viewed_by_device_type_data(self, df, resource_views):
+        columns = ['timestamp_period', 'device_type', 'number_of_resource_views']
+        df = df[columns]
+        resource_views = build_events_created_by_device_type(df, resource_views)
+
+    def build_resources_viewed_by_enrollment_type_data(self, df, resource_views):
+        columns = ['timestamp_period', 'enrollment_type', 'number_of_resource_views']
+        df = df[columns]
+        resource_views = build_events_created_by_enrollment_type(df, resource_views)
