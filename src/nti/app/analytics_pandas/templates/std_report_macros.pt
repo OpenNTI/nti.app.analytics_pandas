@@ -198,7 +198,7 @@
 
 		</blockTableStyle>
 
-		<blockTableStyle id="header_table">
+		<blockTableStyle id="pandas_header_table">
 			<blockFont start="0,0" stop="-1,-1" name="OpenSans" size="10" />
 		</blockTableStyle>
 
@@ -238,8 +238,8 @@
 
 		<tal:block metal:define-macro="header">
 			<img metal:use-macro="macro:header_graphic" />
-			<blockTable alignment='right' style="header_table"
-						tal:content="structure provider:header_table">
+			<blockTable alignment='right' style="pandas_header_table"
+						tal:content="structure provider:pandas_header_table">
 			</blockTable>
 			<nextFrame />
 		</tal:block>
