@@ -121,11 +121,13 @@ class TimeSeriesSimpleChart(_DrawingEditorMixin, Drawing):
 
 class TimeSeriesGroupedChart(_DrawingEditorMixin, Drawing):
 
-    def __init__(self, data, group_legend, width=600, height=400):
+    def __init__(self, data, group_legend, width=700, height=400,
+                 legend_y=350, legend_x=100,
+                 cwidth=600, cheight=250, cy=50, cx=50):
         Drawing.__init__(self, width, height)
         # font
         fontName = 'Helvetica'
-        fontSize = 12
+        fontSize = 14
         # common values
         strokeWidth = 0.5
         dashArray = (0.3, 1)
@@ -135,7 +137,7 @@ class TimeSeriesGroupedChart(_DrawingEditorMixin, Drawing):
         # colours
         colorsList = generate_random_hex_colors(len(group_legend))
         # pylint: disable=no-member
-        for i, color in enumerate(colorsList[:3]):
+        for i, color in enumerate(colorsList):
             self.chart.lines[i].strokeColor = color
         # x axis
         self.chart.xValueAxis = NormalDateXValueAxis()
@@ -185,7 +187,7 @@ class TimeSeriesGroupedChart(_DrawingEditorMixin, Drawing):
         for i in range(len(self.chart.data)):
             self.chart.lines[i].name = group_legend[i]
 
-        self.chart.x = 50
+        self.chart.x = cx
         self.chart.xValueAxis.visible = 1
         self.chart.xValueAxis.visibleGrid = 0
         self.chart.xValueAxis.visibleTicks = 1
@@ -193,9 +195,11 @@ class TimeSeriesGroupedChart(_DrawingEditorMixin, Drawing):
         self.chart.xValueAxis.strokeWidth = 0.5
         self.chart.xValueAxis.gridStrokeWidth = 0.25
 
-        self.chart.y = 50
-        self.chart.width = 500
-        self.chart.height = 250
+        self.chart.lines.symbol = makeMarker('FilledSquare')
+
+        self.chart.y = cy
+        self.chart.width = cwidth
+        self.chart.height = cheight
         self.chart.yValueAxis.tickLeft = 0
-        self.legend.y = 325
-        self.legend.x = 100
+        self.legend.y = legend_y
+        self.legend.x = legend_x
