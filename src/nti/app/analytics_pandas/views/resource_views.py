@@ -28,6 +28,7 @@ from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
 logger = __import__('logging').getLogger(__name__)
 
+
 @view_config(name="ResourceViewsReport")
 class ResourceViewsTimeseriesReportView(AbstractReportView):
 
@@ -73,10 +74,10 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
             else:
                 self.options['period'] = u'daily'
             rvt = ResourceViewsTimeseries(self.db.session,
-                                      self.options['start_date'],
-                                      self.options['end_date'],
-                                      self.options['course_ids'] or (),
-                                      period=self.options['period'])
+                                          self.options['start_date'],
+                                          self.options['end_date'],
+                                          self.options['course_ids'] or (),
+                                          period=self.options['period'])
             if not rvt.dataframe.empty:
                 self.options['has_resource_view_events'] = True
                 data['resources_viewed'] = self.build_resources_viewed_data(rvt)
@@ -92,35 +93,40 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
         # Building chart Data
         if resource_views['num_rows'] > 1:
             chart = build_event_chart_data(dataframes['df_by_timestamp'],
-                                       'number_of_resource_views',
-                                       'Resource Viewed')
+                                           'number_of_resource_views',
+                                           'Resource Viewed')
             resource_views['events_chart'] = save_chart_to_temporary_file(chart)
         else:
             resource_views['events_chart'] = False
-        
+
         self.build_resources_viewed_by_type_data(rvt, resource_views)
 
         if 'df_per_device_types' in dataframes.keys():
             self.options['has_resource_views_per_device_types'] = True
-            self.build_resources_viewed_by_device_type_data(dataframes['df_per_device_types'], resource_views)
+            self.build_resources_viewed_by_device_type_data(
+                dataframes['df_per_device_types'], resource_views
+            )
         else:
             self.options['has_resource_views_per_device_types'] = False
 
         if 'df_per_enrollment_type' in dataframes.keys():
             self.options['has_resource_views_per_enrollment_types'] = True
-            self.build_resources_viewed_by_enrollment_type_data(dataframes['df_per_enrollment_type'], resource_views)
+            self.build_resources_viewed_by_enrollment_type_data(
+                dataframes['df_per_enrollment_type'], resource_views
+            )
         else:
             self.options['has_resource_views_per_enrollment_types'] = False
-        
+
         return resource_views
 
     def build_resources_viewed_by_type_data(self, rvt, resource_views):
         df = rvt.analyze_events_based_on_resource_type()
         df = reset_dataframe_(df)
-        columns = ['timestamp_period', 'resource_type', 'number_of_resource_views']
+        columns = ['timestamp_period', 'resource_type',
+                   'number_of_resource_views']
         df = df[columns]
         resource_views['num_rows_resource_type'] = df.shape[0]
-        if ['num_rows_resource_type'] > 1:
+        if resource_views['num_rows_resource_type'] > 1:
             chart = build_event_grouped_chart_data(df, 'resource_type')
             resource_views['by_resource_type_chart'] = save_chart_to_temporary_file(chart)
             self.options['has_resource_views_per_resource_types'] = True
@@ -128,11 +134,13 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
             resource_views['by_resource_type_chart'] = False
 
     def build_resources_viewed_by_device_type_data(self, df, resource_views):
-        columns = ['timestamp_period', 'device_type', 'number_of_resource_views']
+        columns = ['timestamp_period', 'device_type',
+                   'number_of_resource_views']
         df = df[columns]
-        resource_views = build_events_created_by_device_type(df, resource_views)
+        build_events_created_by_device_type(df, resource_views)
 
     def build_resources_viewed_by_enrollment_type_data(self, df, resource_views):
-        columns = ['timestamp_period', 'enrollment_type', 'number_of_resource_views']
+        columns = ['timestamp_period', 'enrollment_type',
+                   'number_of_resource_views']
         df = df[columns]
-        resource_views = build_events_created_by_enrollment_type(df, resource_views)
+        build_events_created_by_enrollment_type(df, resource_views)
