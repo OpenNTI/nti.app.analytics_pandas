@@ -15,9 +15,12 @@
 		<setNextTemplate name="main"/>
 		<nextPage />
 		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
-			Total Resource Views
+			Resource Views
 		</h1>
 		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This chart shows the number of resources views during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users viewing resources and the ratio of total resources viewed over number of unique users. 
+		</para>
 		<illustration width="5in" height="3in"
 					  tal:define="echart options/data/resources_viewed/events_chart"
 					  tal:condition="echart"
