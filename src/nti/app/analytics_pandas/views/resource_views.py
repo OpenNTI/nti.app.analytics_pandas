@@ -96,11 +96,10 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
             resource_views['events_chart'] = save_chart_to_temporary_file(chart)
         else:
             resource_views['events_chart'] = False
-        self.build_resources_viewed_by_type_data(rvt)
+        self.build_resources_viewed_by_type_data(rvt, resource_views)
         return resource_views
 
-    def build_resources_viewed_by_type_data(self, rvt):
-        resource_views = {}
+    def build_resources_viewed_by_type_data(self, rvt, resource_views):
         df = rvt.analyze_events_based_on_resource_type()
         df = reset_dataframe_(df)
         columns = ['timestamp_period', 'resource_type', 'number_of_resource_views']
@@ -112,5 +111,4 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
             self.options['has_resource_views_per_resource_types'] = True
         else:
             resource_views['by_resource_type_chart'] = False
-            self.options['has_resource_views_per_resource_types'] = False
         
