@@ -203,6 +203,16 @@ def build_event_grouped_chart_data(df, group_col):
     chart = TimeSeriesGroupedChart(data=chart_data, group_legend=groups)
     return chart
 
+def build_events_created_by_device_type(df, events_dict):
+    events_dict['tuples_device_type'] = build_event_grouped_table_data(df)
+    events_dict['device_col'] = 'Device Type'
+
+    events_dict['num_rows_device'] = df.shape[0]
+    if events_dict['num_rows_device'] > 1:
+        chart = build_event_grouped_chart_data(df, 'device_type')
+        events_dict['by_device_chart'] = save_chart_to_temporary_file(chart)
+    return events_dict
+
 def extract_group_dataframe(df, group_col):
     """
     Given a column name, extract dataframe into a data list.
