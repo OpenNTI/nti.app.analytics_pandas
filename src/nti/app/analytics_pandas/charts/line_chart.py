@@ -135,7 +135,7 @@ class TimeSeriesGroupedChart(_DrawingEditorMixin, Drawing):
         # colours
         colorsList = generate_random_hex_colors(len(group_legend))
         # pylint: disable=no-member
-        for i, color in enumerate(colorsList[:3]):
+        for i, color in enumerate(colorsList):
             self.chart.lines[i].strokeColor = color
         # x axis
         self.chart.xValueAxis = NormalDateXValueAxis()
