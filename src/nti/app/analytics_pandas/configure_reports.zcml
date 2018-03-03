@@ -25,7 +25,7 @@
 		have a content template registered.
 	-->
 	<browser:viewletManager
-		name="header_manager"
+		name="pandas_header_manager"
 		permission="zope.Public"
 		provides=".interfaces.IPDFReportHeaderManager" />
 	
@@ -216,8 +216,8 @@
 		view="zope.interface.Interface"
 		layer="pyramid.interfaces.IRequest" />
 
-	<!-- A default header_table that does nothing -->
-	<adapter name="header_table"
+	<!-- A default pandas_header_table that does nothing -->
+	<adapter name="pandas_header_table"
 		for="zope.interface.Interface
 			 pyramid.interfaces.IRequest
 			 zope.interface.Interface"
