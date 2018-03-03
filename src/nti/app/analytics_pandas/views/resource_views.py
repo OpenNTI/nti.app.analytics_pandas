@@ -108,7 +108,6 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
         resource_views['num_rows_resource_type'] = df.shape[0]
         if ['num_rows_resource_type'] > 1:
             chart = build_event_grouped_chart_data(df, 'resource_type')
-            from IPython.terminal.debugger import set_trace;set_trace()
             resource_views['by_resource_type_chart'] = save_chart_to_temporary_file(chart)
             self.options['has_resource_views_per_resource_types'] = True
         else:
