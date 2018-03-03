@@ -13,6 +13,7 @@ from pyramid.view import view_config
 from nti.analytics_pandas.analysis import ResourceViewsTimeseries
 
 from nti.analytics_pandas.analysis.common import get_data
+from nti.analytics_pandas.analysis.common import reset_dataframe_
 
 from nti.app.analytics_pandas.views import MessageFactory as _
 
@@ -95,4 +96,22 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
             resource_views['events_chart'] = save_chart_to_temporary_file(chart)
         else:
             resource_views['events_chart'] = False
+        self.build_resources_viewed_by_type_data(rvt)
         return resource_views
+
+    def build_resources_viewed_by_type_data(self, rvt):
+        resource_views = {}
+        df = rvt.analyze_events_based_on_resource_type()
+        df = reset_dataframe_(df)
+        columns = ['timestamp_period', 'resource_type', 'number_of_resource_views']
+        df = df[columns]
+        resource_views['num_rows_resource_type'] = df.shape[0]
+        if ['num_rows_resource_type'] > 1:
+            chart = build_event_grouped_chart_data(df, 'resource_type')
+            from IPython.terminal.debugger import set_trace;set_trace()
+            resource_views['by_resource_type_chart'] = save_chart_to_temporary_file(chart)
+            self.options['has_resource_views_per_resource_types'] = True
+        else:
+            resource_views['by_resource_type_chart'] = False
+            self.options['has_resource_views_per_resource_types'] = False
+        
