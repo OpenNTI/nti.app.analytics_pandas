@@ -121,11 +121,11 @@ class TimeSeriesSimpleChart(_DrawingEditorMixin, Drawing):
 
 class TimeSeriesGroupedChart(_DrawingEditorMixin, Drawing):
 
-    def __init__(self, data, group_legend, width=600, height=400):
+    def __init__(self, data, group_legend, width=700, height=400):
         Drawing.__init__(self, width, height)
         # font
         fontName = 'Helvetica'
-        fontSize = 12
+        fontSize = 14
         # common values
         strokeWidth = 0.5
         dashArray = (0.3, 1)
@@ -193,9 +193,11 @@ class TimeSeriesGroupedChart(_DrawingEditorMixin, Drawing):
         self.chart.xValueAxis.strokeWidth = 0.5
         self.chart.xValueAxis.gridStrokeWidth = 0.25
 
+        self.chart.lines.symbol = makeMarker('FilledSquare')
+
         self.chart.y = 50
-        self.chart.width = 500
+        self.chart.width = 600
         self.chart.height = 250
         self.chart.yValueAxis.tickLeft = 0
-        self.legend.y = 325
+        self.legend.y = 350
         self.legend.x = 100
