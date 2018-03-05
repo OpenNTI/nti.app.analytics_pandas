@@ -27,6 +27,7 @@ from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_dat
 from nti.app.analytics_pandas.views.commons import build_event_grouped_table_data
 from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
 from nti.app.analytics_pandas.views.commons import build_events_data_by_device_type
+from nti.app.analytics_pandas.views.commons import build_events_data_by_resource_type
 from nti.app.analytics_pandas.views.commons import build_events_data_by_enrollment_type
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
@@ -105,19 +106,35 @@ class NotesTimeseriesReportView(AbstractReportView):
             note_views['tuples'] = False
 
         self.get_the_n_most_viewed_notes_and_its_author(nvt, note_views, max_rank_number=10)
+        self.build_notes_viewed_by_resource_type_data(nvt, note_views)
         return note_views
 
-    def build_notes_viewed_by_device_type_data(self, df, note_views):
+    def build_notes_viewed_by_device_type_data(self, nvt, note_views):
+        df = nvt.analyze_total_events_based_on_device_type()
+        df = reset_dataframe_(df)
         columns = ['timestamp_period', 'device_type',
                    'number_of_note_views']
         df = df[columns]
         build_events_data_by_device_type(df, note_views)
 
-    def build_notes_viewed_by_enrollment_type_data(self, df, note_views):
+    def build_notes_viewed_by_enrollment_type_data(self, nvt, note_views):
+        df = nvt.analyze_total_events_based_on_enrollment_type()
+        df = reset_dataframe_(df)
         columns = ['timestamp_period', 'enrollment_type',
                    'number_of_note_views']
         df = df[columns]
         build_events_data_by_enrollment_type(df, note_views)
+
+    def build_notes_viewed_by_resource_type_data(self, nvt, note_views):
+        df = nvt.analyze_total_events_based_on_resource_type()
+        if df.empty:
+            return
+        self.options['has_note_views_per_resource_types'] = True
+        df = reset_dataframe_(df)
+        columns = ['timestamp_period', 'resource_type',
+                   'number_of_note_views']
+        df = df[columns]
+        build_events_data_by_resource_type(df, note_views)
 
     def get_the_n_most_viewed_notes_and_its_author(self, nvt, note_views, max_rank_number=10):
         df = nvt.get_the_most_viewed_notes_and_its_author(max_rank_number)
