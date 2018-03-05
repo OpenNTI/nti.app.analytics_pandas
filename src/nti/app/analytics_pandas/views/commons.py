@@ -216,7 +216,7 @@ def build_event_grouped_chart_data(df, group_col):
     return chart
 
 
-def build_events_created_by_device_type(df, events_dict):
+def build_events_data_by_device_type(df, events_dict):
     events_dict['num_rows_device'] = df.shape[0]
     timestamp_num = len(np.unique(df['timestamp_period'].values.ravel()))
     if events_dict['num_rows_device'] > 1 and timestamp_num > 1:
@@ -233,7 +233,7 @@ def build_events_created_by_device_type(df, events_dict):
     return events_dict
 
 
-def build_events_created_by_enrollment_type(df, events_dict):
+def build_events_data_by_enrollment_type(df, events_dict):
     events_dict['num_rows_enrollment'] = df.shape[0]
     timestamp_num = len(np.unique(df['timestamp_period'].values.ravel()))
     if events_dict['num_rows_enrollment'] > 1 and timestamp_num > 1:
@@ -247,6 +247,36 @@ def build_events_created_by_enrollment_type(df, events_dict):
         events_dict['enrollment_col'] = _(u'Enrollment Type')
     else:
         events_dict['tuples_enrollment_type'] = ()
+
+def build_events_data_by_resource_type(df, events_dict):
+    events_dict['num_rows_resource'] = df.shape[0]
+    timestamp_num = len(np.unique(df['timestamp_period'].values.ravel()))
+    if events_dict['num_rows_resource'] > 1 and timestamp_num > 1:
+        chart = build_event_grouped_chart_data(df, 'resource_type')
+        events_dict['by_resource_chart'] = save_chart_to_temporary_file(chart)
+    else:
+        events_dict['by_resource_chart'] = ()
+    
+    if events_dict['num_rows_resource'] == 1 and timestamp_num == 1:
+        events_dict['tuples_resource_type'] = build_event_grouped_table_data(df)
+        events_dict['resource_col'] = _(u'Resource Type')
+    else:
+        events_dict['tuples_resource_type'] = ()
+
+def build_events_data_by_sharing_type(df, events_dict):
+    events_dict['num_rows_sharing'] = df.shape[0]
+    timestamp_num = len(np.unique(df['timestamp_period'].values.ravel()))
+    if events_dict['num_rows_sharing'] > 1 and timestamp_num > 1:
+        chart = build_event_grouped_chart_data(df, 'sharing')
+        events_dict['by_sharing_chart'] = save_chart_to_temporary_file(chart)
+    else:
+        events_dict['by_sharing_chart'] = ()
+    
+    if events_dict['num_rows_sharing'] == 1 and timestamp_num == 1:
+        events_dict['tuples_sharing_type'] = build_event_grouped_table_data(df)
+        events_dict['sharing_col'] = _(u'Sharing Type')
+    else:
+        events_dict['tuples_sharing_type'] = ()
 
 def extract_group_dataframe(df, group_col):
     """

@@ -26,8 +26,8 @@ from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
 from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
 from nti.app.analytics_pandas.views.commons import build_event_grouped_table_data
 from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
-from nti.app.analytics_pandas.views.commons import build_events_created_by_device_type
-from nti.app.analytics_pandas.views.commons import build_events_created_by_enrollment_type
+from nti.app.analytics_pandas.views.commons import build_events_data_by_device_type
+from nti.app.analytics_pandas.views.commons import build_events_data_by_enrollment_type
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
@@ -163,13 +163,13 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
         columns = ['timestamp_period', 'device_type',
                    'number_of_resource_views']
         df = df[columns]
-        build_events_created_by_device_type(df, resource_views)
+        build_events_data_by_device_type(df, resource_views)
 
     def build_resources_viewed_by_enrollment_type_data(self, df, resource_views):
         columns = ['timestamp_period', 'enrollment_type',
                    'number_of_resource_views']
         df = df[columns]
-        build_events_created_by_enrollment_type(df, resource_views)
+        build_events_data_by_enrollment_type(df, resource_views)
 
     def get_the_n_most_viewed_resources(self, rvt, resource_views, max_rank_number=10):
         df = rvt.get_the_most_viewed_resources(max_rank_number)
