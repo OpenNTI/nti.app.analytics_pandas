@@ -19,13 +19,35 @@
 		</h1>
 		<hr width="100%" />
 		<para style="subdesc" spaceAfter=".5in" >
-			This chart shows the number of resources views during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users viewing resources and the ratio of total resources viewed over number of unique users. 
+			This page shows the number of resources views during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users viewing resources and the ratio of total resources viewed over number of unique users. 
 		</para>
 		<illustration width="5in" height="3in"
 					  tal:define="echart options/data/resources_viewed/events_chart"
 					  tal:condition="echart"
 					  metal:use-macro="macro:pandas_one_page_chart">
 		</illustration>
+		<tal:block tal:define="tuples options/data/resources_viewed/tuples">
+			<blockTable style="default"
+						alignment="left"
+						colWidths="20% 20% 20% 20% 20%"
+						tal:condition="tuples"
+						repeatRows="1">
+				<tr>
+					<td>Date</td>
+					<td>Resources Viewed</td>
+					<td>Unique Resources</td>
+					<td>Unique Users</td>
+					<td>Ratio</td>
+				</tr>
+				<tr tal:repeat="item tuples">
+					<td fontSize="8" tal:content="item/timestamp_period">2015-03-01</td>
+					<td fontSize="8" tal:content="item/number_of_resource_views">31</td>
+					<td fontSize="8" tal:content="item/number_of_unique_resource">13</td>
+					<td fontSize="8" tal:content="item/number_of_unique_users">4</td>
+					<td fontSize="8" tal:content="item/ratio">7.75</td>
+				</tr>
+			</blockTable>
+		</tal:block>
 	</tal:block>
 
 	<tal:block tal:condition="python: options['has_resource_view_events']">

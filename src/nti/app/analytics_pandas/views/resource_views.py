@@ -21,6 +21,7 @@ from nti.app.analytics_pandas.views import MessageFactory as _
 
 from nti.app.analytics_pandas.views.commons import iternamedtuples
 from nti.app.analytics_pandas.views.commons import build_event_chart_data
+from nti.app.analytics_pandas.views.commons import build_event_table_data
 from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
 from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
 from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
@@ -101,7 +102,14 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
             resource_views['events_chart'] = save_chart_to_temporary_file(chart)
         else:
             resource_views['events_chart'] = False
-
+        
+        if resource_views['num_rows'] == 1:
+            columns =dataframes['df_by_timestamp'].columns.tolist()
+            resource_views['tuples'] = build_event_table_data(
+                dataframes['df_by_timestamp'], columns)
+        else:
+            resource_views['tuples'] = False
+        from IPython.terminal.debugger import set_trace;set_trace()
         self.build_resources_viewed_by_type_data(rvt, resource_views)
 
         if 'df_per_device_types' in dataframes.keys():
