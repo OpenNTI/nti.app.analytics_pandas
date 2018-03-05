@@ -108,11 +108,13 @@ class NotesTimeseriesReportView(AbstractReportView):
         self.get_the_n_most_viewed_notes_and_its_author(nvt, note_views, max_rank_number=10)
         self.build_notes_viewed_by_resource_type_data(nvt, note_views)
         self.build_notes_viewed_by_device_type_data(nvt, note_views)
+        self.build_notes_viewed_by_enrollment_type_data(nvt, note_views)
         return note_views
 
     def build_notes_viewed_by_device_type_data(self, nvt, note_views):
         df = nvt.analyze_total_events_based_on_device_type()
         if df.empty:
+            self.options['has_note_views_per_device_types'] = False
             return
         df = reset_dataframe_(df)
         self.options['has_note_views_per_device_types'] = True
@@ -123,6 +125,10 @@ class NotesTimeseriesReportView(AbstractReportView):
 
     def build_notes_viewed_by_enrollment_type_data(self, nvt, note_views):
         df = nvt.analyze_total_events_based_on_enrollment_type()
+        if df.empty:
+            self.options['has_note_views_per_enrollment_types'] = False
+            return
+        self.options['has_note_views_per_enrollment_types'] = True
         df = reset_dataframe_(df)
         columns = ['timestamp_period', 'enrollment_type',
                    'number_of_note_views']
@@ -132,6 +138,7 @@ class NotesTimeseriesReportView(AbstractReportView):
     def build_notes_viewed_by_resource_type_data(self, nvt, note_views):
         df = nvt.analyze_total_events_based_on_resource_type()
         if df.empty:
+            self.options['has_note_views_per_resource_types'] = False
             return
         self.options['has_note_views_per_resource_types'] = True
         df = reset_dataframe_(df)
