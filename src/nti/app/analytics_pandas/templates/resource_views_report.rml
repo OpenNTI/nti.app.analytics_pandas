@@ -58,7 +58,7 @@
 		</h1>
 		<hr width="100%" />
 		<para style="subdesc" spaceAfter=".5in" >
-			This pages shows the n most resources viewed during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
+			This pages shows the *10 most resources viewed during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
 		</para>
 		<blockTable style="default"
 					alignment="left"
@@ -92,6 +92,17 @@
 			</para>
 			<illustration width="5in" height="3in"
 						  metal:use-macro="macro:pandas_one_page_chart">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:define="events options/data/resources_viewed/tuples_resource_type"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of resources views grouped by resource types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/resources_viewed/column_name; group_name options/data/resources_viewed/resource_col"
+						  metal:use-macro="macro:pandas_events_grouped_table">
 			</illustration>
 		</tal:block>
 	</tal:block>
