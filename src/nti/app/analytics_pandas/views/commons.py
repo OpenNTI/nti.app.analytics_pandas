@@ -223,13 +223,13 @@ def build_events_created_by_device_type(df, events_dict):
         chart = build_event_grouped_chart_data(df, 'device_type')
         events_dict['by_device_chart'] = save_chart_to_temporary_file(chart)
     else:
-        events_dict['by_device_chart'] = False
+        events_dict['by_device_chart'] = ()
 
     if events_dict['num_rows_device'] == 1 or timestamp_num == 1:
         events_dict['tuples_device_type'] = build_event_grouped_table_data(df)
-        events_dict['device_col'] = 'Device Type'
+        events_dict['device_col'] = _(u'Device Type')
     else:
-        events_dict['tuples_device_type'] = False
+        events_dict['tuples_device_type'] = ()
     return events_dict
 
 
@@ -240,13 +240,13 @@ def build_events_created_by_enrollment_type(df, events_dict):
         chart = build_event_grouped_chart_data(df, 'enrollment_type')
         events_dict['by_enrollment_chart'] = save_chart_to_temporary_file(chart)
     else:
-        events_dict['by_enrollment_chart'] = False
+        events_dict['by_enrollment_chart'] = ()
     
     if events_dict['num_rows_enrollment'] == 1 and timestamp_num == 1:
         events_dict['tuples_enrollment_type'] = build_event_grouped_table_data(df)
-        events_dict['enrollment_col'] = 'Enrollment Type'
+        events_dict['enrollment_col'] = _(u'Enrollment Type')
     else:
-        events_dict['tuples_enrollment_type'] = False
+        events_dict['tuples_enrollment_type'] = ()
 
 def extract_group_dataframe(df, group_col):
     """
