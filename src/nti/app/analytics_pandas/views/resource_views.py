@@ -8,6 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import numpy as np
+
 from pyramid.view import view_config
 
 from nti.analytics_pandas.analysis import ResourceViewsTimeseries
@@ -19,8 +21,10 @@ from nti.app.analytics_pandas.views import MessageFactory as _
 
 from nti.app.analytics_pandas.views.commons import iternamedtuples
 from nti.app.analytics_pandas.views.commons import build_event_chart_data
+from nti.app.analytics_pandas.views.commons import build_event_table_data
 from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
 from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
+from nti.app.analytics_pandas.views.commons import build_event_grouped_table_data
 from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
 from nti.app.analytics_pandas.views.commons import build_events_created_by_device_type
 from nti.app.analytics_pandas.views.commons import build_events_created_by_enrollment_type
@@ -91,6 +95,7 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
         resource_views = {}
         dataframes = get_data(rvt)
         resource_views['num_rows'] = dataframes['df_by_timestamp'].shape[0]
+        resource_views['column_name'] = u'Resource Viewed'
         # Building chart Data
         if resource_views['num_rows'] > 1:
             chart = build_event_chart_data(dataframes['df_by_timestamp'],
@@ -99,7 +104,14 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
             resource_views['events_chart'] = save_chart_to_temporary_file(chart)
         else:
             resource_views['events_chart'] = False
-
+        
+        if resource_views['num_rows'] == 1:
+            columns =dataframes['df_by_timestamp'].columns.tolist()
+            resource_views['tuples'] = build_event_table_data(
+                dataframes['df_by_timestamp'], columns)
+        else:
+            resource_views['tuples'] = False
+        
         self.build_resources_viewed_by_type_data(rvt, resource_views)
 
         if 'df_per_device_types' in dataframes.keys():
@@ -123,18 +135,29 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
 
     def build_resources_viewed_by_type_data(self, rvt, resource_views):
         df = rvt.analyze_events_based_on_resource_type()
+        if not df.empty:
+            self.options['has_resource_views_per_resource_types'] = True
+        else:
+            return
         df = reset_dataframe_(df)
         columns = ['timestamp_period', 'resource_type',
                    'number_of_resource_views']
         df = df[columns]
         df['timestamp_period'] = df['timestamp_period'].astype(str)
+        timestamp_num = len(np.unique(df['timestamp_period'].values.ravel()))
         resource_views['num_rows_resource_type'] = df.shape[0]
-        if resource_views['num_rows_resource_type'] > 1:
+        
+        if resource_views['num_rows_resource_type'] > 1 and timestamp_num > 1:
             chart = build_event_grouped_chart_data(df, 'resource_type')
             resource_views['by_resource_type_chart'] = save_chart_to_temporary_file(chart)
-            self.options['has_resource_views_per_resource_types'] = True
         else:
             resource_views['by_resource_type_chart'] = False
+            
+        if resource_views['num_rows_resource_type'] == 1 or timestamp_num == 1:
+            resource_views['tuples_resource_type'] = build_event_grouped_table_data(df)
+            resource_views['resource_col'] = 'Resource Type'
+        else:
+            resource_views['tuples_resource_type'] = False
 
     def build_resources_viewed_by_device_type_data(self, df, resource_views):
         columns = ['timestamp_period', 'device_type',

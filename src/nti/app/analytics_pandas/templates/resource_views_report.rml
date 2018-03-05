@@ -19,13 +19,35 @@
 		</h1>
 		<hr width="100%" />
 		<para style="subdesc" spaceAfter=".5in" >
-			This chart shows the number of resources views during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users viewing resources and the ratio of total resources viewed over number of unique users. 
+			This page shows the number of resources views during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users viewing resources and the ratio of total resources viewed over number of unique users. 
 		</para>
 		<illustration width="5in" height="3in"
 					  tal:define="echart options/data/resources_viewed/events_chart"
 					  tal:condition="echart"
 					  metal:use-macro="macro:pandas_one_page_chart">
 		</illustration>
+		<tal:block tal:define="tuples options/data/resources_viewed/tuples">
+			<blockTable style="default"
+						alignment="left"
+						colWidths="20% 20% 20% 20% 20%"
+						tal:condition="tuples"
+						repeatRows="1">
+				<tr>
+					<td>Date</td>
+					<td>Resources Viewed</td>
+					<td>Unique Resources</td>
+					<td>Unique Users</td>
+					<td>Ratio</td>
+				</tr>
+				<tr tal:repeat="item tuples">
+					<td fontSize="8" tal:content="item/timestamp_period">2015-03-01</td>
+					<td fontSize="8" tal:content="item/number_of_resource_views">31</td>
+					<td fontSize="8" tal:content="item/number_of_unique_resource">13</td>
+					<td fontSize="8" tal:content="item/number_of_unique_users">4</td>
+					<td fontSize="8" tal:content="item/ratio">7.75</td>
+				</tr>
+			</blockTable>
+		</tal:block>
 	</tal:block>
 
 	<tal:block tal:condition="python: options['has_resource_view_events']">
@@ -36,7 +58,7 @@
 		</h1>
 		<hr width="100%" />
 		<para style="subdesc" spaceAfter=".5in" >
-			This pages shows the n most resources viewed during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
+			This pages shows the *10 most resources viewed during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
 		</para>
 		<blockTable style="default"
 					alignment="left"
@@ -72,6 +94,17 @@
 						  metal:use-macro="macro:pandas_one_page_chart">
 			</illustration>
 		</tal:block>
+
+		<tal:block tal:define="events options/data/resources_viewed/tuples_resource_type"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of resources views grouped by resource types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/resources_viewed/column_name; group_name options/data/resources_viewed/resource_col"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
 	</tal:block>
 
 	<tal:block tal:condition="python: options['has_resource_views_per_device_types']">
@@ -90,6 +123,17 @@
 						  metal:use-macro="macro:pandas_one_page_chart">
 			</illustration>
 		</tal:block>
+
+		<tal:block tal:define="events options/data/resources_viewed/tuples_device_type"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of resources views grouped by application types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/resources_viewed/column_name; group_name options/data/resources_viewed/device_col"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
 	</tal:block>
 
 	<tal:block tal:condition="python: options['has_resource_views_per_enrollment_types']">
@@ -106,6 +150,17 @@
 			</para>
 			<illustration width="5in" height="3in"
 						  metal:use-macro="macro:pandas_one_page_chart">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:define="events options/data/resources_viewed/tuples_enrollment_type"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of resources views grouped by user enrollment types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/resources_viewed/column_name; group_name options/data/resources_viewed/enrollment_col"
+						  metal:use-macro="macro:pandas_events_grouped_table">
 			</illustration>
 		</tal:block>
 	</tal:block>
