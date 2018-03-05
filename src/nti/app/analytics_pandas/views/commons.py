@@ -263,6 +263,21 @@ def build_events_data_by_resource_type(df, events_dict):
     else:
         events_dict['tuples_resource_type'] = ()
 
+def build_events_data_by_sharing_type(df, events_dict):
+    events_dict['num_rows_sharing'] = df.shape[0]
+    timestamp_num = len(np.unique(df['timestamp_period'].values.ravel()))
+    if events_dict['num_rows_sharing'] > 1 and timestamp_num > 1:
+        chart = build_event_grouped_chart_data(df, 'sharing')
+        events_dict['by_sharing_chart'] = save_chart_to_temporary_file(chart)
+    else:
+        events_dict['by_sharing_chart'] = ()
+    
+    if events_dict['num_rows_sharing'] == 1 and timestamp_num == 1:
+        events_dict['tuples_sharing_type'] = build_event_grouped_table_data(df)
+        events_dict['sharing_col'] = _(u'Sharing Type')
+    else:
+        events_dict['tuples_sharing_type'] = ()
+
 def extract_group_dataframe(df, group_col):
     """
     Given a column name, extract dataframe into a data list.

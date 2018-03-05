@@ -27,6 +27,7 @@ from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_dat
 from nti.app.analytics_pandas.views.commons import build_event_grouped_table_data
 from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
 from nti.app.analytics_pandas.views.commons import build_events_data_by_device_type
+from nti.app.analytics_pandas.views.commons import build_events_data_by_sharing_type
 from nti.app.analytics_pandas.views.commons import build_events_data_by_resource_type
 from nti.app.analytics_pandas.views.commons import build_events_data_by_enrollment_type
 
@@ -109,6 +110,7 @@ class NotesTimeseriesReportView(AbstractReportView):
         self.build_notes_viewed_by_resource_type_data(nvt, note_views)
         self.build_notes_viewed_by_device_type_data(nvt, note_views)
         self.build_notes_viewed_by_enrollment_type_data(nvt, note_views)
+        self.build_notes_viewed_by_sharing_type_data(nvt, note_views)
         return note_views
 
     def build_notes_viewed_by_device_type_data(self, nvt, note_views):
@@ -146,6 +148,18 @@ class NotesTimeseriesReportView(AbstractReportView):
                    'number_of_note_views']
         df = df[columns]
         build_events_data_by_resource_type(df, note_views)
+
+    def build_notes_viewed_by_sharing_type_data(self, nvt, note_views):
+        df = nvt.analyze_total_events_based_on_sharing_type()
+        if df.empty:
+            self.options['has_note_views_per_sharing_types'] = False
+            return
+        self.options['has_note_views_per_sharing_types'] = True
+        df = reset_dataframe_(df)
+        columns = ['timestamp_period', 'sharing',
+                   'number_of_note_views']
+        df = df[columns]
+        build_events_data_by_sharing_type(df, note_views)
 
     def get_the_n_most_viewed_notes_and_its_author(self, nvt, note_views, max_rank_number=10):
         df = nvt.get_the_most_viewed_notes_and_its_author(max_rank_number)
