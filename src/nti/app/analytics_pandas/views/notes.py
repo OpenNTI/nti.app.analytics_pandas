@@ -103,6 +103,8 @@ class NotesTimeseriesReportView(AbstractReportView):
                 dataframes['df_by_timestamp'], columns)
         else:
             note_views['tuples'] = False
+
+        self.get_the_n_most_viewed_notes_and_its_author(nvt, note_views, max_rank_number=10)
         return note_views
 
     def build_notes_viewed_by_device_type_data(self, df, note_views):
@@ -117,9 +119,9 @@ class NotesTimeseriesReportView(AbstractReportView):
         df = df[columns]
         build_events_created_by_enrollment_type(df, note_views)
 
-    def get_the_n_most_viewed_notes(self, nvt, note_views, max_rank_number=10):
-        df = nvt.get_the_most_viewed_notes(max_rank_number)
-        columns = ['number_of_views', 'note_display_name', 'note_type']
+    def get_the_n_most_viewed_notes_and_its_author(self, nvt, note_views, max_rank_number=10):
+        df = nvt.get_the_most_viewed_notes_and_its_author(max_rank_number)
+        columns = ['note_id', 'number_of_views', 'author_name']
         df = df[columns]
         tuples = iternamedtuples(df, columns)
         note_views['n_most_viewed_notes'] = tuples
