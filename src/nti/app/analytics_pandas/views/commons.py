@@ -217,8 +217,6 @@ def build_event_grouped_chart_data(df, group_col):
 
 
 def build_events_created_by_device_type(df, events_dict):
-    events_dict['tuples_device_type'] = build_event_grouped_table_data(df)
-    events_dict['device_col'] = 'Device Type'
     events_dict['num_rows_device'] = df.shape[0]
     timestamp_num = len(np.unique(df['timestamp_period'].values.ravel()))
     if events_dict['num_rows_device'] > 1 and timestamp_num > 1:
@@ -226,6 +224,12 @@ def build_events_created_by_device_type(df, events_dict):
         events_dict['by_device_chart'] = save_chart_to_temporary_file(chart)
     else:
         events_dict['by_device_chart'] = False
+
+    if events_dict['num_rows_device'] == 1 or timestamp_num == 1:
+        events_dict['tuples_device_type'] = build_event_grouped_table_data(df)
+        events_dict['device_col'] = 'Device Type'
+    else:
+        events_dict['tuples_device_type'] = False
     return events_dict
 
 

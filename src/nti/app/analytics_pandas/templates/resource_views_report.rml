@@ -123,6 +123,17 @@
 						  metal:use-macro="macro:pandas_one_page_chart">
 			</illustration>
 		</tal:block>
+
+		<tal:block tal:define="events options/data/resources_viewed/tuples_device_type"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of resources views grouped by resource types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/resources_viewed/column_name; group_name options/data/resources_viewed/device_col"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
 	</tal:block>
 
 	<tal:block tal:condition="python: options['has_resource_views_per_enrollment_types']">
