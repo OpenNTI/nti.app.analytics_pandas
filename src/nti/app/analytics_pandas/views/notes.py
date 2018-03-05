@@ -26,8 +26,8 @@ from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
 from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
 from nti.app.analytics_pandas.views.commons import build_event_grouped_table_data
 from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
-from nti.app.analytics_pandas.views.commons import build_events_created_by_device_type
-from nti.app.analytics_pandas.views.commons import build_events_created_by_enrollment_type
+from nti.app.analytics_pandas.views.commons import build_events_data_by_device_type
+from nti.app.analytics_pandas.views.commons import build_events_data_by_enrollment_type
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
@@ -111,13 +111,13 @@ class NotesTimeseriesReportView(AbstractReportView):
         columns = ['timestamp_period', 'device_type',
                    'number_of_note_views']
         df = df[columns]
-        build_events_created_by_device_type(df, note_views)
+        build_events_data_by_device_type(df, note_views)
 
     def build_notes_viewed_by_enrollment_type_data(self, df, note_views):
         columns = ['timestamp_period', 'enrollment_type',
                    'number_of_note_views']
         df = df[columns]
-        build_events_created_by_enrollment_type(df, note_views)
+        build_events_data_by_enrollment_type(df, note_views)
 
     def get_the_n_most_viewed_notes_and_its_author(self, nvt, note_views, max_rank_number=10):
         df = nvt.get_the_most_viewed_notes_and_its_author(max_rank_number)
