@@ -248,7 +248,7 @@ def build_events_data_by_enrollment_type(df, events_dict):
     else:
         events_dict['tuples_enrollment_type'] = ()
 
-def build_events_created_by_resource_type(df, events_dict):
+def build_events_data_by_resource_type(df, events_dict):
     events_dict['num_rows_resource'] = df.shape[0]
     timestamp_num = len(np.unique(df['timestamp_period'].values.ravel()))
     if events_dict['num_rows_resource'] > 1 and timestamp_num > 1:
