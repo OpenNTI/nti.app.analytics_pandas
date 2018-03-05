@@ -56,22 +56,22 @@
 		layer="pyramid.interfaces.IRequest"
 		permission="zope.Public"
 		manager=".interfaces.IPDFReportHeaderManager" />
-	
-	<!--
-	Notes related events report
+
+	<!-- Notes related events report -->
 	<z3c:template
-		template="templatesreport_notes.rml"
-		for=".notes.NoteEventsTimeseriesReportView"
+		template="templates/notes_report.rml"
+		for=".views.notes.NotesTimeseriesReportView"
 		layer="pyramid.interfaces.IRequest" />
-	
+
 	<browser:viewlet
-		name="note_info_content_provider"
-		template="templatesdefault_content_provider.rml"
-		view=".views.participation_views.NoteEventsTimeseriesReportView"
+		name="notes_content_provider"
+		template="templates/note_content_provider.rml"
+		view=".views.notes.NotesTimeseriesReportView"
 		layer="pyramid.interfaces.IRequest"
 		permission="zope.Public"
 		manager=".interfaces.IPDFReportHeaderManager" />
 	
+	<!--
 	Bookmarks related events report
 	<z3c:template
 		template="templatesbookmarks.rml"
