@@ -246,7 +246,7 @@ def build_events_created_by_enrollment_type(df, events_dict):
         events_dict['tuples_enrollment_type'] = build_event_grouped_table_data(df)
         events_dict['enrollment_col'] = 'Enrollment Type'
     else:
-        events_dict['tuples_enrollment_type']   
+        events_dict['tuples_enrollment_type'] = False
 
 def extract_group_dataframe(df, group_col):
     """
