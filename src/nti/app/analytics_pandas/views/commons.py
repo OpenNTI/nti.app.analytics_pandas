@@ -235,16 +235,18 @@ def build_events_created_by_device_type(df, events_dict):
 
 def build_events_created_by_enrollment_type(df, events_dict):
     events_dict['num_rows_enrollment'] = df.shape[0]
-    # building table data
-    events_dict['tuples_enrollment_type'] = build_event_grouped_table_data(df)
-    events_dict['enrollment_col'] = 'Enrollment Type'
     timestamp_num = len(np.unique(df['timestamp_period'].values.ravel()))
-    # building chart
     if events_dict['num_rows_enrollment'] > 1 and timestamp_num > 1:
         chart = build_event_grouped_chart_data(df, 'enrollment_type')
         events_dict['by_enrollment_chart'] = save_chart_to_temporary_file(chart)
     else:
         events_dict['by_enrollment_chart'] = False
+    
+    if events_dict['num_rows_enrollment'] == 1 and timestamp_num == 1:
+        events_dict['tuples_enrollment_type'] = build_event_grouped_table_data(df)
+        events_dict['enrollment_col'] = 'Enrollment Type'
+    else:
+        events_dict['tuples_enrollment_type']   
 
 def extract_group_dataframe(df, group_col):
     """
