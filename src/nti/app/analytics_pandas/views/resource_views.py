@@ -8,6 +8,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import absolute_import
 
+import numpy as np
+
 from pyramid.view import view_config
 
 from nti.analytics_pandas.analysis import ResourceViewsTimeseries
@@ -118,7 +120,7 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
         else:
             self.options['has_resource_views_per_enrollment_types'] = False
 
-        self.get_the_n_most_viewed_resources(rvt, resource_views, 10)
+        self.get_the_n_most_viewed_resources(rvt, resource_views, 100)
         return resource_views
 
     def build_resources_viewed_by_type_data(self, rvt, resource_views):
@@ -128,8 +130,9 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
                    'number_of_resource_views']
         df = df[columns]
         df['timestamp_period'] = df['timestamp_period'].astype(str)
+        timestamp_num = len(np.unique(df['timestamp_period'].values.ravel()))
         resource_views['num_rows_resource_type'] = df.shape[0]
-        if resource_views['num_rows_resource_type'] > 1:
+        if resource_views['num_rows_resource_type'] > 1 and timestamp_num > 1:
             chart = build_event_grouped_chart_data(df, 'resource_type')
             resource_views['by_resource_type_chart'] = save_chart_to_temporary_file(chart)
             self.options['has_resource_views_per_resource_types'] = True
