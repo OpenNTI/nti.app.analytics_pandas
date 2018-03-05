@@ -5,7 +5,7 @@
 
 	<tal:block>
 		<para style="normal" spaceAfter=".5in" >
-			This document presents an overview of notes related events in <u>${options/course_names}</u> from <strong>${context/start_date}</strong> through <strong>${context/end_date}</strong>.
+			This document presents an overview of notes related events in <u>${options/course_names}</u> from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
 			It includes plots of notes created, note views, note likes and note favorites events.
 			Each related note event plot is grouped by device, note and sharing types. It also shows note even plots per course sections
 		</para>
@@ -16,7 +16,7 @@
 		<setNextTemplate name="main"/>
 		<nextPage />
 		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
-			note Views
+			Note Views
 		</h1>
 		<hr width="100%" />
 		<para style="subdesc" spaceAfter=".5in" >
