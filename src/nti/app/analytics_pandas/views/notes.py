@@ -97,14 +97,12 @@ class NotesTimeseriesReportView(AbstractReportView):
                                            'Notes Viewed')
             note_views['events_chart'] = save_chart_to_temporary_file(chart)
         else:
-            note_views['events_chart'] = False
+            note_views['events_chart'] = ()
         
         if note_views['num_rows'] == 1:
-            columns = df.columns.tolist()
-            note_views['tuples'] = build_event_table_data(
-                dataframes['df_by_timestamp'], columns)
+            note_views['tuples'] = build_event_table_data(df)
         else:
-            note_views['tuples'] = False
+            note_views['tuples'] = ()
 
         self.get_the_n_most_viewed_notes_and_its_author(nvt, note_views, max_rank_number=10)
         self.build_notes_viewed_by_resource_type_data(nvt, note_views)
