@@ -86,13 +86,13 @@ class NotesTimeseriesReportView(AbstractReportView):
     def build_notes_viewed_data(self, nvt):
         note_views = {}
         df = nvt.analyze_total_events()
+        df = reset_dataframe_(df)
         note_views['num_rows'] = df.shape[0]
         note_views['column_name'] = _(u'Notes Viewed')
-        # Building chart Data
         if note_views['num_rows'] > 1:
             chart = build_event_chart_data(df,
                                            'number_of_note_views',
-                                           'note Viewed')
+                                           'Notes Viewed')
             note_views['events_chart'] = save_chart_to_temporary_file(chart)
         else:
             note_views['events_chart'] = False
