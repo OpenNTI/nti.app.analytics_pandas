@@ -57,6 +57,7 @@ class NotesTimeseriesReportView(AbstractReportView):
             self.options['has_notes_created_per_resource_types'] = False
             self.options['has_notes_created_per_device_types'] = False
             self.options['has_notes_created_per_enrollment_types'] = False
+            self.options['has_notes_created_per_sharing_types'] = False
         self.options['data'] = data
         return self.options
 
@@ -203,6 +204,7 @@ class NotesTimeseriesReportView(AbstractReportView):
             self.build_notes_created_by_device_type_data(dataframes['df_per_device_types'], notes_created)
         if 'df_per_enrollment_type' in dataframes.keys():
             self.build_notes_created_by_enrollment_type_data(dataframes['df_per_enrollment_type'], notes_created)
+        self.build_notes_created_by_sharing_type_data(nct, notes_created)
         return notes_created
 
     def build_notes_created_by_resource_type_data(self, nct, notes_created):
@@ -236,3 +238,15 @@ class NotesTimeseriesReportView(AbstractReportView):
                    'number_of_notes_created']
         df = df[columns]
         build_events_data_by_enrollment_type(df, notes_created)
+
+    def build_notes_created_by_sharing_type_data(self, nct, notes_created):
+        df = nct.analyze_sharing_types()
+        if df.empty:
+            self.options['has_notes_created_per_sharing_types'] = False
+            return
+        self.options['has_notes_created_per_sharing_types'] = True
+        df = reset_dataframe_(df)
+        columns = ['timestamp_period', 'sharing',
+                   'number_of_notes_created']
+        df = df[columns]
+        build_events_data_by_sharing_type(df, notes_created)
