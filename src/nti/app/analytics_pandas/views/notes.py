@@ -13,6 +13,7 @@ import numpy as np
 from pyramid.view import view_config
 
 from nti.analytics_pandas.analysis import NotesViewTimeseries
+from nti.analytics_pandas.analysis import NotesCreationTimeseries
 
 from nti.analytics_pandas.analysis.common import get_data
 from nti.analytics_pandas.analysis.common import reset_dataframe_
@@ -51,6 +52,8 @@ class NotesTimeseriesReportView(AbstractReportView):
             self.options['has_note_views_per_device_types'] = False
             self.options['has_note_views_per_resource_types'] = False
             self.options['has_note_views_per_sharing_types'] = False
+        if 'has_note_create_events' not in keys:
+            self.options['has_note_create_events'] = False
 
         self.options['data'] = data
         return self.options
@@ -80,6 +83,15 @@ class NotesTimeseriesReportView(AbstractReportView):
             if not nvt.dataframe.empty:
                 self.options['has_note_view_events'] = True
                 data['notes_viewed'] = self.build_notes_viewed_data(nvt)
+
+            nct = NotesCreationTimeseries(self.db.session,
+                                      self.options['start_date'],
+                                      self.options['end_date'],
+                                      self.options['course_ids'] or (),
+                                      period=self.options['period'])
+            if not nct.dataframe.empty:
+                self.options['has_note_create_events'] = True
+                data['notes_created'] = self.build_notes_created_data(nct)
 
         values = self.readInput()
         self._build_data(data)
@@ -165,3 +177,23 @@ class NotesTimeseriesReportView(AbstractReportView):
         df = df[columns]
         tuples = iternamedtuples(df, columns)
         note_views['n_most_viewed_notes'] = tuples
+
+    def build_notes_created_data(self, nct):
+        notes_created = {}
+        dataframes = get_data(nct)
+        df = dataframes['df_by_timestamp']
+        notes_created['num_rows'] = df.shape[0]
+        notes_created['column_name'] = _(u'Notes Created')
+        if notes_created['num_rows'] > 1:
+            chart = build_event_chart_data(df,
+                                           'number_of_notes_created',
+                                           'Notes Viewed')
+            notes_created['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            notes_created['events_chart'] = ()
+        
+        if notes_created['num_rows'] == 1:
+            notes_created['tuples'] = build_event_table_data(df)
+        else:
+            notes_created['tuples'] = ()
+        return notes_created
