@@ -12,6 +12,7 @@ import numpy as np
 
 from pyramid.view import view_config
 
+from nti.analytics_pandas.analysis import NoteLikesTimeseries
 from nti.analytics_pandas.analysis import NotesViewTimeseries
 from nti.analytics_pandas.analysis import NotesCreationTimeseries
 
@@ -58,6 +59,8 @@ class NotesTimeseriesReportView(AbstractReportView):
             self.options['has_notes_created_per_device_types'] = False
             self.options['has_notes_created_per_enrollment_types'] = False
             self.options['has_notes_created_per_sharing_types'] = False
+        if 'has_note_like_events' not in keys:
+            self.options['has_note_like_events'] = False
         self.options['data'] = data
         return self.options
 
@@ -95,6 +98,15 @@ class NotesTimeseriesReportView(AbstractReportView):
             if not nct.dataframe.empty:
                 self.options['has_note_create_events'] = True
                 data['notes_created'] = self.build_notes_created_data(nct)
+
+            nlt = NoteLikesTimeseries(self.db.session,
+                                      self.options['start_date'],
+                                      self.options['end_date'],
+                                      self.options['course_ids'] or (),
+                                      period=self.options['period'])
+            if not nlt.dataframe.empty:
+                self.options['has_note_like_events'] = True
+                data['notes_liked'] = self.build_notes_liked_data(nlt)
 
         values = self.readInput()
         self._build_data(data)
@@ -190,7 +202,7 @@ class NotesTimeseriesReportView(AbstractReportView):
         if notes_created['num_rows'] > 1:
             chart = build_event_chart_data(df,
                                            'number_of_notes_created',
-                                           'Notes Viewed')
+                                           'Notes Created')
             notes_created['events_chart'] = save_chart_to_temporary_file(chart)
         else:
             notes_created['events_chart'] = ()
@@ -250,3 +262,23 @@ class NotesTimeseriesReportView(AbstractReportView):
                    'number_of_notes_created']
         df = df[columns]
         build_events_data_by_sharing_type(df, notes_created)
+
+    def build_notes_liked_data(self, nlt):
+        notes_liked = {}
+        df = nlt.analyze_events()
+        df = reset_dataframe_(df)
+        notes_liked['num_rows'] = df.shape[0]
+        notes_liked['column_name'] = _(u'Notes Liked')
+        if notes_liked['num_rows'] > 1:
+            chart = build_event_chart_data(df,
+                                           'number_of_note_likes',
+                                           'Notes Liked')
+            notes_liked['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            notes_liked['events_chart'] = ()
+        
+        if notes_liked['num_rows'] == 1:
+            notes_liked['tuples'] = build_event_table_data(df)
+        else:
+            notes_liked['tuples'] = ()
+        return notes_liked
