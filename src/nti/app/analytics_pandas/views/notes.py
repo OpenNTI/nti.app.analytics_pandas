@@ -55,6 +55,7 @@ class NotesTimeseriesReportView(AbstractReportView):
         if 'has_note_create_events' not in keys:
             self.options['has_note_create_events'] = False
             self.options['has_notes_created_per_resource_types'] = False
+            self.options['has_notes_created_per_device_types'] = False
 
         self.options['data'] = data
         return self.options
@@ -198,6 +199,8 @@ class NotesTimeseriesReportView(AbstractReportView):
         else:
             notes_created['tuples'] = ()
         self.build_notes_created_by_resource_type_data(nct, notes_created)
+        if 'df_per_device_types' in dataframes.keys():
+            self.build_notes_created_by_device_type_data(dataframes['df_per_device_types'], notes_created)
         return notes_created
 
     def build_notes_created_by_resource_type_data(self, nct, notes_created):
@@ -211,3 +214,13 @@ class NotesTimeseriesReportView(AbstractReportView):
                    'number_of_notes_created']
         df = df[columns]
         build_events_data_by_resource_type(df, notes_created)
+
+    def build_notes_created_by_device_type_data(self, df, notes_created):
+        if df.empty:
+            self.options['has_notes_created_per_device_types'] = False
+            return
+        self.options['has_notes_created_per_device_types'] = True
+        columns = ['timestamp_period', 'device_type',
+                   'number_of_notes_created']
+        df = df[columns]
+        build_events_data_by_device_type(df, notes_created)
