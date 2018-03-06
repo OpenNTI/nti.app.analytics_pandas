@@ -15,6 +15,7 @@ from pyramid.view import view_config
 from nti.analytics_pandas.analysis import NoteLikesTimeseries
 from nti.analytics_pandas.analysis import NotesViewTimeseries
 from nti.analytics_pandas.analysis import NotesCreationTimeseries
+from nti.analytics_pandas.analysis import NoteFavoritesTimeseries
 
 from nti.analytics_pandas.analysis.common import get_data
 from nti.analytics_pandas.analysis.common import reset_dataframe_
@@ -61,6 +62,8 @@ class NotesTimeseriesReportView(AbstractReportView):
             self.options['has_notes_created_per_sharing_types'] = False
         if 'has_note_like_events' not in keys:
             self.options['has_note_like_events'] = False
+        if 'has_note_favorite_events' not in keys:
+            self.options['has_note_favorite_events'] = False
         self.options['data'] = data
         return self.options
 
@@ -89,7 +92,6 @@ class NotesTimeseriesReportView(AbstractReportView):
             if not nvt.dataframe.empty:
                 self.options['has_note_view_events'] = True
                 data['notes_viewed'] = self.build_notes_viewed_data(nvt)
-
             nct = NotesCreationTimeseries(self.db.session,
                                       self.options['start_date'],
                                       self.options['end_date'],
@@ -98,7 +100,6 @@ class NotesTimeseriesReportView(AbstractReportView):
             if not nct.dataframe.empty:
                 self.options['has_note_create_events'] = True
                 data['notes_created'] = self.build_notes_created_data(nct)
-
             nlt = NoteLikesTimeseries(self.db.session,
                                       self.options['start_date'],
                                       self.options['end_date'],
@@ -107,7 +108,14 @@ class NotesTimeseriesReportView(AbstractReportView):
             if not nlt.dataframe.empty:
                 self.options['has_note_like_events'] = True
                 data['notes_liked'] = self.build_notes_liked_data(nlt)
-
+            nft = NoteFavoritesTimeseries(self.db.session,
+                                      self.options['start_date'],
+                                      self.options['end_date'],
+                                      self.options['course_ids'] or (),
+                                      period=self.options['period'])
+            if not nft.dataframe.empty:
+                self.options['has_note_favorite_events'] = True
+                data['notes_favorite'] = self.build_notes_liked_data(nft)
         values = self.readInput()
         self._build_data(data)
         return self.options
@@ -282,3 +290,23 @@ class NotesTimeseriesReportView(AbstractReportView):
         else:
             notes_liked['tuples'] = ()
         return notes_liked
+
+    def build_notes_favorite_data(self, nft):
+        notes_favorite = {}
+        df = nft.analyze_events()
+        df = reset_dataframe_(df)
+        notes_favorite['num_rows'] = df.shape[0]
+        notes_favorite['column_name'] = _(u'Notes Favorite')
+        if notes_favorite['num_rows'] > 1:
+            chart = build_event_chart_data(df,
+                                           'number_of_note_favorites',
+                                           'Notes Favorite')
+            notes_favorite['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            notes_favorite['events_chart'] = ()
+        
+        if notes_favorite['num_rows'] == 1:
+            notes_favorite['tuples'] = build_event_table_data(df)
+        else:
+            notes_favorite['tuples'] = ()
+        return notes_favorite
