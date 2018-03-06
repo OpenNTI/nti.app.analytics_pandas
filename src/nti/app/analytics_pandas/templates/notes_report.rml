@@ -149,4 +149,186 @@
 			</illustration>
 		</tal:block>
 	</tal:block>
+
+	<tal:block tal:condition="python: options['has_note_create_events']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Note Creation
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This page shows the number of notes created during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users creating notes and the ratio of total notes created over number of unique users. 
+		</para>
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/notes_created/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/notes_created/tuples; column_name options/data/notes_created/column_name"
+				  	  tal:condition="events"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_notes_created_per_resource_types']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Notes Created Grouped by Resource Types
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="echart options/data/notes_created/by_resource_chart" 
+				   tal:condition="echart">
+			<para style="subdesc" spaceAfter=".5in" >
+				This chart shows the number of notes created grouped by resource types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="5in" height="3in"
+						  metal:use-macro="macro:pandas_one_page_chart">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:define="events options/data/notes_created/tuples_resource_type"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of notes created grouped by resource types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/notes_created/column_name; group_name options/data/notes_created/resource_col"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_notes_created_per_device_types']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Notes Created Grouped by Application Types
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="echart options/data/notes_created/by_device_chart" 
+				   tal:condition="echart">
+			<para style="subdesc" spaceAfter=".5in" >
+				This chart shows the number of notes created grouped by application types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="5in" height="3in"
+						  metal:use-macro="macro:pandas_one_page_chart">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:define="events options/data/notes_created/tuples_device_type"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of notes created grouped by application types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/notes_created/column_name; group_name options/data/notes_created/device_col"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_notes_created_per_enrollment_types']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Notes Created Grouped by User Enrollment Types
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="echart options/data/notes_created/by_enrollment_chart" 
+				   tal:condition="echart">
+			<para style="subdesc" spaceAfter=".5in" >
+				This chart shows the number of notes created grouped by user enrollment types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="5in" height="3in"
+						  metal:use-macro="macro:pandas_one_page_chart">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:define="events options/data/notes_created/tuples_enrollment_type"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of notes created grouped by user enrollment types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/notes_created/column_name; group_name options/data/notes_created/enrollment_col"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_notes_created_per_sharing_types']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Notes Created Grouped by Sharing Types
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="echart options/data/notes_created/by_sharing_chart" 
+				   tal:condition="echart">
+			<para style="subdesc" spaceAfter=".5in" >
+				This chart shows the number of notes created grouped by sharing types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="5in" height="3in"
+						  metal:use-macro="macro:pandas_one_page_chart">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:define="events options/data/notes_created/tuples_sharing_type"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of notes created grouped by sharing types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/notes_created/column_name; group_name options/data/notes_created/sharing_col"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_note_like_events']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Notes Likes
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This page shows the number of notes liked during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users liking notes and the ratio of total notes created over number of unique users. 
+		</para>
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/notes_liked/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/notes_liked/tuples; column_name options/data/notes_liked/column_name"
+				  	  tal:condition="events"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_note_favorite_events']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Notes Favorite
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This page shows the number of notes favorite during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users setting notes as favorite and the ratio of total notes favorite over number of unique users. 
+		</para>
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/notes_favorite/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/notes_favorite/tuples; column_name options/data/notes_favorite/column_name"
+				  	  tal:condition="events"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+	</tal:block>
 </metal:block>
