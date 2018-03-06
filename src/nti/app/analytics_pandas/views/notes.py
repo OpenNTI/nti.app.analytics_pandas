@@ -54,6 +54,7 @@ class NotesTimeseriesReportView(AbstractReportView):
             self.options['has_note_views_per_sharing_types'] = False
         if 'has_note_create_events' not in keys:
             self.options['has_note_create_events'] = False
+            self.options['has_notes_created_per_resource_types'] = False
 
         self.options['data'] = data
         return self.options
@@ -196,4 +197,17 @@ class NotesTimeseriesReportView(AbstractReportView):
             notes_created['tuples'] = build_event_table_data(df)
         else:
             notes_created['tuples'] = ()
+        self.build_notes_created_by_resource_type_data(nct, notes_created)
         return notes_created
+
+    def build_notes_created_by_resource_type_data(self, nct, notes_created):
+        df = nct.analyze_resource_types()
+        if df.empty:
+            self.options['has_notes_created_per_resource_types'] = False
+            return
+        self.options['has_notes_created_per_resource_types'] = True
+        df = reset_dataframe_(df)
+        columns = ['timestamp_period', 'resource_type',
+                   'number_of_notes_created']
+        df = df[columns]
+        build_events_data_by_resource_type(df, notes_created)
