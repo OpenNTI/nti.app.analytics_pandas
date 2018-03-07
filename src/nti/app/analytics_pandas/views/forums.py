@@ -69,9 +69,7 @@ class ForumsTimeseriesReportView(AbstractReportView):
                 self.options['period'] = values['period']
             else:
                 self.options['period'] = u'daily'
-        
-        self._build_data(data)
-        return self.options
+
         fct = ForumsCreatedTimeseries(self.db.session,
                                       self.options['start_date'],
                                       self.options['end_date'],
@@ -79,15 +77,14 @@ class ForumsTimeseriesReportView(AbstractReportView):
                                       period=self.options['period'])        
         if not fct.dataframe.empty:
             self.options['has_forums_created_data'] = True
-            self.build_forums_created_data(fct)
+            data['forums_created'] = self.build_forums_created_data(fct)
         self._build_data(data)
         return self.options
 
     def build_forums_created_data(self, fct):
         forums_created = {}
-        dataframes = get_data(fct)
-        from IPython.terminal.debugger import set_trace;set_trace()
-        df = dataframes['df_by_timestamp']
+        df = fct.analyze_events()
+        df = reset_dataframe_(df)
         forums_created['num_rows'] = df.shape[0]
         forums_created['column_name'] = _(u'Forums Created')
         if forums_created['num_rows'] > 1:
