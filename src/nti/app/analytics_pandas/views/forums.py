@@ -49,7 +49,7 @@ class ForumsTimeseriesReportView(AbstractReportView):
         keys = self.options.keys()
         if 'has_forums_created_data' not in keys:
             self.options['has_forums_created_data'] = False
-        if 'has_forums_comment_created_data' not in keys:
+        if 'has_forum_comments_created_data' not in keys:
             self.options['has_forum_comments_created_data'] = False
         self.options['data'] = data
         return self.options
@@ -71,24 +71,23 @@ class ForumsTimeseriesReportView(AbstractReportView):
                 self.options['period'] = values['period']
             else:
                 self.options['period'] = u'daily'
-
-        fct = ForumsCreatedTimeseries(self.db.session,
-                                      self.options['start_date'],
-                                      self.options['end_date'],
-                                      self.options['course_ids'] or (),
-                                      period=self.options['period'])        
-        if not fct.dataframe.empty:
-            self.options['has_forums_created_data'] = True
-            data['forums_created'] = self.build_forums_created_data(fct)
-        
-        fcct = ForumsCommentsCreatedTimeseries(self.db.session,
-                                      self.options['start_date'],
-                                      self.options['end_date'],
-                                      self.options['course_ids'] or (),
-                                      period=self.options['period'])
-        if not fcct.dataframe.empty:
-            self.options['has_forum_comments_created_data'] = True
-            data['forum_comments_created'] = self.build_forum_comments_created_data(fcct)
+            fct = ForumsCreatedTimeseries(self.db.session,
+                                          self.options['start_date'],
+                                          self.options['end_date'],
+                                          self.options['course_ids'] or (),
+                                          period=self.options['period'])        
+            if not fct.dataframe.empty:
+                self.options['has_forums_created_data'] = True
+                data['forums_created'] = self.build_forums_created_data(fct)
+            
+            fcct = ForumsCommentsCreatedTimeseries(self.db.session,
+                                          self.options['start_date'],
+                                          self.options['end_date'],
+                                          self.options['course_ids'] or (),
+                                          period=self.options['period'])
+            if not fcct.dataframe.empty:
+                self.options['has_forum_comments_created_data'] = True
+                data['forum_comments_created'] = self.build_forum_comments_created_data(fcct)
         self._build_data(data)
         return self.options
 
