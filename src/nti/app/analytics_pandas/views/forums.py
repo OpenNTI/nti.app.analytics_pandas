@@ -47,10 +47,9 @@ class ForumsTimeseriesReportView(AbstractReportView):
 
     def _build_data(self, data=_('sample forums report')):
         keys = self.options.keys()
-        self.options['data'] = data
         if 'has_forums_created_data' not in keys:
             self.options['has_forums_created_data'] = False
-        
+        self.options['data'] = data
         return self.options
 
     def __call__(self):
@@ -70,7 +69,9 @@ class ForumsTimeseriesReportView(AbstractReportView):
                 self.options['period'] = values['period']
             else:
                 self.options['period'] = u'daily'
-
+        
+        self._build_data(data)
+        return self.options
         fct = ForumsCreatedTimeseries(self.db.session,
                                       self.options['start_date'],
                                       self.options['end_date'],
@@ -102,5 +103,4 @@ class ForumsTimeseriesReportView(AbstractReportView):
         else:
             forums_created['tuples'] = ()
         return forums_created
-
  
