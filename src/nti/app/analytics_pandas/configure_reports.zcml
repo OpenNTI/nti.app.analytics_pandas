@@ -43,6 +43,20 @@
 		permission="zope.Public"
 		manager=".interfaces.IPDFReportHeaderManager" />
 
+	<!-- Forums related events report -->
+	<z3c:template
+		template="templates/forums_report.rml"
+		for=".views.forums.ForumsTimeseriesReportView"
+		layer="pyramid.interfaces.IRequest" />
+	
+	<browser:viewlet
+		name="forums_content_provider"
+		template="templates/forums_content_provider.rml"
+		view=".views.forums.ForumsTimeseriesReportView"
+		layer="pyramid.interfaces.IRequest"
+		permission="zope.Public"
+		manager=".interfaces.IPDFReportHeaderManager" />
+
 	<!-- Resource views report -->
 	<z3c:template
 		template="templates/resource_views_report.rml"
