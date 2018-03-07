@@ -9,7 +9,8 @@
 	<pyramid:scan package=".topics" />
 	<pyramid:scan package=".resource_views" />
 	<pyramid:scan package=".notes" />
-
+	<pyramid:scan package=".forums" />
+	
 	<!--
 	<pyramid:scan package=".forums" />
 	<pyramid:scan package=".social" />
