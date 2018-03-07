@@ -49,6 +49,8 @@ class ForumsTimeseriesReportView(AbstractReportView):
         keys = self.options.keys()
         if 'has_forums_created_data' not in keys:
             self.options['has_forums_created_data'] = False
+        if 'has_forums_comment_created_data' not in keys:
+            self.options['has_forum_comments_created_data'] = False
         self.options['data'] = data
         return self.options
 
@@ -78,6 +80,15 @@ class ForumsTimeseriesReportView(AbstractReportView):
         if not fct.dataframe.empty:
             self.options['has_forums_created_data'] = True
             data['forums_created'] = self.build_forums_created_data(fct)
+        
+        fcct = ForumsCommentsCreatedTimeseries(self.db.session,
+                                      self.options['start_date'],
+                                      self.options['end_date'],
+                                      self.options['course_ids'] or (),
+                                      period=self.options['period'])
+        if not fcct.dataframe.empty:
+            self.options['has_forum_comments_created_data'] = True
+            data['forum_comments_created'] = self.build_forum_comments_created_data(fcct)
         self._build_data(data)
         return self.options
 
@@ -100,4 +111,24 @@ class ForumsTimeseriesReportView(AbstractReportView):
         else:
             forums_created['tuples'] = ()
         return forums_created
+
+    def build_forum_comments_created_data(self, fcct):
+        forum_comments_created = {}
+        df = fcct.analyze_events()
+        df = reset_dataframe_(df)
+        forum_comments_created['num_rows'] = df.shape[0]
+        forum_comments_created['column_name'] = _(u'Forum Comments Created')
+        if forum_comments_created['num_rows'] > 1:
+            chart = build_event_chart_data(df,
+                                           'number_of_comment_created',
+                                           'Forum Comments Created')
+            forum_comments_created['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            forum_comments_created['events_chart'] = ()
+        
+        if forum_comments_created['num_rows'] == 1:
+            forum_comments_created['tuples'] = build_event_table_data(df)
+        else:
+            forum_comments_created['tuples'] = ()
+        return forum_comments_created
  

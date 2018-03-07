@@ -296,7 +296,7 @@
 		</h1>
 		<hr width="100%" />
 		<para style="subdesc" spaceAfter=".5in" >
-			This page shows the number of notes liked during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users liking notes and the ratio of total notes created over number of unique users. 
+			This page shows the number of notes liked during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users liking notes and the ratio of total notes liked over number of unique users. 
 		</para>
 		<illustration width="5in" height="3in"
 					  tal:define="echart options/data/notes_liked/events_chart"

@@ -31,4 +31,26 @@
 					  metal:use-macro="macro:pandas_events_table">
 		</illustration>
 	</tal:block>
+
+	<tal:block tal:condition="python: options['has_forum_comments_created_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Forum Comments Created
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This page shows the number of comments created during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users commenting and the ratio of total comments created over number of unique users. 
+		</para>
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/forum_comments_created/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/forum_comments_created/tuples; column_name options/data/forum_comments_created/column_name"
+				  	  tal:condition="events"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+	</tal:block>
 </metal:block>
