@@ -38,7 +38,6 @@ from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
 logger = __import__('logging').getLogger(__name__)
 
-
 @view_config(name="ForumsReport")
 class ForumsTimeseriesReportView(AbstractReportView):
 
@@ -48,10 +47,9 @@ class ForumsTimeseriesReportView(AbstractReportView):
 
     def _build_data(self, data=_('sample forums report')):
         keys = self.options.keys()
-        self.options['data'] = data
         if 'has_forums_created_data' not in keys:
-            options['has_forums_created_data'] = False
-        
+            self.options['has_forums_created_data'] = False
+        self.options['data'] = data
         return self.options
 
     def __call__(self):
@@ -74,5 +72,35 @@ class ForumsTimeseriesReportView(AbstractReportView):
         
         self._build_data(data)
         return self.options
+        fct = ForumsCreatedTimeseries(self.db.session,
+                                      self.options['start_date'],
+                                      self.options['end_date'],
+                                      self.options['course_ids'] or (),
+                                      period=self.options['period'])        
+        if not fct.dataframe.empty:
+            self.options['has_forums_created_data'] = True
+            self.build_forums_created_data(fct)
+        self._build_data(data)
+        return self.options
 
+    def build_forums_created_data(self, fct):
+        forums_created = {}
+        dataframes = get_data(fct)
+        from IPython.terminal.debugger import set_trace;set_trace()
+        df = dataframes['df_by_timestamp']
+        forums_created['num_rows'] = df.shape[0]
+        forums_created['column_name'] = _(u'Forums Created')
+        if forums_created['num_rows'] > 1:
+            chart = build_event_chart_data(df,
+                                           'number_of_forums_created',
+                                           'Forums Created')
+            forums_created['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            forums_created['events_chart'] = ()
+        
+        if forums_created['num_rows'] == 1:
+            forums_created['tuples'] = build_event_table_data(df)
+        else:
+            forums_created['tuples'] = ()
+        return forums_created
  
