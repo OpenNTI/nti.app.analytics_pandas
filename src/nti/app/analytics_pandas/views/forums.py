@@ -116,18 +116,25 @@ class ForumsTimeseriesReportView(AbstractReportView):
         df = fcct.analyze_events()
         df = reset_dataframe_(df)
         forum_comments_created['num_rows'] = df.shape[0]
-        forum_comments_created['column_name'] = _(u'Forum Comments Created')
+        forum_comments_created['column_name'] = _(u'Forum Comments')
         if forum_comments_created['num_rows'] > 1:
             chart = build_event_chart_data(df,
                                            'number_of_comment_created',
-                                           'Forum Comments Created')
+                                           'Forum Comments')
             forum_comments_created['events_chart'] = save_chart_to_temporary_file(chart)
         else:
             forum_comments_created['events_chart'] = ()
         
         if forum_comments_created['num_rows'] == 1:
-            forum_comments_created['tuples'] = build_event_table_data(df)
+            tuple_df = df[[u'timestamp_period', u'number_of_unique_users', u'number_of_comment_created', u'ratio']]
+            forum_comments_created['tuples'] = build_event_table_data(tuple_df)
         else:
             forum_comments_created['tuples'] = ()
+
+        comments_df_col = [u'timestamp_period', u'number_of_comment_created', 
+                               u'average_comment_length', u'favorite_count', u'like_count']
+        comments_df = df[comments_df_col]
+        comments_df = comments_df.round({'average_comment_length': 2})
+        forum_comments_created['comments_tuple'] = iternamedtuples(comments_df.astype(str), comments_df_col)
         return forum_comments_created
  

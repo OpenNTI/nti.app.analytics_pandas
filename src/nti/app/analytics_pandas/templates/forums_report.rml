@@ -36,7 +36,7 @@
 		<setNextTemplate name="main"/>
 		<nextPage />
 		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
-			Forum Comments Created
+			Forum Comments
 		</h1>
 		<hr width="100%" />
 		<para style="subdesc" spaceAfter=".5in" >
@@ -52,5 +52,31 @@
 				  	  tal:condition="events"
 					  metal:use-macro="macro:pandas_events_table">
 		</illustration>
+		<tal:block tal:define="tuples options/data/forum_comments_created/comments_tuple">
+			<tal:block tal:define="echart options/data/forum_comments_created/events_chart" 
+					   tal:condition="echart">
+				<nextPage />
+			</tal:block>
+			<blockTable style="default"
+						alignment="left"
+						colWidths="20% 20% 20% 20% 20%"
+						tal:condition="tuples"
+						repeatRows="1">
+				<tr>
+					<td>Date</td>
+					<td>Comments Created</td>
+					<td>Average Comment Length</td>
+					<td>Comments Favorite</td>
+					<td>Comments Liked</td>
+				</tr>
+				<tr tal:repeat="item tuples">
+					<td fontSize="8" tal:content="item/timestamp_period">2015-03-01</td>
+					<td fontSize="8" tal:content="item/number_of_comment_created">31</td>
+					<td fontSize="8" tal:content="item/average_comment_length">13</td>
+					<td fontSize="8" tal:content="item/favorite_count">4</td>
+					<td fontSize="8" tal:content="item/like_count">7.75</td>
+				</tr>
+			</blockTable>
+		</tal:block>
 	</tal:block>
 </metal:block>
