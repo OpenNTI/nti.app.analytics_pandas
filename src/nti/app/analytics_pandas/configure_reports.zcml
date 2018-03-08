@@ -113,13 +113,21 @@
 		permission="zope.Public"
 		manager=".interfaces.IPDFReportHeaderManager" />
 
-	<!--
-	Videos related events report 
+	<!-- Videos related events report -->
 	<z3c:template
-		template="templatesvideos.rml"
-		for=".videos.VideosTimeseriesReportView"
+		template="templates/videos_report.rml"
+		for=".views.videos.VideosTimeseriesReportView"
 		layer="pyramid.interfaces.IRequest" />
 	
+	<browser:viewlet
+		name="highlights_content_provider"
+		template="templates/videos_content_provider.rml"
+		view=".views.videos.VideosTimeseriesReportView"
+		layer="pyramid.interfaces.IRequest"
+		permission="zope.Public"
+		manager=".interfaces.IPDFReportHeaderManager" />
+
+	<!--
 	Assessments related events report
 	<z3c:template
 		template="templatesassessments.rml"
@@ -138,34 +146,7 @@
 		for=".social.SocialTimeseriesReportView"
 		layer="pyramid.interfaces.IRequest" />
 	-->
-		
-	<!-- Macros
-	<z3c:macro
-		template="templatesstd_report_macros.pt"
-		name="four_plots_event"
-		layer="pyramid.interfaces.IRequest" />
-
-	<z3c:macro
-		template="templatesstd_report_macros.pt"
-		name="three_plots_event"
-		layer="pyramid.interfaces.IRequest" />
-
-	<z3c:macro
-		template="templatesstd_report_macros.pt"
-		name="two_plots_event"
-		layer="pyramid.interfaces.IRequest" />
-
-	<z3c:macro
-		template="templatesstd_report_macros.pt"
-		name="one_plot_event"
-		layer="pyramid.interfaces.IRequest" />
-
-	<z3c:macro
-		template="templatesstd_report_macros.pt"
-		name="three_plots"
-		layer="pyramid.interfaces.IRequest" />
-	-->
-		
+			
 	<!-- Default macros for the reports -->
 	<!--
 	 NOTE: There is probably a better, more modern way
