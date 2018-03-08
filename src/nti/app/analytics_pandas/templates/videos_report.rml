@@ -2,5 +2,33 @@
 	xmlns:tal="http://xml.zope.org/namespaces/tal"
 	xmlns:metal="http://xml.zope.org/namespaces/metal"
 	tal:define="options view/options">
+
+	<tal:block tal:condition="python: options['has_video_events_data']">
+		<para style="normal" spaceAfter=".5in" >
+			This document presents an overview of videos related events created in <u>${options/course_names}</u> from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
+		</para>
+	</tal:block>	
+	<hr width="100%" />
 	
+	<tal:block tal:condition="python: options['has_video_events_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Videos Watched
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This page shows the number of videos watched during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users watching video and the ratio of total videos watched over number of unique users. 
+		</para>
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/video_events/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/video_events/tuples; column_name options/data/video_events/column_name"
+				  	  tal:condition="events"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+	</tal:block>
 </metal:block>

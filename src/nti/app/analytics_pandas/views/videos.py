@@ -24,7 +24,7 @@ from nti.app.analytics_pandas.views.commons import build_event_grouped_table_dat
 from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
 from nti.app.analytics_pandas.views.commons import build_events_data_by_sharing_type
 from nti.app.analytics_pandas.views.commons import build_events_data_by_resource_type
-from nti.app.analytics_pandas.views.commons import build_events_data_by_video_type
+from nti.app.analytics_pandas.views.commons import build_events_data_by_enrollment_type
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
@@ -35,10 +35,12 @@ class VideosTimeseriesReportView(AbstractReportView):
 
     @property
     def report_title(self):
-        return _(u'videos Report')
+        return _(u'Video Events Report')
 
     def _build_data(self, data=_('sample videos report')):
         keys = self.options.keys()
+        if 'has_video_events_data' not in keys:
+            self.options['has_video_events_data'] = False
         self.options['data'] = data
         return self.options
 
@@ -59,5 +61,35 @@ class VideosTimeseriesReportView(AbstractReportView):
                 self.options['period'] = values['period']
             else:
                 self.options['period'] = u'daily'
+            vet = VideoEventsTimeseries(self.db.session,
+                                        self.options['start_date'],
+                                        self.options['end_date'],
+                                        self.options['course_ids'] or (),
+                                        period=self.options['period'])
+            if not vet.dataframe.empty:
+                self.options['has_video_events_data'] = True
+                data['video_events'] = self.build_videos_watched_data(vet)
         self._build_data(data)
         return self.options
+
+    def build_videos_watched_data(self, vet):
+        df = vet.analyze_video_events(video_event_type=u'WATCH')
+        df = reset_dataframe_(df)
+        if df.empty:
+            return
+        video_events = {}
+        video_events['num_rows'] = df.shape[0]
+        video_events['column_name'] = _(u'Videos Watched')
+        if video_events['num_rows'] > 1:
+            chart = build_event_chart_data(df,
+                                           'number_of_video_events',
+                                           'Videos Watched')
+            video_events['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            video_events['events_chart'] = ()
+        
+        if video_events['num_rows'] == 1:
+            video_events['tuples'] = build_event_table_data(df)
+        else:
+            video_events['tuples'] = ()
+        return video_events
