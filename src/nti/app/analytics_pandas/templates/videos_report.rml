@@ -60,4 +60,26 @@
 					  metal:use-macro="macro:pandas_events_table">
 		</illustration>
 	</tal:block>
+
+	<tal:block tal:condition="python: options['has_video_events_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Videos Skipped
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This page shows the number of videos skipped during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users skipping video and the ratio of total videos skipped over number of unique users. 
+		</para>
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/video_events/events_chart_skip"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/video_events/tuples_skip; column_name options/data/video_events/column_name_skip"
+				  	  tal:condition="events"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+	</tal:block>
 </metal:block>

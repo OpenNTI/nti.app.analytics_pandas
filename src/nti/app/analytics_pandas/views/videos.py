@@ -76,6 +76,7 @@ class VideosTimeseriesReportView(AbstractReportView):
         video_events = {}
         self.build_video_event_types(vet, video_events)
         self.build_videos_watched_data(vet, video_events)
+        self.build_videos_skipped_data(vet, video_events)
         return video_events
 
     def build_video_event_types(self, vet, video_events):
@@ -121,3 +122,23 @@ class VideosTimeseriesReportView(AbstractReportView):
             video_events['tuples'] = build_event_table_data(df)
         else:
             video_events['tuples'] = ()
+
+    def build_videos_skipped_data(self, vet, video_events):
+        df = vet.analyze_video_events(video_event_type=u'SKIP')
+        df = reset_dataframe_(df)
+        if df.empty:
+            return
+        video_events['num_rows_skip'] = df.shape[0]
+        video_events['column_name_skip'] = _(u'Videos Skipped')
+        if video_events['num_rows'] > 1:
+            chart = build_event_chart_data(df,
+                                           'number_of_video_events',
+                                           'Videos Skipped')
+            video_events['events_chart_skip'] = save_chart_to_temporary_file(chart)
+        else:
+            video_events['events_chart_skip'] = ()
+        
+        if video_events['num_rows_skip'] == 1:
+            video_events['tuples_skip'] = build_event_table_data(df)
+        else:
+            video_events['tuples_skip'] = ()
