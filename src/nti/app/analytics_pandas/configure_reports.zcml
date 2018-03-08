@@ -104,12 +104,6 @@
 		for=".videos.VideosTimeseriesReportView"
 		layer="pyramid.interfaces.IRequest" />
 	
-	Forums related events report
-	<z3c:template
-		template="templatesforums.rml"
-		for=".forums.ForumsTimeseriesReportView"
-		layer="pyramid.interfaces.IRequest" />
-	
 	Assessments related events report
 	<z3c:template
 		template="templatesassessments.rml"
