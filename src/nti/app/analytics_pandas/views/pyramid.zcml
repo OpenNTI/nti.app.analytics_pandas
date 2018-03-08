@@ -10,12 +10,11 @@
 	<pyramid:scan package=".resource_views" />
 	<pyramid:scan package=".notes" />
 	<pyramid:scan package=".forums" />
+	<pyramid:scan package=".bookmarks" />
 	
 	<!--
-	<pyramid:scan package=".forums" />
 	<pyramid:scan package=".social" />
 	<pyramid:scan package=".videos" />
-	<pyramid:scan package=".bookmarks" />
 	<pyramid:scan package=".highlights" />
 	<pyramid:scan package=".assessments" />
 	<pyramid:scan package=".enrollments" />

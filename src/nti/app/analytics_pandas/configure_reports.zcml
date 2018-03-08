@@ -84,14 +84,22 @@
 		layer="pyramid.interfaces.IRequest"
 		permission="zope.Public"
 		manager=".interfaces.IPDFReportHeaderManager" />
-	
-	<!--
-	Bookmarks related events report
+
+	<!-- Bookmarks related events report -->
 	<z3c:template
-		template="templatesbookmarks.rml"
-		for=".bookmarks.BookmarksTimeseriesReportView"
+		template="templates/bookmarks_report.rml"
+		for=".views.bookmarks.BookmarksTimeseriesReportView"
 		layer="pyramid.interfaces.IRequest" />
 	
+	<browser:viewlet
+		name="bookmarks_content_provider"
+		template="templates/bookmarks_content_provider.rml"
+		view=".views.bookmarks.BookmarksTimeseriesReportView"
+		layer="pyramid.interfaces.IRequest"
+		permission="zope.Public"
+		manager=".interfaces.IPDFReportHeaderManager" />
+	
+	<!--
 	Highlights related events report
 	<z3c:template
 		template="templateshighlights.rml"
