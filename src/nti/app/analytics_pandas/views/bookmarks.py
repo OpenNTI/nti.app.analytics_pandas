@@ -4,149 +4,67 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
-logger = __import__('logging').getLogger(__name__)
-
-from . import MessageFactory as _
+import numpy as np
 
 from pyramid.view import view_config
 
-from zope import interface
-
-from nti.analytics_pandas.analysis import BookmarksTimeseriesPlot
 from nti.analytics_pandas.analysis import BookmarkCreationTimeseries
 
-from nti.app.analytics_pandas.model import BookmarksTimeseriesContext
+from nti.analytics_pandas.analysis.common import get_data
+from nti.analytics_pandas.analysis.common import reset_dataframe_
 
-from nti.app.analytics_pandas.views.interfaces import IBookmarksTimeseriesContext
+from nti.app.analytics_pandas.views import MessageFactory as _
 
-from nti.mimetype.mimetype import nti_mimetype_with_class
+from nti.app.analytics_pandas.views.commons import iternamedtuples
+from nti.app.analytics_pandas.views.commons import build_event_chart_data
+from nti.app.analytics_pandas.views.commons import build_event_table_data
+from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
+from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
+from nti.app.analytics_pandas.views.commons import build_event_grouped_table_data
+from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
+from nti.app.analytics_pandas.views.commons import build_events_data_by_device_type
+from nti.app.analytics_pandas.views.commons import build_events_data_by_sharing_type
+from nti.app.analytics_pandas.views.commons import build_events_data_by_resource_type
+from nti.app.analytics_pandas.views.commons import build_events_data_by_enrollment_type
 
-from .commons import get_course_names
-from .commons import build_plot_images_dictionary
-from .commons import build_images_dict_from_plot_dict
+from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
-from .mixins import AbstractReportView
+logger = __import__('logging').getLogger(__name__)
 
-@view_config(name="BookmarksReport",
-			 renderer="../templates/bookmarks.rml")
+@view_config(name="BookmarksReport")
 class BookmarksTimeseriesReportView(AbstractReportView):
 
-	@property
-	def report_title(self):
-		return _('Bookmarks Report')
+    @property
+    def report_title(self):
+        return _(u'Bookmarks Report')
 
-	def _build_data(self, data=_('sample bookmarks related events report')):
-		keys = self.options.keys()
-		if 'has_bookmark_data' not in keys:
-			self.options['has_bookmark_data'] = False
+    def _build_data(self, data=_('sample bookmarks report')):
+        keys = self.options.keys()
+        if 'has_bookmarks_created_data' not in keys:
+            self.options['has_bookmarks_created_data'] = False
+        self.options['data'] = data
+        return self.options
 
-		if 'has_bookmark_data_per_device_types' not in keys:
-			self.options['has_bookmark_data_per_device_types'] = False
-
-		if 'has_bookmark_data_per_resource_types' not in keys:
-			self.options['has_bookmark_data_per_resource_types'] = False
-
-		if 'has_bookmark_created_users' not in keys:
-			self.options['has_bookmark_created_users'] = False
-
-		if 'has_bookmark_data_per_course_sections' not in keys:
-			self.options['has_bookmark_data_per_course_sections'] = False
-
-		if 'has_bookmark_data_per_enrollment_types' not in keys:
-			self.options['has_bookmark_data_per_enrollment_types'] = False
-
-		self.options['data'] = data
-		return self.options
-
-	def __call__(self):
-		values = self.readInput()
-		if "MimeType" not in values.keys():
-			values["MimeType"] = 'application/vnd.nextthought.reports.bookmarkstimeseriescontext'
-		self.context = self._build_context(BookmarksTimeseriesContext, values)
-		
-		self.bct = BookmarkCreationTimeseries(self.db.session,
-										   	  self.context.start_date,
-										   	  self.context.end_date,
-											  self.context.courses,
-											  period=self.context.period)
-		if self.bct.dataframe.empty:
-			self.options['has_bookmark_data'] = False
-			return self.options
-		else:
-			self.options['has_bookmark_data'] = True
-
-		course_names = get_course_names(self.db.session, self.context.courses)
-		self.options['course_names'] = ", ".join(map(str, course_names))
-
-		data = {}
-		data = self.generate_bookmarks_created_plots(data)
-		self._build_data(data)
-		return self.options
-
-	def generate_bookmarks_created_plots(self, data):
-		self.bctp = BookmarksTimeseriesPlot(self.bct)
-		data = self.get_bookmarks_created_plots(data)
-		data = self.get_bookmarks_created_plots_per_device_types(data)
-		data = self.get_bookmarks_created_plots_per_enrollment_types(data)
-		data = self.get_bookmarks_created_plots_per_resource_types(data)
-		data = self.get_the_most_active_users_plot(data)
-		if len(self.context.courses) > 1:
-			data = self.get_bookmarks_created_plots_per_course_sections(data)
-		else:
-			self.options['has_bookmark_data_per_course_sections'] = False
-		return data
-
-	def get_bookmarks_created_plots(self, data):
-		plots = self.bctp.explore_events(self.context.period_breaks,
-										 self.context.minor_period_breaks,
-										 self.context.theme_bw_)
-		if plots:
-			data['bookmarks_created'] = build_plot_images_dictionary(plots)
-		return data
-
-	def get_bookmarks_created_plots_per_device_types(self, data):
-		plots = self.bctp.analyze_device_types(self.context.period_breaks,
-										 	   self.context.minor_period_breaks,
-										 	   self.context.theme_bw_)
-		if plots:
-			data['bookmarks_created_per_device_types'] = build_plot_images_dictionary(plots)
-			self.options['has_bookmark_data_per_device_types'] = True
-		return data
-
-	def get_bookmarks_created_plots_per_enrollment_types(self, data):
-		plots = self.bctp.analyze_enrollment_types(self.context.period_breaks,
-										 	   self.context.minor_period_breaks,
-										 	   self.context.theme_bw_)
-		if plots:
-			data['bookmarks_created_per_enrollment_types'] = build_plot_images_dictionary(plots)
-			self.options['has_bookmark_data_per_enrollment_types'] = True
-		return data
-
-	def get_bookmarks_created_plots_per_resource_types(self, data):
-		plots = self.bctp.analyze_resource_types(self.context.period_breaks,
-										 	   	 self.context.minor_period_breaks,
-										 	   	 self.context.theme_bw_)
-		if plots:
-			data['bookmarks_created_per_resource_types'] = build_images_dict_from_plot_dict(plots)
-			self.options['has_bookmark_data_per_resource_types'] = True
-		return data
-
-	def get_the_most_active_users_plot(self, data):
-		plot = self.bctp.plot_the_most_active_users(self.context.number_of_most_active_user)
-		if plot:
-			data['bookmark_created_users'] = build_plot_images_dictionary(plot)
-			self.options['has_bookmark_created_users'] = True
-		return data
-
-	def get_bookmarks_created_plots_per_course_sections(self, data):
-		plots = self.bctp.analyze_events_per_course_sections(self.context.period_breaks,
-										 	   	 			 self.context.minor_period_breaks,
-										 	   	 			 self.context.theme_bw_)
-		if plots:
-			data['bookmarks_created_per_course_sections'] = build_images_dict_from_plot_dict(plots)
-			self.options['has_bookmark_data_per_course_sections'] = True
-		return data
-
+    def __call__(self):
+        values = self.readInput()
+        if "MimeType" not in values.keys():
+            values["MimeType"] = 'application/vnd.nextthought.reports.bookmarkeventstimeseriescontext'
+        self.options['ntiid'] = values['ntiid']
+        course_ids, course_names = get_course_id_and_name_given_ntiid(self.db.session,
+                                                                      self.options['ntiid'])
+        data = {}
+        if course_ids and course_names:
+            self.options['course_ids'] = course_ids
+            self.options['course_names'] = ", ".join(map(str, course_names or ()))
+            self.options['start_date'] = values['start_date']
+            self.options['end_date'] = values['end_date']
+            if 'period' in values.keys():
+                self.options['period'] = values['period']
+            else:
+                self.options['period'] = u'daily'
+        self._build_data(data)
+        return self.options
