@@ -1,0 +1,92 @@
+<metal:block
+	xmlns:tal="http://xml.zope.org/namespaces/tal"
+	xmlns:metal="http://xml.zope.org/namespaces/metal"
+	tal:define="options view/options">
+	
+	<tal:block tal:condition="python: options['has_highlights_created_data']">
+		<para style="normal" spaceAfter=".5in" >
+			This document presents an overview of highlights related events created in <u>${options/course_names}</u> from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
+		</para>
+	</tal:block>	
+	<hr width="100%" />
+
+	<tal:block tal:condition="python: options['has_highlights_created_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Highlights Creation
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This page shows the number of highlights created during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users creating highlights and the ratio of total highlights created over number of unique users. 
+		</para>
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/highlights_created/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/highlights_created/tuples; column_name options/data/highlights_created/column_name"
+				  	  tal:condition="events"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_highlights_created_per_resource_types']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Highlights Created Grouped by Resource Types
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="echart options/data/highlights_created/by_resource_chart" 
+				   tal:condition="echart">
+			<para style="subdesc" spaceAfter=".5in" >
+				This chart shows the number of highlights created grouped by resource types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="5in" height="3in"
+						  metal:use-macro="macro:pandas_one_page_chart">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:define="events options/data/highlights_created/tuples_resource_type"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of highlights created grouped by resource types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/highlights_created/column_name; group_name options/data/highlights_created/resource_col"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_highlights_created_per_enrollment_types']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Highlights Created Grouped by User Enrollment Types
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="echart options/data/highlights_created/by_enrollment_chart" 
+				   tal:condition="echart">
+			<para style="subdesc" spaceAfter=".5in" >
+				This chart shows the number of highlights created grouped by user enrollment types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="5in" height="3in"
+						  metal:use-macro="macro:pandas_one_page_chart">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:define="events options/data/highlights_created/tuples_enrollment_type"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of highlights created grouped by user enrollment types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/highlights_created/column_name; group_name options/data/highlights_created/enrollment_col"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
+	</tal:block>
+</metal:block>
