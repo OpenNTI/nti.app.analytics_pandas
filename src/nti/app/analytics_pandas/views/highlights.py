@@ -33,7 +33,7 @@ from nti.app.analytics_pandas.views.mixins import AbstractReportView
 logger = __import__('logging').getLogger(__name__)
 
 @view_config(name="HighlightsReport")
-class highlightsTimeseriesReportView(AbstractReportView):
+class HighlightsTimeseriesReportView(AbstractReportView):
 
     @property
     def report_title(self):
