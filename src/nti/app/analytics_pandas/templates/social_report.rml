@@ -1,0 +1,7 @@
+<metal:block
+	xmlns:tal="http://xml.zope.org/namespaces/tal"
+	xmlns:metal="http://xml.zope.org/namespaces/metal"
+	tal:define="options view/options; context view/context">
+	<document>
+	</document>
+</metal:block>
