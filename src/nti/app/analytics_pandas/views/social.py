@@ -36,7 +36,7 @@ from nti.app.analytics_pandas.views.commons import build_event_grouped_table_dat
 from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
 from nti.app.analytics_pandas.views.commons import build_events_data_by_sharing_type
 from nti.app.analytics_pandas.views.commons import build_events_data_by_resource_type
-from nti.app.analytics_pandas.views.commons import build_events_data_by_social_type
+from nti.app.analytics_pandas.views.commons import build_events_data_by_enrollment_type
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
