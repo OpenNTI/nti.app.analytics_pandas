@@ -14,19 +14,16 @@ from pyramid.view import view_config
 
 from nti.analytics_pandas.analysis import BookmarkCreationTimeseries
 
-from nti.analytics_pandas.analysis.common import get_data
 from nti.analytics_pandas.analysis.common import reset_dataframe_
 
 from nti.app.analytics_pandas.views import MessageFactory as _
 
-from nti.app.analytics_pandas.views.commons import iternamedtuples
 from nti.app.analytics_pandas.views.commons import build_event_chart_data
 from nti.app.analytics_pandas.views.commons import build_event_table_data
 from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
 from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
 from nti.app.analytics_pandas.views.commons import build_event_grouped_table_data
 from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
-from nti.app.analytics_pandas.views.commons import build_events_data_by_device_type
 from nti.app.analytics_pandas.views.commons import build_events_data_by_sharing_type
 from nti.app.analytics_pandas.views.commons import build_events_data_by_resource_type
 from nti.app.analytics_pandas.views.commons import build_events_data_by_enrollment_type
@@ -66,5 +63,33 @@ class BookmarksTimeseriesReportView(AbstractReportView):
                 self.options['period'] = values['period']
             else:
                 self.options['period'] = u'daily'
+            bct = BookmarkCreationTimeseries(self.db.session,
+                                          self.options['start_date'],
+                                          self.options['end_date'],
+                                          self.options['course_ids'] or (),
+                                          period=self.options['period'])
+            if not bct.dataframe.empty:
+                self.options['has_bookmarks_created_data'] = True
+                data['bookmarks_created'] = self.build_bookmarks_created_data(bct)
         self._build_data(data)
         return self.options
+
+    def build_bookmarks_created_data(self, bct):
+        bookmarks_created = {}
+        df = bct.analyze_events()
+        df = reset_dataframe_(df)
+        bookmarks_created['num_rows'] = df.shape[0]
+        bookmarks_created['column_name'] = _(u'Bookmarks Created')
+        if bookmarks_created['num_rows'] > 1:
+            chart = build_event_chart_data(df,
+                                           'number_of_bookmarks_created',
+                                           'Bookmarks Created')
+            bookmarks_created['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            bookmarks_created['events_chart'] = ()
+        
+        if bookmarks_created['num_rows'] == 1:
+            bookmarks_created['tuples'] = build_event_table_data(df)
+        else:
+            bookmarks_created['tuples'] = ()
+        return bookmarks_created
