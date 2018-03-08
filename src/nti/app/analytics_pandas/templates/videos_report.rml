@@ -39,7 +39,7 @@
 		</tal:block>
 	</tal:block>
 	
-	<tal:block tal:condition="python: options['has_video_events_data']">
+	<tal:block tal:condition="python: options['has_videos_watched']">
 		<setNextTemplate name="main"/>
 		<nextPage />
 		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
@@ -61,7 +61,7 @@
 		</illustration>
 	</tal:block>
 
-	<tal:block tal:condition="python: options['has_video_events_data']">
+	<tal:block tal:condition="python: options['has_videos_skipped']">
 		<setNextTemplate name="main"/>
 		<nextPage />
 		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">

@@ -41,6 +41,8 @@ class VideosTimeseriesReportView(AbstractReportView):
         keys = self.options.keys()
         if 'has_video_events_data' not in keys:
             self.options['has_video_events_data'] = False
+            self.options['has_videos_watched'] = False
+            self.options['has_videos_skipped'] = False
         self.options['data'] = data
         return self.options
 
@@ -107,7 +109,9 @@ class VideosTimeseriesReportView(AbstractReportView):
         df = vet.analyze_video_events(video_event_type=u'WATCH')
         df = reset_dataframe_(df)
         if df.empty:
+            self.options['has_videos_watched'] = False
             return
+        self.options['has_videos_watched'] = True
         video_events['num_rows'] = df.shape[0]
         video_events['column_name'] = _(u'Videos Watched')
         if video_events['num_rows'] > 1:
@@ -127,7 +131,9 @@ class VideosTimeseriesReportView(AbstractReportView):
         df = vet.analyze_video_events(video_event_type=u'SKIP')
         df = reset_dataframe_(df)
         if df.empty:
+            self.options['has_videos_skipped'] = False
             return
+        self.options['has_videos_skipped'] = True
         video_events['num_rows_skip'] = df.shape[0]
         video_events['column_name_skip'] = _(u'Videos Skipped')
         if video_events['num_rows'] > 1:
