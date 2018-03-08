@@ -43,6 +43,8 @@ class BookmarksTimeseriesReportView(AbstractReportView):
         keys = self.options.keys()
         if 'has_bookmarks_created_data' not in keys:
             self.options['has_bookmarks_created_data'] = False
+        if 'has_bookmarks_created_per_resource_types' not in keys:
+            self.options['has_bookmarks_created_per_resource_types'] = False 
         self.options['data'] = data
         return self.options
 
@@ -92,4 +94,19 @@ class BookmarksTimeseriesReportView(AbstractReportView):
             bookmarks_created['tuples'] = build_event_table_data(df)
         else:
             bookmarks_created['tuples'] = ()
+        self.build_bookmarks_created_by_resource_type_data(bct, bookmarks_created)
         return bookmarks_created
+
+    def build_bookmarks_created_by_resource_type_data(self, bct, bookmarks_created):
+        resources = bct.analyze_resource_types()
+        if resources[0] is not None:
+            df = resources[0]
+            if df.empty:
+                self.options['has_bookmarks_created_per_resource_types'] = False
+                return
+            self.options['has_bookmarks_created_per_resource_types'] = True
+            df = reset_dataframe_(df)
+            columns = ['timestamp_period', 'resource_type',
+                       'number_of_bookmarks_created']
+            df = df[columns]
+            build_events_data_by_resource_type(df, bookmarks_created)
