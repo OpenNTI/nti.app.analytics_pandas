@@ -4,373 +4,66 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
-logger = __import__('logging').getLogger(__name__)
-
-from . import MessageFactory as _
+import numpy as np
 
 from pyramid.view import view_config
 
-from zope import interface
-
-from nti.app.analytics_pandas.model import AssessmentsEventsTimeseriesContext
-
 from nti.analytics_pandas.analysis import AssessmentEventsTimeseries
-from nti.analytics_pandas.analysis import AssessmentEventsTimeseriesPlot
-
 from nti.analytics_pandas.analysis import AssignmentViewsTimeseries
 from nti.analytics_pandas.analysis import AssignmentsTakenTimeseries
-from nti.analytics_pandas.analysis import AssignmentViewsTimeseriesPlot
-from nti.analytics_pandas.analysis import AssignmentsTakenTimeseriesPlot
-
 from nti.analytics_pandas.analysis import SelfAssessmentViewsTimeseries
 from nti.analytics_pandas.analysis import SelfAssessmentsTakenTimeseries
-from nti.analytics_pandas.analysis import SelfAssessmentViewsTimeseriesPlot
-from nti.analytics_pandas.analysis import SelfAssessmentsTakenTimeseriesPlot
 
-from nti.mimetype.mimetype import nti_mimetype_with_class
+from nti.analytics_pandas.analysis.common import reset_dataframe_
 
-from .commons import get_course_names
-from .commons import build_plot_images_dictionary
-from .commons import build_images_dict_from_plot_dict
+from nti.app.analytics_pandas.views import MessageFactory as _
 
-from .mixins import AbstractReportView
+from nti.app.analytics_pandas.views.commons import build_event_chart_data
+from nti.app.analytics_pandas.views.commons import build_event_table_data
+from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
+from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
+from nti.app.analytics_pandas.views.commons import build_event_grouped_table_data
+from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
+from nti.app.analytics_pandas.views.commons import build_events_data_by_sharing_type
+from nti.app.analytics_pandas.views.commons import build_events_data_by_resource_type
+from nti.app.analytics_pandas.views.commons import build_events_data_by_assessment_type
 
+from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
-@view_config(renderer="../templates/assessments.rml",
-			 name="AssessmentsRelatedEvents")
-class AssessmentsEventsTimeseriesReportView(AbstractReportView):
+logger = __import__('logging').getLogger(__name__)
 
-	@property
-	def report_title(self):
-		return _('Assessments Related Events')
+@view_config(name="AssessmentsReport")
+class AssessmentsTimeseriesReportView(AbstractReportView):
 
-	def _build_data(self, data=_('sample assessments related events report')):
-		keys = self.options.keys()
+    @property
+    def report_title(self):
+        return _(u'Assessments Report')
 
-		if 'has_assignment_taken_data' not in keys:
-			self.options['has_assignment_taken_data'] = False
+    def _build_data(self, data=_('sample assessments report')):
+        keys = self.options.keys()
+        self.options['data'] = data
+        return self.options
 
-		if 'has_assignment_views_data' not in keys:
-			self.options['has_assignment_views_data'] = False
-
-		if 'has_self_assessment_views_data' not in keys:
-			self.options['has_self_assessment_views_data'] = False
-
-		if 'has_self_assessments_taken_data' not in keys:
-			self.options['has_self_assessments_taken_data'] = False
-
-		if 'has_assessment_events' not in keys:
-			self.options['has_assessment_events'] = False
-
-		self.options['data'] = data
-		return self.options
-
-	def __call__(self):
-		values = self.readInput()
-		if "MimeType" not in values.keys():
-			values["MimeType"] = 'application/vnd.nextthought.reports.assessmentseventstimeseriescontext'
-		self.context = self._build_context(AssessmentsEventsTimeseriesContext, values)
-		
-		course_names = get_course_names(self.db.session, self.context.courses)
-		self.options['course_names'] = ", ".join(map(str, course_names))
-		data = {}
-
-		self.att = AssignmentsTakenTimeseries(self.db.session,
-											  self.context.start_date,
-											  self.context.end_date,
-											  self.context.courses,
-											  period=self.context.period)
-
-		if self.att.dataframe.empty:
-			self.options['has_assignment_taken_data'] = False
-		else:
-			self.options['has_assignment_taken_data'] = True
-			data = self.generate_assignments_taken_plots(data)
-
-
-		self.avt = AssignmentViewsTimeseries(self.db.session,
-											 self.context.start_date,
-											 self.context.end_date,
-											 self.context.courses,
-											 period=self.context.period)
-
-		if self.avt.dataframe.empty:
-			self.options['has_assignment_views_data'] = False
-		else:
-			self.options['has_assignment_views_data'] = True
-			data = self.generate_assignment_view_plots(data)
-
-		self.savt = SelfAssessmentViewsTimeseries(self.db.session,
-												  self.context.start_date,
-												  self.context.end_date,
-												  self.context.courses,
-												  period=self.context.period)
-
-		if self.savt.dataframe.empty:
-			self.options['has_self_assessment_views_data'] = False
-		else:
-			self.options['has_self_assessment_views_data'] = True
-			data = self.generate_self_assessment_view_plots(data)
-
-
-		self.satt = SelfAssessmentsTakenTimeseries(self.db.session,
-												   self.context.start_date,
-												   self.context.end_date,
-												   self.context.courses,
-												   period=self.context.period)
-
-		if self.satt.dataframe.empty:
-			self.options['has_self_assessments_taken_data'] = False
-		else:
-			self.options['has_self_assessments_taken_data'] = True
-			data = self.generate_self_assessment_taken_plots(data)
-
-		self.aet = AssessmentEventsTimeseries(avt=self.avt, 
-											  att=self.att, 
-											  savt=self.savt, 
-											  satt=self.satt)
-		data = self.generate_combined_assessment_event_plots(data)
-
-		self._build_data(data)
-		return self.options
-
-	def generate_assignments_taken_plots(self, data):
-		self.attp = AssignmentsTakenTimeseriesPlot(self.att)
-		data = self.get_assignments_taken_plots(data)
-		data = self.get_assignments_taken_plots_per_device_types(data)
-		data = self.get_assignments_taken_plots_per_enrollment_types(data)
-		if len(self.context.courses) > 1:
-			data = self.get_assignments_taken_plots_per_course_sections(data)
-		else:
-			self.options['has_assignment_taken_per_course_sections'] = False
-		data = self.get_assignment_taken_over_total_enrollments_ts(data)
-		return data
-
-	def get_assignments_taken_plots(self, data):
-		plots = self.attp.analyze_events(self.context.period_breaks,
-										 self.context.minor_period_breaks,
-										 self.context.theme_bw_)
-		if plots:
-			data['assignment_taken'] = build_plot_images_dictionary(plots)
-		return data
-
-	def get_assignments_taken_plots_per_device_types(self, data):
-		plots = self.attp.analyze_events_group_by_device_type(self.context.period_breaks,
-															  self.context.minor_period_breaks,
-															  self.context.theme_bw_)
-		self.options['has_assignment_taken_per_device_types'] = False
-		if plots:
-			data['assignment_taken_per_device_types'] = build_plot_images_dictionary(plots)
-			self.options['has_assignment_taken_per_device_types'] = True
-		return data
-
-	def get_assignments_taken_plots_per_enrollment_types(self, data):
-		plots = self.attp.analyze_events_group_by_enrollment_type(self.context.period_breaks,
-																  self.context.minor_period_breaks,
-																  self.context.theme_bw_)
-		self.options['has_assignment_taken_per_enrollment_types'] = False
-		if plots:
-			data['assignment_taken_per_enrollment_types'] = build_plot_images_dictionary(plots)
-			self.options['has_assignment_taken_per_enrollment_types'] = True
-		return data
-
-	def get_assignments_taken_plots_per_course_sections(self, data):
-		plots = self.attp.analyze_events_per_course_sections(self.context.period_breaks,
-															 self.context.minor_period_breaks,
-															 self.context.theme_bw_)
-		self.options['has_assignment_taken_per_course_sections'] = False
-		if plots:
-			data['assignment_taken_per_course_sections'] = build_images_dict_from_plot_dict(plots)
-			self.options['has_assignment_taken_per_course_sections'] = True
-		return data
-
-	def get_assignment_taken_over_total_enrollments_ts(self, data):
-		plots = self.attp.analyze_assignment_taken_over_total_enrollments_ts(
-																self.context.period_breaks,
-																self.context.minor_period_breaks,
-																self.context.theme_bw_)
-		self.options['has_assignment_taken_over_total_enrollments_ts'] = False
-		if plots:
-			data['assignment_taken_over_total_enrollments_ts'] = build_plot_images_dictionary(plots)
-			self.options['has_assignment_taken_over_total_enrollments_ts'] = True
-		return data
-
-	def generate_assignment_view_plots(self, data):
-		self.avtp = AssignmentViewsTimeseriesPlot(self.avt)
-		data = self.get_assignment_view_plots(data)
-		data = self.get_assignment_view_plots_per_device_types(data)
-		data = self.get_assignment_view_plots_per_enrollment_types(data)
-		if len(self.context.courses) > 1:
-			data = self.get_assignment_view_plots_per_course_sections(data)
-		else:
-			self.options['has_assignment_views_per_course_sections'] = False
-		return data
-
-	def get_assignment_view_plots(self, data):
-		plots = self.avtp.analyze_events(self.context.period_breaks,
-										 self.context.minor_period_breaks,
-										 self.context.theme_bw_)
-		if plots:
-			data['assignment_views'] = build_plot_images_dictionary(plots)
-		return data
-
-	def get_assignment_view_plots_per_device_types(self, data):
-		plots = self.avtp.analyze_events_group_by_device_type(self.context.period_breaks,
-															  self.context.minor_period_breaks,
-															  self.context.theme_bw_)
-		self.options['has_assignment_views_per_device_types'] = False
-		if plots:
-			data['assignment_views_per_device_types'] = build_plot_images_dictionary(plots)
-			self.options['has_assignment_views_per_device_types'] = True
-		return data
-
-	def get_assignment_view_plots_per_enrollment_types(self, data):
-		plots = self.avtp.analyze_events_group_by_enrollment_type(self.context.period_breaks,
-																  self.context.minor_period_breaks,
-																  self.context.theme_bw_)
-		self.options['has_assignment_views_per_enrollment_types'] = False
-		if plots:
-			data['assignment_views_per_enrollment_types'] = build_plot_images_dictionary(plots)
-			self.options['has_assignment_views_per_enrollment_types'] = True
-		return data
-
-	def get_assignment_view_plots_per_course_sections(self, data):
-		plots = self.avtp.analyze_events_per_course_sections(self.context.period_breaks,
-															 self.context.minor_period_breaks,
-															 self.context.theme_bw_)
-		self.options['has_assignment_views_per_course_sections'] = False
-		if plots:
-			data['assignment_views_per_course_sections'] = build_images_dict_from_plot_dict(plots)
-			self.options['has_assignment_views_per_course_sections'] = True
-		return data
-
-	def generate_self_assessment_view_plots(self, data):
-		self.savtp = SelfAssessmentViewsTimeseriesPlot(self.savt)
-		data = self.get_self_assessment_view_plots(data)
-		data = self.get_self_assessment_view_plots_per_device_types(data)
-		data = self.get_self_assessment_view_plots_per_enrollment_types(data)
-		if len(self.context.courses) > 1:
-			data = self.get_self_assessment_view_plots_per_course_sections(data)
-		else:
-			self.options['has_self_assessment_views_per_course_sections'] = False
-		return data
-
-	def get_self_assessment_view_plots(self, data):
-		plots = self.savtp.analyze_events(self.context.period_breaks,
-										  self.context.minor_period_breaks,
-										  self.context.theme_bw_)
-		if plots:
-			data['self_assessment_views'] = build_plot_images_dictionary(plots)
-		return data
-
-	def get_self_assessment_view_plots_per_device_types(self, data):
-		plots = self.savtp.analyze_events_group_by_device_type(self.context.period_breaks,
-															   self.context.minor_period_breaks,
-															   self.context.theme_bw_)
-		self.options['has_self_assessment_views_per_device_types'] = False
-		if plots:
-			data['self_assessment_views_per_device_types'] = build_plot_images_dictionary(plots)
-			self.options['has_self_assessment_views_per_device_types'] = True
-		return data
-
-	def get_self_assessment_view_plots_per_enrollment_types(self, data):
-		plots = self.savtp.analyze_events_group_by_enrollment_type(self.context.period_breaks,
-																   self.context.minor_period_breaks,
-																   self.context.theme_bw_)
-		self.options['has_self_assessment_views_per_enrollment_types'] = False
-		if plots:
-			data['self_assessment_views_per_enrollment_types'] = build_plot_images_dictionary(plots)
-			self.options['has_self_assessment_views_per_enrollment_types'] = True
-		return data
-
-	def get_self_assessment_view_plots_per_course_sections(self, data):
-		plots = self.savtp.analyze_events_per_course_sections(self.context.period_breaks,
-															  self.context.minor_period_breaks,
-															  self.context.theme_bw_)
-		self.options['has_self_assessment_views_per_course_sections'] = False
-		if plots:
-			data['self_assessment_views_per_course_sections'] = build_images_dict_from_plot_dict(plots)
-			self.options['has_self_assessment_views_per_course_sections'] = True
-			if 'all_section_plots' in data['self_assessment_views_per_course_sections'].keys():
-				self.options['has_self_assessment_views_all_section_plots'] = True
-			else:
-				self.options['has_self_assessment_views_all_section_plots'] = False
-		return data
-
-	def generate_self_assessment_taken_plots(self, data):
-		self.sattp = SelfAssessmentsTakenTimeseriesPlot(self.satt)
-		data = self.get_self_assessment_taken_plots(data)
-		data = self.get_self_assessment_taken_plots_per_enrollment_types(data)
-		data = self.get_self_assessment_taken_plots_per_device_types(data)
-		if len(self.context.courses) > 1:
-			data = self.get_self_assessment_taken_plots_per_course_sections(data)
-		else:
-			self.options['has_self_assessments_taken_per_course_sections'] = False
-		data = self.get_self_assessments_taken_over_total_enrollments_ts(data)
-		return data
-
-	def get_self_assessment_taken_plots(self, data):
-		plots = self.sattp.analyze_events(self.context.period_breaks,
-										  self.context.minor_period_breaks,
-										  self.context.theme_bw_)
-		if plots:
-			data['self_assessments_taken'] = build_plot_images_dictionary(plots)
-		return data
-
-	def get_self_assessment_taken_plots_per_enrollment_types(self, data):
-		plots = self.sattp.analyze_events_group_by_enrollment_type(self.context.period_breaks,
-																   self.context.minor_period_breaks,
-																   self.context.theme_bw_)
-		self.options['has_self_assessments_taken_per_enrollment_types'] = False
-		if plots:
-			data['self_assessments_taken_per_enrollment_types'] = build_plot_images_dictionary(plots)
-			self.options['has_self_assessments_taken_per_enrollment_types'] = True
-		return data
-
-	def get_self_assessment_taken_plots_per_device_types(self, data):
-		plots = self.sattp.analyze_events_group_by_device_type(self.context.period_breaks,
-															   self.context.minor_period_breaks,
-															   self.context.theme_bw_)
-		self.options['has_self_assessments_taken_per_device_types'] = False
-		if plots:
-			data['self_assessments_taken_per_device_types'] = build_plot_images_dictionary(plots)
-			self.options['has_self_assessments_taken_per_device_types'] = True
-		return data
-
-	def get_self_assessment_taken_plots_per_course_sections(self, data):
-		plots = self.sattp.analyze_events_per_course_sections(self.context.period_breaks,
-															 self.context.minor_period_breaks,
-															 self.context.theme_bw_)
-		self.options['has_self_assessments_taken_per_course_sections'] = False
-		if plots:
-			data['self_assessments_taken_per_course_sections'] = build_images_dict_from_plot_dict(plots)
-			self.options['has_self_assessments_taken_per_course_sections'] = True
-			if 'all_section_plots' in data['self_assessments_taken_per_course_sections'].keys():
-				self.options['has_self_assessments_taken_all_section_plots'] = True
-			else:
-				self.options['has_self_assessments_taken_all_section_plots'] = False
-		return data
-
-	def get_self_assessments_taken_over_total_enrollments_ts(self, data):
-		plots = self.sattp.analyze_self_assessments_taken_over_total_enrollments_ts(
-																self.context.period_breaks,
-																self.context.minor_period_breaks,
-																self.context.theme_bw_)
-		self.options['has_self_assessments_taken_over_total_enrollments_ts'] = False
-		if plots:
-			data['self_assessments_taken_over_total_enrollments_ts'] = build_plot_images_dictionary(plots)
-			self.options['has_self_assessments_taken_over_total_enrollments_ts'] = True
-		return data
-
-	def generate_combined_assessment_event_plots(self, data):
-		self.aetp = AssessmentEventsTimeseriesPlot(self.aet)
-		plots = self.aetp.combine_events(self.context.period_breaks,
-										 self.context.minor_period_breaks,
-										 self.context.theme_bw_)
-		if plots:
-			data['assessment_events'] = build_plot_images_dictionary(plots)
-			self.options['has_assessment_events'] = True
-		return data
+    def __call__(self):
+        values = self.readInput()
+        if "MimeType" not in values.keys():
+            values["MimeType"] = 'application/vnd.nextthought.reports.assessmenteventstimeseriescontext'
+        self.options['ntiid'] = values['ntiid']
+        course_ids, course_names = get_course_id_and_name_given_ntiid(self.db.session,
+                                                                      self.options['ntiid'])
+        data = {}
+        if course_ids and course_names:
+            self.options['course_ids'] = course_ids
+            self.options['course_names'] = ", ".join(map(str, course_names or ()))
+            self.options['start_date'] = values['start_date']
+            self.options['end_date'] = values['end_date']
+            if 'period' in values.keys():
+                self.options['period'] = values['period']
+            else:
+                self.options['period'] = u'daily'
+        self._build_data(data)
+        return self.options
