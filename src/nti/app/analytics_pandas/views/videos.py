@@ -22,8 +22,6 @@ from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
 from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
 from nti.app.analytics_pandas.views.commons import build_event_grouped_table_data
 from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
-from nti.app.analytics_pandas.views.commons import build_events_data_by_sharing_type
-from nti.app.analytics_pandas.views.commons import build_events_data_by_resource_type
 from nti.app.analytics_pandas.views.commons import build_events_data_by_enrollment_type
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
@@ -43,6 +41,8 @@ class VideosTimeseriesReportView(AbstractReportView):
             self.options['has_video_events_data'] = False
             self.options['has_videos_watched'] = False
             self.options['has_videos_skipped'] = False
+            self.options['has_videos_watched_per_enrollment_types'] = False
+            self.options['has_videos_skipped_per_enrollment_types'] = False
         self.options['data'] = data
         return self.options
 
@@ -150,6 +150,7 @@ class VideosTimeseriesReportView(AbstractReportView):
             video_events['tuples_skip'] = build_event_table_data(df)
         else:
             video_events['tuples_skip'] = ()
+        self.build_videos_skipped_by_enrollment_type_data(vet, video_events)
 
     def build_videos_watched_by_enrollment_type_data(self, vet, video_events):
         df = vet.analyze_video_events_enrollment_types(video_event_type='WATCH')
@@ -164,3 +165,17 @@ class VideosTimeseriesReportView(AbstractReportView):
         videos_watched = {}
         build_events_data_by_enrollment_type(df, videos_watched)
         video_events['videos_watched'] = videos_watched
+
+    def build_videos_skipped_by_enrollment_type_data(self, vet, video_events):
+        df = vet.analyze_video_events_enrollment_types(video_event_type='SKIP')
+        df = reset_dataframe_(df)
+        if df.empty:
+            self.options['has_videos_skipped_per_enrollment_types'] = False
+            return
+        self.options['has_videos_skipped_per_enrollment_types'] = True
+        columns = ['timestamp_period', 'enrollment_type',
+                   'number_of_video_events']
+        df = df[columns]
+        videos_skipped = {}
+        build_events_data_by_enrollment_type(df, videos_skipped)
+        video_events['videos_skipped'] = videos_skipped
