@@ -51,6 +51,8 @@ class ForumsTimeseriesReportView(AbstractReportView):
             self.options['has_forums_created_data'] = False
         if 'has_forum_comments_created_data' not in keys:
             self.options['has_forum_comments_created_data'] = False
+            if 'has_forum_comments_created_per_enrollment_types' not in keys:
+                self.options['has_forum_comments_created_per_enrollment_types'] = False
         self.options['data'] = data
         return self.options
 
@@ -136,5 +138,18 @@ class ForumsTimeseriesReportView(AbstractReportView):
         comments_df = df[comments_df_col]
         comments_df = comments_df.round({'average_comment_length': 2})
         forum_comments_created['comments_tuple'] = iternamedtuples(comments_df.astype(str), comments_df_col)
+        self.build_forum_comments_created_by_enrollment_type_data(fcct, forum_comments_created)
         return forum_comments_created
+
+    def build_forum_comments_created_by_enrollment_type_data(self, fcct, forum_comments_created):
+        df = fcct.analyze_enrollment_types()
+        df = reset_dataframe_(df)
+        if df.empty:
+            self.options['has_forum_comments_created_per_enrollment_types'] = False
+            return
+        self.options['has_forum_comments_created_per_enrollment_types'] = True
+        columns = ['timestamp_period', 'enrollment_type',
+                   'number_of_comment_created']
+        df = df[columns]
+        build_events_data_by_enrollment_type(df, forum_comments_created)
  
