@@ -45,6 +45,8 @@ class BookmarksTimeseriesReportView(AbstractReportView):
             self.options['has_bookmarks_created_data'] = False
         if 'has_bookmarks_created_per_resource_types' not in keys:
             self.options['has_bookmarks_created_per_resource_types'] = False 
+        if 'has_bookmarks_created_per_enrollment_types' not in keys:
+            self.options['has_bookmarks_created_per_enrollment_types'] = False
         self.options['data'] = data
         return self.options
 
@@ -95,6 +97,7 @@ class BookmarksTimeseriesReportView(AbstractReportView):
         else:
             bookmarks_created['tuples'] = ()
         self.build_bookmarks_created_by_resource_type_data(bct, bookmarks_created)
+        self.build_bookmarks_created_by_enrollment_type_data(bct, bookmarks_created)
         return bookmarks_created
 
     def build_bookmarks_created_by_resource_type_data(self, bct, bookmarks_created):
@@ -110,3 +113,15 @@ class BookmarksTimeseriesReportView(AbstractReportView):
                        'number_of_bookmarks_created']
             df = df[columns]
             build_events_data_by_resource_type(df, bookmarks_created)
+
+    def build_bookmarks_created_by_enrollment_type_data(self, bct, bookmarks_created):
+        df = bct.analyze_enrollment_types()
+        if df.empty:
+            self.options['has_bookmarks_created_per_enrollment_types'] = False
+            return
+        df = reset_dataframe_(df)
+        self.options['has_bookmarks_created_per_enrollment_types'] = True
+        columns = ['timestamp_period', 'enrollment_type',
+                   'number_of_bookmarks_created']
+        df = df[columns]
+        build_events_data_by_enrollment_type(df, bookmarks_created)
