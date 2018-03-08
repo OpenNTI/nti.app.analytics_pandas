@@ -4,142 +4,122 @@
 .. $Id$
 """
 
-from __future__ import print_function, unicode_literals, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
-logger = __import__('logging').getLogger(__name__)
-
-from . import MessageFactory as _
+import numpy as np
 
 from pyramid.view import view_config
 
-from zope import interface
-
-from nti.app.analytics_pandas.model import HighlightsTimeseriesContext
-
 from nti.analytics_pandas.analysis import HighlightsCreationTimeseries
-from nti.analytics_pandas.analysis import HighlightsCreationTimeseriesPlot
 
-from nti.mimetype.mimetype import nti_mimetype_with_class
+from nti.analytics_pandas.analysis.common import reset_dataframe_
 
-from .commons import get_course_names
-from .commons import build_plot_images_dictionary
-from .commons import build_images_dict_from_plot_dict
+from nti.app.analytics_pandas.views import MessageFactory as _
 
-from .mixins import AbstractReportView
+from nti.app.analytics_pandas.views.commons import build_event_chart_data
+from nti.app.analytics_pandas.views.commons import build_event_table_data
+from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
+from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
+from nti.app.analytics_pandas.views.commons import build_event_grouped_table_data
+from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
+from nti.app.analytics_pandas.views.commons import build_events_data_by_sharing_type
+from nti.app.analytics_pandas.views.commons import build_events_data_by_resource_type
+from nti.app.analytics_pandas.views.commons import build_events_data_by_enrollment_type
 
-@view_config(name="HighlightEventsReport",
-			 renderer="../templates/highlights.rml")
+from nti.app.analytics_pandas.views.mixins import AbstractReportView
+
+logger = __import__('logging').getLogger(__name__)
+
+@view_config(name="HighlightsReport")
 class HighlightsTimeseriesReportView(AbstractReportView):
 
-	@property
-	def report_title(self):
-		return _('Highlight Events Report')
+    @property
+    def report_title(self):
+        return _(u'Highlights Report')
 
-	def _build_data(self, data=_('sample highlights created events report')):
-		keys = self.options.keys()
-		if 'has_highlight_data' not in keys:
-			self.options['has_highlight_data'] = False
+    def _build_data(self, data=_('sample highlights report')):
+        keys = self.options.keys()
+        if 'has_highlights_created_data' not in keys:
+            self.options['has_highlights_created_data'] = False
+        if 'has_highlights_created_per_resource_types' not in keys:
+            self.options['has_highlights_created_per_resource_types'] = False 
+        if 'has_highlights_created_per_enrollment_types' not in keys:
+            self.options['has_highlights_created_per_enrollment_types'] = False
+        self.options['data'] = data
+        return self.options
 
-		if 'has_highlight_data_per_device_types' not in keys:
-			self.options['has_highlight_data_per_device_types'] = False
+    def __call__(self):
+        values = self.readInput()
+        if "MimeType" not in values.keys():
+            values["MimeType"] = 'application/vnd.nextthought.reports.highlighteventstimeseriescontext'
+        self.options['ntiid'] = values['ntiid']
+        course_ids, course_names = get_course_id_and_name_given_ntiid(self.db.session,
+                                                                      self.options['ntiid'])
+        data = {}
+        if course_ids and course_names:
+            self.options['course_ids'] = course_ids
+            self.options['course_names'] = ", ".join(map(str, course_names or ()))
+            self.options['start_date'] = values['start_date']
+            self.options['end_date'] = values['end_date']
+            if 'period' in values.keys():
+                self.options['period'] = values['period']
+            else:
+                self.options['period'] = u'daily'
+            hct = HighlightsCreationTimeseries(self.db.session,
+                                          self.options['start_date'],
+                                          self.options['end_date'],
+                                          self.options['course_ids'] or (),
+                                          period=self.options['period'])
+            if not hct.dataframe.empty:
+                self.options['has_highlights_created_data'] = True
+                data['highlights_created'] = self.build_highlights_created_data(hct)
+        self._build_data(data)
+        return self.options
 
-		if 'has_highlight_data_per_resource_types' not in keys:
-			self.options['has_highlight_data_per_resource_types'] = False
+    def build_highlights_created_data(self, hct):
+        highlights_created = {}
+        df = hct.analyze_events()
+        df = reset_dataframe_(df)
+        highlights_created['num_rows'] = df.shape[0]
+        highlights_created['column_name'] = _(u'Highlights Created')
+        if highlights_created['num_rows'] > 1:
+            chart = build_event_chart_data(df,
+                                           'number_of_highlights_created',
+                                           'Highlights Created')
+            highlights_created['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            highlights_created['events_chart'] = ()
+        
+        if highlights_created['num_rows'] == 1:
+            highlights_created['tuples'] = build_event_table_data(df)
+        else:
+            highlights_created['tuples'] = ()
+        self.build_highlights_created_by_resource_type_data(hct, highlights_created)
+        self.build_highlights_created_by_enrollment_type_data(hct, highlights_created)
+        return highlights_created
 
-		if 'has_highlight_created_users' not in keys:
-			self.options['has_highlight_created_users'] = False
+    def build_highlights_created_by_resource_type_data(self, hct, highlights_created):
+        df =hct.analyze_resource_types()
+        if df.empty:
+            self.options['has_highlights_created_per_resource_types'] = False
+            return
+        self.options['has_highlights_created_per_resource_types'] = True
+        df = reset_dataframe_(df)
+        columns = ['timestamp_period', 'resource_type',
+                   'number_of_highlights_created']
+        df = df[columns]
+        build_events_data_by_resource_type(df, highlights_created)
 
-		if 'has_highlight_data_per_course_sections' not in keys:
-			self.options['has_highlight_data_per_course_sections'] = False
-
-		if 'has_highlight_data_per_enrollment_types' not in keys:
-			self.options['has_highlight_data_per_enrollment_types'] = False
-
-		self.options['data'] = data
-		return self.options
-
-	def __call__(self):
-		values = self.readInput()
-		if "MimeType" not in values.keys():
-			values["MimeType"] = 'application/vnd.nextthought.reports.highlightstimeseriescontext'
-		self.context = self._build_context(HighlightsTimeseriesContext, values)
-		
-		self.hct = HighlightsCreationTimeseries(self.db.session,
-										   		self.context.start_date,
-										   		self.context.end_date,
-										   		self.context.courses,
-										   		period=self.context.period)
-		if self.hct.dataframe.empty:
-			self.options['has_highlight_data'] = False
-			return self.options
-
-		self.options['has_highlight_data'] = True
-
-		course_names = get_course_names(self.db.session, self.context.courses)
-		self.options['course_names'] = ", ".join(map(str, course_names))
-		data = {}
-		data = self.generate_highlights_created_plots(data)
-		self._build_data(data)
-		return self.options
-
-	def generate_highlights_created_plots(self, data):
-		self.hctp = HighlightsCreationTimeseriesPlot(self.hct)
-		data = self.get_highlights_created_plots(data)
-		data = self.get_highlights_created_plots_per_device_types(data)
-		data = self.get_highlights_created_plots_per_resource_types(data)
-		data = self.get_the_most_active_users_plot(data)
-		if len(self.context.courses) > 1:
-			data = self.get_highlights_created_plots_per_course_sections(data)
-			self.options['has_highlight_data_per_course_sections'] = True
-		return data
-
-	def get_highlights_created_plots(self, data):
-		plots = self.hctp.explore_events(self.context.period_breaks,
-										 self.context.minor_period_breaks,
-										 self.context.theme_bw_)
-		if plots:
-			data['highlights_created'] = build_plot_images_dictionary(plots)
-		return data
-
-	def get_highlights_created_plots_per_device_types(self, data):
-		plots = self.hctp.analyze_device_types(self.context.period_breaks,
-										 	   self.context.minor_period_breaks,
-										 	   self.context.theme_bw_)
-		if plots:
-			data['highlights_created_per_device_types'] = build_plot_images_dictionary(plots)
-			self.options['has_highlight_data_per_device_types'] = True
-		return data
-
-	def get_highlights_created_plots_per_enrollment_types(self, data):
-		plots = self.hctp.analyze_enrollment_types(self.context.period_breaks,
-										 	   self.context.minor_period_breaks,
-										 	   self.context.theme_bw_)
-		if plots:
-			data['highlights_created_per_enrollment_types'] = build_plot_images_dictionary(plots)
-			self.options['has_highlight_data_per_enrollment_types'] = True
-		return data
-
-	def get_highlights_created_plots_per_resource_types(self, data):
-		plots = self.hctp.analyze_resource_types(self.context.period_breaks,
-										 		 self.context.minor_period_breaks,
-										 		 self.context.theme_bw_)
-		if plots:
-			data['highlights_created_per_resource_types'] = build_plot_images_dictionary(plots)
-			self.options['has_highlight_data_per_resource_types'] = True
-		return data
-
-	def get_the_most_active_users_plot(self, data):
-		plot = self.hctp.plot_the_most_active_users(self.context.number_of_most_active_user)
-		if plot:
-			data['highlight_created_users'] = build_plot_images_dictionary(plot)
-			self.options['has_highlight_created_users'] = True
-		return data
-
-	def get_highlights_created_plots_per_course_sections(self, data):
-		plots = self.hctp.analyze_events_per_course_sections(self.context.period_breaks,
-										 		 			 self.context.minor_period_breaks,
-										 		 			 self.context.theme_bw_)
-		if plots:
-			data['highlights_created_per_course_sections'] = build_images_dict_from_plot_dict(plots)
-		return data
+    def build_highlights_created_by_enrollment_type_data(self, hct, highlights_created):
+        df = hct.analyze_enrollment_types()
+        if df.empty:
+            self.options['has_highlights_created_per_enrollment_types'] = False
+            return
+        df = reset_dataframe_(df)
+        self.options['has_highlights_created_per_enrollment_types'] = True
+        columns = ['timestamp_period', 'enrollment_type',
+                   'number_of_highlights_created']
+        df = df[columns]
+        build_events_data_by_enrollment_type(df, highlights_created)

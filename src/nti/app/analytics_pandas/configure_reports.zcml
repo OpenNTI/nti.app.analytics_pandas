@@ -99,13 +99,21 @@
 		permission="zope.Public"
 		manager=".interfaces.IPDFReportHeaderManager" />
 	
-	<!--
-	Highlights related events report
+	<!-- Highlights related events report -->
 	<z3c:template
-		template="templateshighlights.rml"
-		for=".highlights.HighlightsTimeseriesReportView"
+		template="templates/highlights_report.rml"
+		for=".views.highlights.HighlightsTimeseriesReportView"
 		layer="pyramid.interfaces.IRequest" />
 	
+	<browser:viewlet
+		name="highlights_content_provider"
+		template="templates/highlights_content_provider.rml"
+		view=".views.highlights.HighlightsTimeseriesReportView"
+		layer="pyramid.interfaces.IRequest"
+		permission="zope.Public"
+		manager=".interfaces.IPDFReportHeaderManager" />
+
+	<!--
 	Videos related events report 
 	<z3c:template
 		template="templatesvideos.rml"
