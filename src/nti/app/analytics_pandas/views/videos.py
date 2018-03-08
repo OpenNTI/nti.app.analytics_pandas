@@ -68,16 +68,45 @@ class VideosTimeseriesReportView(AbstractReportView):
                                         period=self.options['period'])
             if not vet.dataframe.empty:
                 self.options['has_video_events_data'] = True
-                data['video_events'] = self.build_videos_watched_data(vet)
+                data['video_events'] = self.build_video_events_report(vet)
         self._build_data(data)
         return self.options
 
-    def build_videos_watched_data(self, vet):
+    def build_video_events_report(self, vet):
+        video_events = {}
+        self.build_video_event_types(vet, video_events)
+        self.build_videos_watched_data(vet, video_events)
+        return video_events
+
+    def build_video_event_types(self, vet, video_events):
+        df = vet.analyze_video_events_types()
+        if df.empty:
+            return 
+        df = reset_dataframe_(df)
+        columns = ['timestamp_period', 'video_event_type',
+                   'number_of_video_events']
+        df = df[columns]
+        df['timestamp_period'] = df['timestamp_period'].astype(str)
+        timestamp_num = len(df['timestamp_period'].unique())
+        video_events['num_rows_video_event_type'] = df.shape[0]
+        
+        if video_events['num_rows_video_event_type'] > 1 and timestamp_num > 1:
+            chart = build_event_grouped_chart_data(df, 'video_event_type')
+            video_events['by_video_event_type_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            video_events['by_video_event_type_chart'] = False
+            
+        if video_events['num_rows_video_event_type'] == 1 or timestamp_num == 1:
+            video_events['tuples_video_event_type'] = build_event_grouped_table_data(df)
+            video_events['video_event_col'] = 'Video Events Type'
+        else:
+            video_events['tuples_video_event_type'] = False
+
+    def build_videos_watched_data(self, vet, video_events):
         df = vet.analyze_video_events(video_event_type=u'WATCH')
         df = reset_dataframe_(df)
         if df.empty:
             return
-        video_events = {}
         video_events['num_rows'] = df.shape[0]
         video_events['column_name'] = _(u'Videos Watched')
         if video_events['num_rows'] > 1:
@@ -92,4 +121,3 @@ class VideosTimeseriesReportView(AbstractReportView):
             video_events['tuples'] = build_event_table_data(df)
         else:
             video_events['tuples'] = ()
-        return video_events
