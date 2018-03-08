@@ -127,6 +127,8 @@ class VideosTimeseriesReportView(AbstractReportView):
         else:
             video_events['tuples'] = ()
 
+        self.build_videos_watched_by_enrollment_type_data(vet, video_events)
+
     def build_videos_skipped_data(self, vet, video_events):
         df = vet.analyze_video_events(video_event_type=u'SKIP')
         df = reset_dataframe_(df)
@@ -148,3 +150,17 @@ class VideosTimeseriesReportView(AbstractReportView):
             video_events['tuples_skip'] = build_event_table_data(df)
         else:
             video_events['tuples_skip'] = ()
+
+    def build_videos_watched_by_enrollment_type_data(self, vet, video_events):
+        df = vet.analyze_video_events_enrollment_types(video_event_type='WATCH')
+        df = reset_dataframe_(df)
+        if df.empty:
+            self.options['has_videos_watched_per_enrollment_types'] = False
+            return
+        self.options['has_videos_watched_per_enrollment_types'] = True
+        columns = ['timestamp_period', 'enrollment_type',
+                   'number_of_video_events']
+        df = df[columns]
+        videos_watched = {}
+        build_events_data_by_enrollment_type(df, videos_watched)
+        video_events['videos_watched'] = videos_watched
