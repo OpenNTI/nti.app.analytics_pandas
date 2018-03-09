@@ -81,7 +81,7 @@
 		<tal:block tal:define="events options/data/assignments_taken/tuples_enrollment_type"
 				   tal:condition="events"> 
 			<para style="subdesc" spaceAfter=".5in" >
-				This table shows the number of comments created grouped by user enrollment types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+				This table shows the number of assignments taken grouped by user enrollment types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
 			</para>
 			<illustration width="300" height="450" 
 					  	  tal:define="column_name options/data/assignments_taken/column_name; group_name options/data/assignments_taken/enrollment_col"
@@ -110,6 +110,35 @@
 				  	  tal:condition="events"
 					  metal:use-macro="macro:pandas_events_table">
 		</illustration>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_self_assessment_taken_per_enrollment_type']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Self Assessments Taken Grouped by User Enrollment Types
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="echart options/data/self_assessment_taken/by_enrollment_chart" 
+				   tal:condition="echart">
+			<para style="subdesc" spaceAfter=".5in" >
+				This chart shows the number of self assessments taken grouped by user enrollment types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="5in" height="3in"
+						  metal:use-macro="macro:pandas_one_page_chart">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:define="events options/data/self_assessment_taken/tuples_enrollment_type"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of self assessments taken grouped by user enrollment types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/self_assessment_taken/column_name; group_name options/data/self_assessment_taken/enrollment_col"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
 	</tal:block>
 	
 </metal:block>

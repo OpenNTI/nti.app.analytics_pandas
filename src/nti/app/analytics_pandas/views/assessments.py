@@ -52,6 +52,7 @@ class AssessmentsTimeseriesReportView(AbstractReportView):
             self.options['has_assignments_taken_per_enrollment_type'] = False
         if 'has_self_assessment_taken' not in keys:
             self.options['has_self_assessment_taken'] = False
+            self.options['has_self_assessment_taken_per_enrollment_type'] = False
         self.options['data'] = data
         return self.options
 
@@ -188,4 +189,17 @@ class AssessmentsTimeseriesReportView(AbstractReportView):
             self_assessment['tuples'] = build_event_table_data(df, columns)
         else:
             self_assessment['tuples'] = ()
+        self.build_self_assessment_taken_by_enrollment_type_data(satt, self_assessment)
         return self_assessment
+
+    def build_self_assessment_taken_by_enrollment_type_data(self, satt, self_assessment):
+        df = satt.analyze_events_group_by_enrollment_type()
+        df = reset_dataframe_(df)
+        if df.empty:
+            self.options['has_self_assessment_taken_per_enrollment_type'] = False
+            return
+        self.options['has_self_assessment_taken_per_enrollment_type'] = True
+        columns = ['timestamp_period', 'enrollment_type',
+                   'number_self_assessments_taken']
+        df = df[columns]
+        build_events_data_by_enrollment_type(df, self_assessment)
