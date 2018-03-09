@@ -100,7 +100,7 @@ class AssessmentsTimeseriesReportView(AbstractReportView):
             
         if assessment_events['num_rows'] == 1 or timestamp_num == 1:
             assessment_events['tuples'] = build_event_grouped_table_data(df)
-            assessment_events['column_name'] = 'Assessment Events'
+            assessment_events['assessment_col'] = 'Assessment Events'
         else:
             assessment_events['tuples'] = ()
         return assessment_events
