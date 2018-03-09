@@ -45,6 +45,8 @@ class AssessmentsTimeseriesReportView(AbstractReportView):
 
     def _build_data(self, data=_('sample assessments report')):
         keys = self.options.keys()
+        if 'has_assessment_event_data' not in keys:
+            self.options['has_assessment_event_data'] = False
         self.options['data'] = data
         return self.options
 
@@ -65,5 +67,40 @@ class AssessmentsTimeseriesReportView(AbstractReportView):
                 self.options['period'] = values['period']
             else:
                 self.options['period'] = u'daily'
+            aet = AssessmentEventsTimeseries(self.db.session,
+                                        self.options['start_date'],
+                                        self.options['end_date'],
+                                        self.options['course_ids'] or (),
+                                        period=self.options['period'])
+            if not aet.dataframe.empty:
+                self.build_assessment_events_data(aet)
+                data['assessment_events'] = self.build_assessment_events_data(aet)
         self._build_data(data)
         return self.options
+
+    def build_assessment_events_data(self, aet):
+        assessment_events = {}
+        df = aet.combine_events()
+        if df.empty:
+            self.options['has_assessment_event_data'] = False
+            return
+        self.options['has_assessment_event_data'] = True
+        df = reset_dataframe_(df)
+        columns = ['timestamp_period', 'event_type', 'total_events']
+        df = df[columns]
+        df['timestamp_period'] = df['timestamp_period'].astype(str)
+        timestamp_num = len(df['timestamp_period'].unique())
+        assessment_events['num_rows'] = df.shape[0]
+        assessment_events['column_name'] = _(u'Total Events')
+        if assessment_events['num_rows'] > 1 and timestamp_num > 1:
+            chart = build_event_grouped_chart_data(df, 'event_type')
+            assessment_events['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            assessment_events['events_chart'] = ()
+            
+        if assessment_events['num_rows'] == 1 or timestamp_num == 1:
+            assessment_events['tuples'] = build_event_grouped_table_data(df)
+            assessment_events['column_name'] = 'Assessment Events'
+        else:
+            assessment_events['tuples'] = ()
+        return assessment_events

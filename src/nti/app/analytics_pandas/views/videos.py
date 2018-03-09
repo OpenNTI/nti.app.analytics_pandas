@@ -97,13 +97,13 @@ class VideosTimeseriesReportView(AbstractReportView):
             chart = build_event_grouped_chart_data(df, 'video_event_type')
             video_events['by_video_event_type_chart'] = save_chart_to_temporary_file(chart)
         else:
-            video_events['by_video_event_type_chart'] = False
+            video_events['by_video_event_type_chart'] = ()
             
         if video_events['num_rows_video_event_type'] == 1 or timestamp_num == 1:
             video_events['tuples_video_event_type'] = build_event_grouped_table_data(df)
             video_events['video_event_col'] = 'Video Events Type'
         else:
-            video_events['tuples_video_event_type'] = False
+            video_events['tuples_video_event_type'] = ()
 
     def build_videos_watched_data(self, vet, video_events):
         df = vet.analyze_video_events(video_event_type=u'WATCH')
