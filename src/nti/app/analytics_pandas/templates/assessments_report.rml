@@ -2,4 +2,143 @@
 	xmlns:tal="http://xml.zope.org/namespaces/tal"
 	xmlns:metal="http://xml.zope.org/namespaces/metal"
 	tal:define="options view/options">
+
+	<tal:block tal:condition="python: options['has_assessment_event_data']">
+		<para style="normal" spaceAfter=".5in" >
+			This document presents an overview of assessment related events created in <u>${options/course_names}</u> from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
+		</para>
+	</tal:block>	
+	<hr width="100%" />
+
+	<tal:block tal:condition="python: options['has_assessment_event_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Assessments Events
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="echart options/data/assessment_events/events_chart" 
+				   tal:condition="echart">
+			<para style="subdesc" spaceAfter=".5in" >
+				This chart shows the number of assessment events during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="5in" height="3in"
+						  metal:use-macro="macro:pandas_one_page_chart">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:define="events options/data/assessment_events/tuples"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of videos watched or skipped during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/assessment_events/column_name; group_name options/data/assessment_events/assessment_col"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_assignments_taken']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Assignments Taken
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This page shows the number of assignments taken during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users taking assignments and the ratio of total assignment taken over number of unique users. 
+		</para>
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/assignments_taken/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/assignments_taken/tuples; column_name options/data/assignments_taken/column_name"
+				  	  tal:condition="events"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_assignments_taken_per_enrollment_type']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Assignments Taken Grouped by User Enrollment Types
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="echart options/data/assignments_taken/by_enrollment_chart" 
+				   tal:condition="echart">
+			<para style="subdesc" spaceAfter=".5in" >
+				This chart shows the number of assignments taken grouped by user enrollment types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="5in" height="3in"
+						  metal:use-macro="macro:pandas_one_page_chart">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:define="events options/data/assignments_taken/tuples_enrollment_type"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of assignments taken grouped by user enrollment types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/assignments_taken/column_name; group_name options/data/assignments_taken/enrollment_col"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_self_assessment_taken']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Self Assessments Taken
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This page shows the number of self assessments taken during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users taking self assessments and the ratio of total assignment taken over number of unique users. 
+		</para>
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/self_assessment_taken/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/self_assessment_taken/tuples; column_name options/data/self_assessment_taken/column_name"
+				  	  tal:condition="events"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_self_assessment_taken_per_enrollment_type']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Self Assessments Taken Grouped by User Enrollment Types
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="echart options/data/self_assessment_taken/by_enrollment_chart" 
+				   tal:condition="echart">
+			<para style="subdesc" spaceAfter=".5in" >
+				This chart shows the number of self assessments taken grouped by user enrollment types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="5in" height="3in"
+						  metal:use-macro="macro:pandas_one_page_chart">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:define="events options/data/self_assessment_taken/tuples_enrollment_type"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of self assessments taken grouped by user enrollment types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/self_assessment_taken/column_name; group_name options/data/self_assessment_taken/enrollment_col"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
+	</tal:block>
+	
 </metal:block>

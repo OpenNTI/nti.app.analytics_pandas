@@ -13,10 +13,10 @@
 	<pyramid:scan package=".bookmarks" />
 	<pyramid:scan package=".highlights" />
 	<pyramid:scan package=".videos" />
+	<pyramid:scan package=".assessments" />
 
 	<!--
 	<pyramid:scan package=".social" />
-	<pyramid:scan package=".assessments" />
 	<pyramid:scan package=".enrollments" />
 	-->
 	

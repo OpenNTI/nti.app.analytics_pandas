@@ -120,9 +120,23 @@
 		layer="pyramid.interfaces.IRequest" />
 	
 	<browser:viewlet
-		name="highlights_content_provider"
+		name="videos_content_provider"
 		template="templates/videos_content_provider.rml"
 		view=".views.videos.VideosTimeseriesReportView"
+		layer="pyramid.interfaces.IRequest"
+		permission="zope.Public"
+		manager=".interfaces.IPDFReportHeaderManager" />
+
+	<!-- Assessment related events report -->
+	<z3c:template
+		template="templates/assessments_report.rml"
+		for=".views.assessments.AssessmentsTimeseriesReportView"
+		layer="pyramid.interfaces.IRequest" />
+	
+	<browser:viewlet
+		name="assessments_content_provider"
+		template="templates/assessments_content_provider.rml"
+		view=".views.assessments.AssessmentsTimeseriesReportView"
 		layer="pyramid.interfaces.IRequest"
 		permission="zope.Public"
 		manager=".interfaces.IPDFReportHeaderManager" />
