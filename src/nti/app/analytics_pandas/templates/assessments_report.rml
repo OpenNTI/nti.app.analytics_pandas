@@ -38,5 +38,27 @@
 			</illustration>
 		</tal:block>
 	</tal:block>
+
+	<tal:block tal:condition="python: options['has_assignments_taken']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Assignments Taken
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This page shows the number of assignments taken during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users taking assignments and the ratio of total assignment taken over number of unique users. 
+		</para>
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/assignments_taken/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/assignments_taken/tuples; column_name options/data/assignments_taken/column_name"
+				  	  tal:condition="events"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+	</tal:block>
 	
 </metal:block>

@@ -47,6 +47,8 @@ class AssessmentsTimeseriesReportView(AbstractReportView):
         keys = self.options.keys()
         if 'has_assessment_event_data' not in keys:
             self.options['has_assessment_event_data'] = False
+        if 'has_assignments_taken' not in keys:
+            self.options['has_assignments_taken'] = False
         self.options['data'] = data
         return self.options
 
@@ -88,8 +90,8 @@ class AssessmentsTimeseriesReportView(AbstractReportView):
                                         self.options['course_ids'] or (),
                                         period=self.options['period'])
             aet = AssessmentEventsTimeseries(avt, att, savt, satt)
-            self.build_assessment_events_data(aet)
             data['assessment_events'] = self.build_assessment_events_data(aet)
+            data['assignments_taken'] = self.build_graded_assignment_taken_data(att)
         self._build_data(data)
         return self.options
 
@@ -119,3 +121,28 @@ class AssessmentsTimeseriesReportView(AbstractReportView):
         else:
             assessment_events['tuples'] = ()
         return assessment_events
+
+    def build_graded_assignment_taken_data(self, att):
+        df = att.analyze_events()
+        df = reset_dataframe_(df)
+        if df.empty:
+            self.options['has_assignments_taken'] = False
+            return
+        assignments = {}
+        self.options['has_assignments_taken'] = True
+        assignments['num_rows'] = df.shape[0]
+        assignments['column_name'] = _(u'Assignments Taken')
+        if assignments['num_rows'] > 1:
+            chart = build_event_chart_data(df,
+                                           'number_assignments_taken',
+                                           'Assignments Taken')
+            assignments['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            assignments['events_chart'] = ()
+        
+        if assignments['num_rows'] == 1:
+            columns = ('date', 'number_of_events', 'number_of_unique_users','ratio')
+            assignments['tuples'] = build_event_table_data(df, columns)
+        else:
+            assignments['tuples'] = ()
+        return assignments
