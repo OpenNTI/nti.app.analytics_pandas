@@ -67,14 +67,29 @@ class AssessmentsTimeseriesReportView(AbstractReportView):
                 self.options['period'] = values['period']
             else:
                 self.options['period'] = u'daily'
-            aet = AssessmentEventsTimeseries(self.db.session,
+            avt = AssignmentViewsTimeseries(self.db.session,
                                         self.options['start_date'],
                                         self.options['end_date'],
                                         self.options['course_ids'] or (),
                                         period=self.options['period'])
-            if not aet.dataframe.empty:
-                self.build_assessment_events_data(aet)
-                data['assessment_events'] = self.build_assessment_events_data(aet)
+            att = AssignmentsTakenTimeseries(self.db.session,
+                                        self.options['start_date'],
+                                        self.options['end_date'],
+                                        self.options['course_ids'] or (),
+                                        period=self.options['period'])
+            savt = SelfAssessmentViewsTimeseries(self.db.session,
+                                        self.options['start_date'],
+                                        self.options['end_date'],
+                                        self.options['course_ids'] or (),
+                                        period=self.options['period'])
+            satt = SelfAssessmentsTakenTimeseries(self.db.session,
+                                        self.options['start_date'],
+                                        self.options['end_date'],
+                                        self.options['course_ids'] or (),
+                                        period=self.options['period'])
+            aet = AssessmentEventsTimeseries(avt, att, savt, satt)
+            self.build_assessment_events_data(aet)
+            data['assessment_events'] = self.build_assessment_events_data(aet)
         self._build_data(data)
         return self.options
 
