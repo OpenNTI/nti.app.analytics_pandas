@@ -49,6 +49,8 @@ class AssessmentsTimeseriesReportView(AbstractReportView):
             self.options['has_assessment_event_data'] = False
         if 'has_assignments_taken' not in keys:
             self.options['has_assignments_taken'] = False
+        if 'has_self_assessment_taken' not in keys:
+            self.options['has_self_assessment_taken'] = False
         self.options['data'] = data
         return self.options
 
@@ -92,6 +94,7 @@ class AssessmentsTimeseriesReportView(AbstractReportView):
             aet = AssessmentEventsTimeseries(avt, att, savt, satt)
             data['assessment_events'] = self.build_assessment_events_data(aet)
             data['assignments_taken'] = self.build_graded_assignment_taken_data(att)
+            data['self_assessment_taken'] = self.build_self_assessment_taken_data(satt)
         self._build_data(data)
         return self.options
 
@@ -146,3 +149,28 @@ class AssessmentsTimeseriesReportView(AbstractReportView):
         else:
             assignments['tuples'] = ()
         return assignments
+
+    def build_self_assessment_taken_data(self, satt):
+        df = satt.analyze_events()
+        df = reset_dataframe_(df)
+        if df.empty:
+            self.options['has_self_assessment_taken'] = False
+            return
+        self_assessment = {}
+        self.options['has_self_assessment_taken'] = True
+        self_assessment['num_rows'] = df.shape[0]
+        self_assessment['column_name'] = _(u'Self Assessments Taken')
+        if self_assessment['num_rows'] > 1:
+            chart = build_event_chart_data(df,
+                                           'number_self_assessments_taken',
+                                           'Self Assessments Taken')
+            self_assessment['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            self_assessment['events_chart'] = ()
+        
+        if self_assessment['num_rows'] == 1:
+            columns = ('date', 'number_of_events', 'number_of_unique_users','ratio')
+            self_assessment['tuples'] = build_event_table_data(df, columns)
+        else:
+            self_assessment['tuples'] = ()
+        return self_assessment
