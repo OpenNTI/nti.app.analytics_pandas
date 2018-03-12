@@ -225,6 +225,13 @@
 
 	<z3c:macro
 		template="templates/std_report_macros.pt"
+		name="pandas_two_columns_event_table"
+		for="zope.interface.Interface"
+		view="zope.interface.Interface"
+		layer="pyramid.interfaces.IRequest" />
+
+	<z3c:macro
+		template="templates/std_report_macros.pt"
 		name="pandas_one_page_chart"
 		for="zope.interface.Interface"
 		view="zope.interface.Interface"

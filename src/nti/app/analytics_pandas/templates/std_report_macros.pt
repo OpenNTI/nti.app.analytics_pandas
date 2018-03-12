@@ -289,6 +289,23 @@
 			</blockTable>
 		</metal:macro>
 
+		<metal:macro metal:define-macro="pandas_two_columns_event_table" >
+			<blockTable style='default'
+						alignment="left"
+						colWidths="50% 50%"
+						tal:condition="events" 
+						repeatRows="1" >
+				<tr>
+					<td>Date</td>
+					<td tal:content="column_name">Events</td>
+				</tr>
+				<tr tal:repeat="item events">
+					<td fontSize="8" tal:content="item/date">2015-12-01</td>
+					<td fontSize="8" tal:content="item/number_of_events">25</td>
+				</tr>
+			</blockTable>
+		</metal:macro>
+
 		<metal:macro metal:define-macro="pandas_one_page_chart" >
 			<illustration width="620" height="420">
 			    <image tal:attributes="file echart" 
