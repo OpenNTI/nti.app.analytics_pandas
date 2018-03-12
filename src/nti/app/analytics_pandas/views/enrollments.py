@@ -45,6 +45,7 @@ class EnrollmentsTimeseriesReportView(AbstractReportView):
         keys = self.options.keys()
         if 'has_enrollment_data' not in keys:
             self.options['has_enrollment_data'] = False
+            self.options['has_enrollment_type_data'] = False
         if 'has_catalog_views_data' not in keys:
             self.options['has_catalog_views_data'] = False
         self.options['data'] = data
@@ -108,7 +109,21 @@ class EnrollmentsTimeseriesReportView(AbstractReportView):
             enrollments['tuples'] = build_event_table_data(df, column_list=('date', 'number_of_events'))
         else:
             enrollments['tuples'] = ()
+        self.build_enrollment_type_data(cet, enrollments)
         return enrollments
+
+    def build_enrollment_type_data(self, cet, enrollments):
+        df = cet.analyze_enrollment_types()
+        if df.empty:
+            self.options['has_enrollment_type_data'] = False
+            return
+        df = reset_dataframe_(df)
+        self.options['has_enrollment_type_data'] = True
+        columns = ['timestamp_period', 'type_name',
+                   'number_of_enrollments']
+        df = df[columns]
+        df.columns = ['timestamp_period', 'enrollment_type', 'number_of_enrollments']
+        build_events_data_by_enrollment_type(df, enrollments)
 
     def build_catalog_views_data(self, ccvt):
         df = ccvt.analyze_events()
