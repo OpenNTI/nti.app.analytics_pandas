@@ -14,10 +14,10 @@
 	<pyramid:scan package=".highlights" />
 	<pyramid:scan package=".videos" />
 	<pyramid:scan package=".assessments" />
+	<pyramid:scan package=".enrollments" />
 
 	<!--
 	<pyramid:scan package=".social" />
-	<pyramid:scan package=".enrollments" />
 	-->
 	
 </configure>

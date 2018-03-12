@@ -24,6 +24,7 @@ from nti.analytics_pandas.queries import QueryCourses
 
 from nti.app.analytics_pandas import MessageFactory as _
 
+from nti.app.analytics_pandas.charts.colors import color02
 from nti.app.analytics_pandas.charts.colors import three_lines_colors
 
 from nti.app.analytics_pandas.charts.line_chart import TimeSeriesSimpleChart
@@ -108,6 +109,13 @@ def save_chart_to_temporary_file(chart):
         fname = temp_file.name
         return fname
 
+def build_timeseries_chart(df, col_name_alias):
+    events = [tuple(i) for i in df.values]
+    legend = [(color02, col_name_alias)]
+    chart_data = [events]
+    chart = TimeSeriesSimpleChart(data=chart_data,
+                                  legend_color_name_pairs=legend)
+    return chart
 
 def build_event_chart_data(df, event_unique_col_name, col_name_alias,
                             unused_legend_colors=three_lines_colors):
@@ -130,8 +138,9 @@ def build_event_chart_data(df, event_unique_col_name, col_name_alias,
 
 
 def build_event_table_data(df, column_list=('date', 'number_of_unique_users', 'number_of_events', 'ratio')):
-    df_table = df.round({'ratio': 2})
-    tuples = iternamedtuples(df_table.astype(str), column_list)
+    if 'ratio' in df.columns:
+        df = df.round({'ratio': 2})
+    tuples = iternamedtuples(df.astype(str), column_list)
     return tuples
 
 

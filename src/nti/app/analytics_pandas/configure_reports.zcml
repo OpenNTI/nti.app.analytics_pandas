@@ -141,22 +141,24 @@
 		permission="zope.Public"
 		manager=".interfaces.IPDFReportHeaderManager" />
 
+	<!-- Enrollment related events report -->
+	<z3c:template
+		template="templates/enrollments_report.rml"
+		for=".views.enrollments.EnrollmentsTimeseriesReportView"
+		layer="pyramid.interfaces.IRequest" />
+	
+	<browser:viewlet
+		name="enrollments_content_provider"
+		template="templates/enrollments_content_provider.rml"
+		view=".views.enrollments.EnrollmentsTimeseriesReportView"
+		layer="pyramid.interfaces.IRequest"
+		permission="zope.Public"
+		manager=".interfaces.IPDFReportHeaderManager" />
+
 	<!--
-	Assessments related events report
-	<z3c:template
-		template="templatesassessments.rml"
-		for=".assessments.AssessmentsEventsTimeseriesReportView"
-		layer="pyramid.interfaces.IRequest" />
-	
-	Enrollments related events report
-	<z3c:template
-		template="templatesenrollments.rml"
-		for=".enrollments.EnrollmentTimeseriesReportView"
-		layer="pyramid.interfaces.IRequest" />
-	
 	Social related events report
 	<z3c:template
-		template="templatessocial.rml"
+		template="templates/social.rml"
 		for=".social.SocialTimeseriesReportView"
 		layer="pyramid.interfaces.IRequest" />
 	-->
@@ -217,6 +219,13 @@
 	<z3c:macro
 		template="templates/std_report_macros.pt"
 		name="pandas_events_grouped_table"
+		for="zope.interface.Interface"
+		view="zope.interface.Interface"
+		layer="pyramid.interfaces.IRequest" />
+
+	<z3c:macro
+		template="templates/std_report_macros.pt"
+		name="pandas_two_columns_event_table"
 		for="zope.interface.Interface"
 		view="zope.interface.Interface"
 		layer="pyramid.interfaces.IRequest" />
