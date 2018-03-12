@@ -28,7 +28,7 @@
 		<illustration width="2in" height="2.5in" 
 				  	  tal:define="events options/data/enrollments/tuples; column_name options/data/enrollments/column_name"
 				  	  tal:condition="events"
-					  metal:use-macro="macro:pandas_events_table">
+					  metal:use-macro="macro:pandas_two_columns_event_table">
 		</illustration>
 	</tal:block>
 
