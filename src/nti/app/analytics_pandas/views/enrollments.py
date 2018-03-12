@@ -21,6 +21,7 @@ from nti.app.analytics_pandas.views import MessageFactory as _
 
 from nti.app.analytics_pandas.views.commons import build_event_chart_data
 from nti.app.analytics_pandas.views.commons import build_event_table_data
+from nti.app.analytics_pandas.views.commons import build_timeseries_chart
 from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
 from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
 from nti.app.analytics_pandas.views.commons import build_event_grouped_table_data
@@ -42,7 +43,11 @@ class EnrollmentsTimeseriesReportView(AbstractReportView):
 
     def _build_data(self, data=_('sample enrollments report')):
         keys = self.options.keys()
+        if 'has_enrollment_data' not in keys:
+            self.options['has_enrollment_data'] = False
+
         self.options['data'] = data
+
         return self.options
 
     def __call__(self):
@@ -62,5 +67,38 @@ class EnrollmentsTimeseriesReportView(AbstractReportView):
                 self.options['period'] = values['period']
             else:
                 self.options['period'] = u'daily'
+            cet = CourseEnrollmentsTimeseries(self.db.session,
+                                          self.options['start_date'],
+                                          self.options['end_date'],
+                                          self.options['course_ids'] or (),
+                                          period=self.options['period'])
+            if not cet.dataframe.empty:
+                data['enrollments'] = self.build_enrollment_data(cet)
+
         self._build_data(data)
         return self.options
+
+    def build_enrollment_data(self,cet):
+        df = cet.analyze_events()
+        if df.empty:
+            self.options['has_enrollment_data'] = False
+            return
+        self.options['has_enrollment_data'] = True
+        df = reset_dataframe_(df)
+        df = df[['timestamp_period', 'number_of_enrollments']]
+        enrollments = {}
+        enrollments['num_rows'] = df.shape[0]
+        enrollments['column_name'] = _(u'Enrollments')
+        if enrollments['num_rows'] > 1:
+            chart = build_timeseries_chart(df, 'Enrollments')
+            enrollments['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            enrollments['events_chart'] = ()
+        
+        if enrollments['num_rows'] == 1:
+            enrollments['tuples'] = build_event_table_data(df, column_list=('date', 'number_of_events'))
+        else:
+            enrollments['tuples'] = ()
+        return enrollments
+
+

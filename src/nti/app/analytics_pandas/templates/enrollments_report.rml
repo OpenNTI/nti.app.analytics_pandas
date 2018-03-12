@@ -3,4 +3,33 @@
 	xmlns:metal="http://xml.zope.org/namespaces/metal"
 	tal:define="options view/options">
 
+	<tal:block tal:condition="python: options['has_enrollment_data']">
+		<para style="normal" spaceAfter=".5in" >
+			This document presents an overview of enrollment related events created in <u>${options/course_names}</u> from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
+		</para>
+	</tal:block>	
+	<hr width="100%" />
+
+	<tal:block tal:condition="python: options['has_enrollment_data']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Student Enrollments
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This page shows the number of enrollments during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>.
+		</para>
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/enrollments/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/enrollments/tuples; column_name options/data/enrollments/column_name"
+				  	  tal:condition="events"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+	</tal:block>
+
 </metal:block>
