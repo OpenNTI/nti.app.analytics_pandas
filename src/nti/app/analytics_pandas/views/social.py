@@ -55,6 +55,7 @@ class SocialTimeseriesReportView(AbstractReportView):
             self.options['has_friend_list_member_added'] = False
         if 'has_profile_views' not in keys:
             self.options['has_profile_views'] = False
+            self.options['has_profile_viewers'] = False
         self.options['data'] = data
         return self.options
 
@@ -110,6 +111,7 @@ class SocialTimeseriesReportView(AbstractReportView):
                                       period=self.options['period'])
         if not epvt.dataframe.empty:
             data['profile_views'] = self.build_entity_profile_views_data(epvt)
+            data['profile_viewers'] = self.build_profile_viewers_data(epvt)
         self._build_data(data)
         return self.options
 
@@ -247,11 +249,28 @@ class SocialTimeseriesReportView(AbstractReportView):
             profile_views['tuples'] = ()
         return profile_views
 
-    def build_profile_views_by_owner_or_by_others_data(self, epvt):
+    def build_profile_viewers_data(self, epvt):
         df = epvt.analyze_views_by_owner_or_by_others()
         if df.empty:
-            self.options['has_profile_views_by_owner_or_by_others'] = False
+            self.options['has_profile_viewers'] = False
             return
+        self.options['has_profile_viewers'] = True
+        columns = ['timestamp_period', 'viewers', 'number_of_profile_views']
         df = reset_dataframe_(df)
-        self.options['has_profile_views_by_owner_or_by_others'] = True
-        
+        df = df[columns]
+        df['timestamp_period'] = df['timestamp_period'].astype(str)
+        timestamp_num = len(df['timestamp_period'].unique())
+        profile_viewers = {}
+        profile_viewers['num_rows'] = df.shape[0]
+        profile_viewers['column_name'] = _(u'Viewers')
+        if profile_viewers['num_rows'] > 1 and timestamp_num > 1:
+            chart = build_event_grouped_chart_data(df, 'viewers')
+            profile_viewers['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            profile_viewers['events_chart'] = False
+            
+        if profile_viewers['num_rows'] == 1 or timestamp_num == 1:
+            profile_viewers['tuples'] = build_event_grouped_table_data(df)
+        else:
+            profile_viewers['tuples'] = False
+        return profile_viewers
