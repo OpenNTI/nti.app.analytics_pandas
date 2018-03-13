@@ -173,7 +173,7 @@
 				This table shows the number of note views grouped by resource types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
 			</para>
 			<illustration width="300" height="450" 
-					  	  tal:define="column_name options/data/profile_viewers/column_name; group_name options/data/profile_viewers/column_name"
+					  	  tal:define="column_name options/data/profile_viewers/column_name; group_name options/data/profile_viewers/col"
 						  metal:use-macro="macro:pandas_events_grouped_table">
 			</illustration>
 		</tal:block>
