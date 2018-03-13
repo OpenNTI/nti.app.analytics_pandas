@@ -51,6 +51,8 @@ class SocialTimeseriesReportView(AbstractReportView):
             self.options['has_chats_initiated'] = False
         if 'has_chats_joined' not in keys:
             self.options['has_chats_joined'] = False
+        if 'has_contacts_added' not in keys:
+            self.options['has_contacts_added'] = False
         self.options['data'] = data
         return self.options
 
@@ -78,6 +80,13 @@ class SocialTimeseriesReportView(AbstractReportView):
                                     period=self.options['period'])
         if not cjt.dataframe.empty:
             data['chats_joined'] = self.build_chats_joined_data(cjt)
+
+        cat = ContactsAddedTimeseries(self.db.session,
+                                      self.options['start_date'],
+                                      self.options['end_date'],
+                                      period=self.options['period'])
+        if not cat.dataframe.empty:
+            data['contacts_added'] = self.build_contacts_added_data(cat)
         self._build_data(data)
         return self.options
 
@@ -130,4 +139,28 @@ class SocialTimeseriesReportView(AbstractReportView):
         else:
             chats_joined['tuples'] = False
         return chats_joined
+
+    def build_contacts_added_data(self, cat):
+        df = cat.analyze_events()
+        if df.empty:
+            self.options['has_contacts_added'] = False
+            return
+        df = reset_dataframe_(df)
+        self.options['has_contacts_added'] = True
+        contacts_added = {}
+        contacts_added['num_rows'] = df.shape[0]
+        contacts_added['column_name'] = _(u'Contacts Added')
+        if contacts_added['num_rows'] > 1:
+            chart = build_event_chart_data(df,
+                                           'number_of_contacts_added',
+                                           contacts_added['column_name'])
+            contacts_added['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            contacts_added['events_chart'] = ()
+        
+        if contacts_added['num_rows'] == 1:
+            contacts_added['tuples'] = build_event_table_data(df)
+        else:
+            contacts_added['tuples'] = ()
+        return contacts_added
 
