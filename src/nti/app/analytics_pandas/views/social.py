@@ -15,14 +15,8 @@ from nti.analytics_pandas.analysis import ChatsInitiatedTimeseries
 
 from nti.analytics_pandas.analysis import ContactsAddedTimeseries
 from nti.analytics_pandas.analysis import ContactsRemovedTimeseries
-from nti.analytics_pandas.analysis import ContactsEventsTimeseries
 
 from nti.analytics_pandas.analysis import FriendsListsMemberAddedTimeseries
-
-from nti.analytics_pandas.analysis import EntityProfileViewsTimeseries
-from nti.analytics_pandas.analysis import EntityProfileViewEventsTimeseries
-from nti.analytics_pandas.analysis import EntityProfileActivityViewsTimeseries
-from nti.analytics_pandas.analysis import EntityProfileMembershipViewsTimeseries
 
 from nti.analytics_pandas.analysis.common import reset_dataframe_
 
@@ -53,6 +47,10 @@ class SocialTimeseriesReportView(AbstractReportView):
             self.options['has_chats_joined'] = False
         if 'has_contacts_added' not in keys:
             self.options['has_contacts_added'] = False
+        if 'has_contacts_removed' not in keys:
+            self.options['has_contacts_removed'] = False
+        if 'has_friend_list_member_added' not in keys:
+            self.options['has_friend_list_member_added'] = False
         self.options['data'] = data
         return self.options
 
@@ -87,6 +85,20 @@ class SocialTimeseriesReportView(AbstractReportView):
                                       period=self.options['period'])
         if not cat.dataframe.empty:
             data['contacts_added'] = self.build_contacts_added_data(cat)
+
+        crt = ContactsRemovedTimeseries(self.db.session,
+                                      self.options['start_date'],
+                                      self.options['end_date'],
+                                      period=self.options['period'])
+        if not crt.dataframe.empty:
+            data['contacts_removed'] = self.build_contacts_removed_data(crt)
+        
+        flmat = FriendsListsMemberAddedTimeseries(self.db.session,
+                                      self.options['start_date'],
+                                      self.options['end_date'],
+                                      period=self.options['period'])
+        if not flmat.dataframe.empty:
+            data['friend_list'] = self.build_friend_list_member_added_data(flmat)
         self._build_data(data)
         return self.options
 
@@ -164,3 +176,38 @@ class SocialTimeseriesReportView(AbstractReportView):
             contacts_added['tuples'] = ()
         return contacts_added
 
+    def build_contacts_removed_data(self, crt):
+        df = crt.analyze_events()
+        if df.empty:
+            self.options['has_contacts_removed'] = False
+            return
+        df = reset_dataframe_(df)
+        self.options['has_contacts_removed'] = True
+        contacts_removed = {}
+        contacts_removed['num_rows'] = df.shape[0]
+        contacts_removed['column_name'] = _(u'Contacts Removed')
+        if contacts_removed['num_rows'] > 1:
+            chart = build_event_chart_data(df,
+                                           'number_of_contacts_removed',
+                                           contacts_removed['column_name'])
+            contacts_removed['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            contacts_removed['events_chart'] = ()
+        
+        if contacts_removed['num_rows'] == 1:
+            contacts_removed['tuples'] = build_event_table_data(df)
+        else:
+            contacts_removed['tuples'] = ()
+        return contacts_removed
+
+    def build_friend_list_member_added_data(self, flmat):
+        df = flmat.analyze_number_of_friend_list_members_added()
+        if df.empty:
+            self.options['has_friend_list_member_added'] = False
+            return
+        self.options['has_friend_list_member_added'] = True
+        df = reset_dataframe_(df) 
+        df = df.round({'average_number_of_friend_list_members_added' : 2})
+        friend_list = {}
+        friend_list['tuples'] = build_event_table_data(df, column_list=df.columns)
+        return friend_list
