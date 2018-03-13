@@ -184,7 +184,7 @@ def build_events_data_by_enrollment_type(df, events_dict):
     else:
         events_dict['by_enrollment_chart'] = ()
     
-    if events_dict['num_rows_enrollment'] == 1 and timestamp_num == 1:
+    if events_dict['num_rows_enrollment'] == 1 or timestamp_num == 1:
         events_dict['tuples_enrollment_type'] = build_event_grouped_table_data(df)
         events_dict['enrollment_col'] = _(u'Enrollment Type')
     else:
@@ -199,7 +199,7 @@ def build_events_data_by_resource_type(df, events_dict):
     else:
         events_dict['by_resource_chart'] = ()
     
-    if events_dict['num_rows_resource'] == 1 and timestamp_num == 1:
+    if events_dict['num_rows_resource'] == 1 or timestamp_num == 1:
         events_dict['tuples_resource_type'] = build_event_grouped_table_data(df)
         events_dict['resource_col'] = _(u'Resource Type')
     else:
@@ -214,7 +214,7 @@ def build_events_data_by_sharing_type(df, events_dict):
     else:
         events_dict['by_sharing_chart'] = ()
     
-    if events_dict['num_rows_sharing'] == 1 and timestamp_num == 1:
+    if events_dict['num_rows_sharing'] == 1 or timestamp_num == 1:
         events_dict['tuples_sharing_type'] = build_event_grouped_table_data(df)
         events_dict['sharing_col'] = _(u'Sharing Type')
     else:
