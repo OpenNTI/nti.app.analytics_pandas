@@ -24,5 +24,34 @@
 					  metal:use-macro="macro:pandas_events_table">
 		</illustration>
 	</tal:block>
+
+	<tal:block tal:condition="python: options['has_chats_joined']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			One-One Chat and Group Chat
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="echart options/data/chats_joined/events_chart" 
+				   tal:condition="echart">
+			<para style="subdesc" spaceAfter=".5in" >
+				This chart shows the number of one-one and group chat during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="5in" height="3in"
+						  metal:use-macro="macro:pandas_one_page_chart">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:define="events options/data/chats_joined/tuples"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of note views grouped by resource types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/chats_joined/column_name; group_name options/data/chats_joined/column_name"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
+	</tal:block>
 	
 </metal:block>

@@ -33,10 +33,6 @@ from nti.app.analytics_pandas.views.commons import build_event_table_data
 from nti.app.analytics_pandas.views.commons import save_chart_to_temporary_file
 from nti.app.analytics_pandas.views.commons import build_event_grouped_chart_data
 from nti.app.analytics_pandas.views.commons import build_event_grouped_table_data
-from nti.app.analytics_pandas.views.commons import get_course_id_and_name_given_ntiid
-from nti.app.analytics_pandas.views.commons import build_events_data_by_sharing_type
-from nti.app.analytics_pandas.views.commons import build_events_data_by_resource_type
-from nti.app.analytics_pandas.views.commons import build_events_data_by_enrollment_type
 
 from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
@@ -53,6 +49,8 @@ class SocialTimeseriesReportView(AbstractReportView):
         keys = self.options.keys()
         if 'has_chats_initiated' not in keys:
             self.options['has_chats_initiated'] = False
+        if 'has_chats_joined' not in keys:
+            self.options['has_chats_joined'] = False
         self.options['data'] = data
         return self.options
 
@@ -73,6 +71,13 @@ class SocialTimeseriesReportView(AbstractReportView):
                                     period=self.options['period'])
         if not cit.dataframe.empty:
             data['chats_initiated'] = self.build_chats_initiated_data(cit)
+
+        cjt = ChatsJoinedTimeseries(self.db.session,
+                                    self.options['start_date'],
+                                    self.options['end_date'],
+                                    period=self.options['period'])
+        if not cjt.dataframe.empty:
+            data['chats_joined'] = self.build_chats_joined_data(cjt)
         self._build_data(data)
         return self.options
 
@@ -81,6 +86,7 @@ class SocialTimeseriesReportView(AbstractReportView):
         if df.empty:
             self.options['has_chats_initiated'] = False
             return
+        df = reset_dataframe_(df)
         self.options['has_chats_initiated'] = True
         chats_initiated = {}
         chats_initiated['num_rows'] = df.shape[0]
@@ -98,3 +104,30 @@ class SocialTimeseriesReportView(AbstractReportView):
         else:
             chats_initiated['tuples'] = ()
         return chats_initiated
+
+    def build_chats_joined_data(self, cjt):
+        df = cjt.analyze_one_one_and_group_chat()
+        if df.empty:
+            self.options['has_chats_joined'] = False
+            return
+        self.options['has_chats_joined'] = True
+        df = reset_dataframe_(df)
+        columns = ['timestamp_period', 'chat_type', 'number_of_chats']
+        df = df[columns]
+        df['timestamp_period'] = df['timestamp_period'].astype(str)
+        chats_joined = {}
+        timestamp_num = len(df['timestamp_period'].unique())
+        chats_joined['num_rows'] = df.shape[0]
+        chats_joined['column_name'] = _(u'Chats')
+        if chats_joined['num_rows'] > 1 and timestamp_num > 1:
+            chart = build_event_grouped_chart_data(df, 'chat_type')
+            chats_joined['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            chats_joined['events_chart'] = False
+            
+        if chats_joined['num_rows'] == 1 or timestamp_num == 1:
+            chats_joined['tuples'] = build_event_grouped_table_data(df)
+        else:
+            chats_joined['tuples'] = False
+        return chats_joined
+
