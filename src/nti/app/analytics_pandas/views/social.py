@@ -42,15 +42,17 @@ from nti.app.analytics_pandas.views.mixins import AbstractReportView
 
 logger = __import__('logging').getLogger(__name__)
 
-@view_config(name="SocialsReport")
-class SocialsTimeseriesReportView(AbstractReportView):
+@view_config(name="SocialReport")
+class SocialTimeseriesReportView(AbstractReportView):
 
     @property
     def report_title(self):
-        return _(u'socials Report')
+        return _(u'Social Report')
 
-    def _build_data(self, data=_('sample socials report')):
+    def _build_data(self, data=_('sample social report')):
         keys = self.options.keys()
+        if 'has_chats_initiated' not in keys:
+            self.options['has_chats_initiated'] = False
         self.options['data'] = data
         return self.options
 
@@ -58,18 +60,41 @@ class SocialsTimeseriesReportView(AbstractReportView):
         values = self.readInput()
         if "MimeType" not in values.keys():
             values["MimeType"] = 'application/vnd.nextthought.reports.socialeventstimeseriescontext'
-        self.options['ntiid'] = values['ntiid']
-        course_ids, course_names = get_course_id_and_name_given_ntiid(self.db.session,
-                                                                      self.options['ntiid'])
+        self.options['start_date'] = values['start_date']
+        self.options['end_date'] = values['end_date']
         data = {}
-        if course_ids and course_names:
-            self.options['course_ids'] = course_ids
-            self.options['course_names'] = ", ".join(map(str, course_names or ()))
-            self.options['start_date'] = values['start_date']
-            self.options['end_date'] = values['end_date']
-            if 'period' in values.keys():
-                self.options['period'] = values['period']
-            else:
-                self.options['period'] = u'daily'
+        if 'period' in values.keys():
+            self.options['period'] = values['period']
+        else:
+            self.options['period'] = u'daily'
+        cit = ChatsInitiatedTimeseries(self.db.session,
+                                    self.options['start_date'],
+                                    self.options['end_date'],
+                                    period=self.options['period'])
+        if not cit.dataframe.empty:
+            data['chats_initiated'] = self.build_chats_initiated_data(cit)
         self._build_data(data)
         return self.options
+
+    def build_chats_initiated_data(self, cit):
+        df = cit.analyze_events()
+        if df.empty:
+            self.options['has_chats_initiated'] = False
+            return
+        self.options['has_chats_initiated'] = True
+        chats_initiated = {}
+        chats_initiated['num_rows'] = df.shape[0]
+        chats_initiated['column_name'] = _(u'Chats Initiated')
+        if chats_initiated['num_rows'] > 1:
+            chart = build_event_chart_data(df,
+                                           'number_of_chats_initiated',
+                                           chats_initiated['column_name'])
+            chats_initiated['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            chats_initiated['events_chart'] = ()
+        
+        if chats_initiated['num_rows'] == 1:
+            chats_initiated['tuples'] = build_event_table_data(df)
+        else:
+            chats_initiated['tuples'] = ()
+        return chats_initiated
