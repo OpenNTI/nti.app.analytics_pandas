@@ -120,7 +120,6 @@ class SocialTimeseriesReportView(AbstractReportView):
         if df.empty:
             self.options['has_chats_initiated'] = False
             return
-        df = reset_dataframe_(df)
         self.options['has_chats_initiated'] = True
         chats_initiated = {}
         chats_initiated['num_rows'] = df.shape[0]
@@ -157,12 +156,12 @@ class SocialTimeseriesReportView(AbstractReportView):
             chart = build_event_grouped_chart_data(df, 'chat_type')
             chats_joined['events_chart'] = save_chart_to_temporary_file(chart)
         else:
-            chats_joined['events_chart'] = False
+            chats_joined['events_chart'] = ()
             
         if chats_joined['num_rows'] == 1 or timestamp_num == 1:
             chats_joined['tuples'] = build_event_grouped_table_data(df)
         else:
-            chats_joined['tuples'] = False
+            chats_joined['tuples'] = ()
         return chats_joined
 
     def build_contacts_added_data(self, cat):
@@ -170,7 +169,6 @@ class SocialTimeseriesReportView(AbstractReportView):
         if df.empty:
             self.options['has_contacts_added'] = False
             return
-        df = reset_dataframe_(df)
         self.options['has_contacts_added'] = True
         contacts_added = {}
         contacts_added['num_rows'] = df.shape[0]
@@ -194,7 +192,6 @@ class SocialTimeseriesReportView(AbstractReportView):
         if df.empty:
             self.options['has_contacts_removed'] = False
             return
-        df = reset_dataframe_(df)
         self.options['has_contacts_removed'] = True
         contacts_removed = {}
         contacts_removed['num_rows'] = df.shape[0]
@@ -230,7 +227,6 @@ class SocialTimeseriesReportView(AbstractReportView):
         if df.empty:
             self.options['has_profile_views'] = False
             return
-        df = reset_dataframe_(df)
         self.options['has_profile_views'] = True
         profile_views = {}
         profile_views['num_rows'] = df.shape[0]
