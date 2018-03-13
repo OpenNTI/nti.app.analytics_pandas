@@ -15,9 +15,5 @@
 	<pyramid:scan package=".videos" />
 	<pyramid:scan package=".assessments" />
 	<pyramid:scan package=".enrollments" />
-
-	<!--
 	<pyramid:scan package=".social" />
-	-->
-	
 </configure>

@@ -155,13 +155,19 @@
 		permission="zope.Public"
 		manager=".interfaces.IPDFReportHeaderManager" />
 
-	<!--
-	Social related events report
+	<!-- Social network related events report -->
 	<z3c:template
-		template="templates/social.rml"
-		for=".social.SocialTimeseriesReportView"
+		template="templates/social_report.rml"
+		for=".views.social.SocialTimeseriesReportView"
 		layer="pyramid.interfaces.IRequest" />
-	-->
+	
+	<browser:viewlet
+		name="social_content_provider"
+		template="templates/social_content_provider.rml"
+		view=".views.social.SocialTimeseriesReportView"
+		layer="pyramid.interfaces.IRequest"
+		permission="zope.Public"
+		manager=".interfaces.IPDFReportHeaderManager" />
 			
 	<!-- Default macros for the reports -->
 	<!--

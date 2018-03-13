@@ -2,6 +2,181 @@
 	xmlns:tal="http://xml.zope.org/namespaces/tal"
 	xmlns:metal="http://xml.zope.org/namespaces/metal"
 	tal:define="options view/options; context view/context">
-	<document>
-	</document>
+
+	<tal:block tal:condition="python: options['has_chats_initiated']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Chats Initiated
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This page shows the number of chats initiated during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users initiating chats and the ratio of total chats initiated over number of unique users. 
+		</para>
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/chats_initiated/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/chats_initiated/tuples; column_name options/data/chats_initiated/column_name"
+				  	  tal:condition="events"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_chats_joined']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			One-One Chat and Group Chat
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="echart options/data/chats_joined/events_chart" 
+				   tal:condition="echart">
+			<para style="subdesc" spaceAfter=".5in" >
+				This chart shows the number of one-one and group chat during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="5in" height="3in"
+						  metal:use-macro="macro:pandas_one_page_chart">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:define="events options/data/chats_joined/tuples"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of note views grouped by resource types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/chats_joined/column_name; group_name options/data/chats_joined/column_name"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_contacts_added']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Contacts Added
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This page shows the number of contacts added during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users adding contacts and the ratio of total contacts added over number of unique users. 
+		</para>
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/contacts_added/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/contacts_added/tuples; column_name options/data/contacts_added/column_name"
+				  	  tal:condition="events"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_contacts_removed']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Contacts Removed
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This page shows the number of contacts removed during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users removing contacts and the ratio of total contacts removed over number of unique users. 
+		</para>
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/contacts_removed/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/contacts_removed/tuples; column_name options/data/contacts_removed/column_name"
+				  	  tal:condition="events"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_friend_list_member_added']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Friend List Members Added
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This tables shows the number of friend list members added from<strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique friend list in which the members is added and average number of friend list members added.
+		</para>
+		<blockTable style="default"
+					alignment="left"
+					colWidths="25% 25% 25% 25%"
+					tal:define="tuples options/data/friend_list/tuples"
+					repeatRows="1">
+			<tr>
+				<td>Date</td>
+				<td>Total Members Added</td>
+				<td>Unique Friend Lists</td>
+				<td>Average Members Added</td>
+			</tr>
+			<tr tal:repeat="item tuples">
+				<td fontSize="8" tal:content="item/timestamp_period">2015-05-01</td>
+				<td fontSize="8" tal:content="item/total_number_of_friend_list_members_added">4</td>
+				<td fontSize="8" tal:content="item/number_of_friend_lists">2</td>
+				<td fontSize="8" tal:content="item/average_number_of_friend_list_members_added">2</td>
+			</tr>
+		</blockTable>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_profile_views']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Profile Views
+		</h1>
+		<hr width="100%" />
+		<para style="subdesc" spaceAfter=".5in" >
+			This page shows the number of profile views during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. It also shows the number of unique users viewing profile and the ratio of total profile views over number of unique users. 
+		</para>
+		<illustration width="5in" height="3in"
+					  tal:define="echart options/data/profile_views/events_chart"
+					  tal:condition="echart"
+					  metal:use-macro="macro:pandas_one_page_chart">
+		</illustration>
+		<illustration width="2in" height="2.5in" 
+				  	  tal:define="events options/data/profile_views/tuples; column_name options/data/profile_views/column_name"
+				  	  tal:condition="events"
+					  metal:use-macro="macro:pandas_events_table">
+		</illustration>
+	</tal:block>
+
+	<tal:block tal:condition="python: options['has_profile_viewers']">
+		<setNextTemplate name="main"/>
+		<nextPage />
+		<h1 style="h1" fontSize="14" spaceBefore=".3in" spaceAfter=".3in">
+			Profile Viewers
+		</h1>
+		<hr width="100%" />
+		<tal:block tal:define="echart options/data/profile_viewers/events_chart" 
+				   tal:condition="echart">
+			<para style="subdesc" spaceAfter=".5in" >
+				This chart shows the number of profile views group by viewers during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="5in" height="3in"
+						  metal:use-macro="macro:pandas_one_page_chart">
+			</illustration>
+		</tal:block>
+
+		<tal:block tal:define="events options/data/profile_viewers/tuples"
+				   tal:condition="events"> 
+			<para style="subdesc" spaceAfter=".5in" >
+				This table shows the number of note views grouped by resource types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
+			</para>
+			<illustration width="300" height="450" 
+					  	  tal:define="column_name options/data/profile_viewers/column_name; group_name options/data/profile_viewers/column_name"
+						  metal:use-macro="macro:pandas_events_grouped_table">
+			</illustration>
+		</tal:block>
+	</tal:block>
+	
 </metal:block>
