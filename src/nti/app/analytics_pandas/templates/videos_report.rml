@@ -84,7 +84,7 @@
 				This table shows the number of videos watched grouped by user enrollment types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
 			</para>
 			<illustration width="300" height="450" 
-					  	  tal:define="column_name options/data/video_events/videos_watched/column_name; group_name options/data/video_events/videos_watched/enrollment_col"
+					  	  tal:define="column_name options/data/video_events/column_name; group_name options/data/video_events/videos_watched/enrollment_col"
 						  metal:use-macro="macro:pandas_events_grouped_table">
 			</illustration>
 		</tal:block>
@@ -135,7 +135,7 @@
 				This table shows the number of videos skipped grouped by user enrollment types during the period from <strong>${options/start_date}</strong> through <strong>${options/end_date}</strong>. 
 			</para>
 			<illustration width="300" height="450" 
-					  	  tal:define="column_name options/data/video_events/videos_skipped/column_name; group_name options/data/video_events/videos_skipped/enrollment_col"
+					  	  tal:define="column_name options/data/video_events/column_name; group_name options/data/video_events/videos_skipped/enrollment_col"
 						  metal:use-macro="macro:pandas_events_grouped_table">
 			</illustration>
 		</tal:block>
