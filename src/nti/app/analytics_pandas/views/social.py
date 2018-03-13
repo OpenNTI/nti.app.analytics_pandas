@@ -18,6 +18,8 @@ from nti.analytics_pandas.analysis import ContactsRemovedTimeseries
 
 from nti.analytics_pandas.analysis import FriendsListsMemberAddedTimeseries
 
+from nti.analytics_pandas.analysis import EntityProfileViewsTimeseries
+
 from nti.analytics_pandas.analysis.common import reset_dataframe_
 
 from nti.app.analytics_pandas.views import MessageFactory as _
@@ -51,6 +53,8 @@ class SocialTimeseriesReportView(AbstractReportView):
             self.options['has_contacts_removed'] = False
         if 'has_friend_list_member_added' not in keys:
             self.options['has_friend_list_member_added'] = False
+        if 'has_profile_views' not in keys:
+            self.options['has_profile_views'] = False
         self.options['data'] = data
         return self.options
 
@@ -99,6 +103,13 @@ class SocialTimeseriesReportView(AbstractReportView):
                                       period=self.options['period'])
         if not flmat.dataframe.empty:
             data['friend_list'] = self.build_friend_list_member_added_data(flmat)
+        
+        epvt = EntityProfileViewsTimeseries(self.db.session,
+                                      self.options['start_date'],
+                                      self.options['end_date'],
+                                      period=self.options['period'])
+        if not epvt.dataframe.empty:
+            data['profile_views'] = self.build_entity_profile_views_data(epvt)
         self._build_data(data)
         return self.options
 
@@ -211,3 +222,36 @@ class SocialTimeseriesReportView(AbstractReportView):
         friend_list = {}
         friend_list['tuples'] = build_event_table_data(df, column_list=df.columns)
         return friend_list
+
+    def build_entity_profile_views_data(self, epvt):
+        df = epvt.analyze_events()
+        if df.empty:
+            self.options['has_profile_views'] = False
+            return
+        df = reset_dataframe_(df)
+        self.options['has_profile_views'] = True
+        profile_views = {}
+        profile_views['num_rows'] = df.shape[0]
+        profile_views['column_name'] = _(u'Profile Views')
+        if profile_views['num_rows'] > 1:
+            chart = build_event_chart_data(df,
+                                           'number_of_profile_views',
+                                           profile_views['column_name'])
+            profile_views['events_chart'] = save_chart_to_temporary_file(chart)
+        else:
+            profile_views['events_chart'] = ()
+        
+        if profile_views['num_rows'] == 1:
+            profile_views['tuples'] = build_event_table_data(df)
+        else:
+            profile_views['tuples'] = ()
+        return profile_views
+
+    def build_profile_views_by_owner_or_by_others_data(self, epvt):
+        df = epvt.analyze_views_by_owner_or_by_others()
+        if df.empty:
+            self.options['has_profile_views_by_owner_or_by_others'] = False
+            return
+        df = reset_dataframe_(df)
+        self.options['has_profile_views_by_owner_or_by_others'] = True
+        
