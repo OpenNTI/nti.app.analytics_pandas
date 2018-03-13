@@ -258,7 +258,7 @@ class SocialTimeseriesReportView(AbstractReportView):
         timestamp_num = len(df['timestamp_period'].unique())
         profile_viewers = {}
         profile_viewers['num_rows'] = df.shape[0]
-        profile_viewers['column_name'] = _(u'Viewers')
+        profile_viewers['column_name'] = _(u'Number of Profile Views')
         if profile_viewers['num_rows'] > 1 and timestamp_num > 1:
             chart = build_event_grouped_chart_data(df, 'viewers')
             profile_viewers['events_chart'] = save_chart_to_temporary_file(chart)
@@ -267,6 +267,7 @@ class SocialTimeseriesReportView(AbstractReportView):
             
         if profile_viewers['num_rows'] == 1 or timestamp_num == 1:
             profile_viewers['tuples'] = build_event_grouped_table_data(df)
+            profile_viewers['col'] = _(u'Viewers')
         else:
             profile_viewers['tuples'] = False
         return profile_viewers
