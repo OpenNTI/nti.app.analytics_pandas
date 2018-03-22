@@ -1,0 +1,6 @@
+type_id,type_name
+2,ForCredit
+3,ForCreditDegree
+4,ForCreditNonDegree
+1,Public
+5,Purchased
