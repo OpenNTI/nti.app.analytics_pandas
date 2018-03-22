@@ -24,7 +24,7 @@ from zope.configuration import xmlconfig
 
 from zope.dottedname import resolve as dottedname
 
-from nti.app.analytics_pandas.reports.interfaces import IPandasReport
+from nti.app.analytics_pandas.interfaces import IPandasReport
 
 from nti.app.analytics_pandas.tests import SharedConfiguringTestLayer
 
