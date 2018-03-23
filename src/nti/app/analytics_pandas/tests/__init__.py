@@ -7,6 +7,12 @@ from __future__ import absolute_import
 
 # pylint: disable=protected-access,too-many-public-methods,arguments-differ
 
+
+import os
+import re
+import glob
+import pandas
+
 import unittest
 import functools
 
@@ -18,7 +24,17 @@ from nti.analytics_database.interfaces import IAnalyticsDatabase
 
 from nti.analytics_database.database import AnalyticsDB
 
-from nti.analytics_pandas.tests import read_sample_data
+
+def read_sample_data(engine):
+    # run from nti.analytics_pandas directory
+    path = os.path.join(os.path.dirname(__file__), "testdb")
+    for source in glob.glob(os.path.join(path, "*.csv")):
+        try:
+            tablename = re.split(r"\W+", source)[-2]
+            df = pandas.read_csv(source)
+            df.to_sql(con=engine, name=tablename, if_exists='replace')
+        except Exception:  # pylint: broad-except
+            pass
 
 
 class DatabaseTestMixin(object):
