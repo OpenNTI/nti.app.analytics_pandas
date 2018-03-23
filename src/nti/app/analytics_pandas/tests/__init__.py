@@ -120,7 +120,7 @@ from nti.app.contenttypes.reports.interfaces import IReportLinkProvider
 from nti.app.contenttypes.reports.tests import TestPredicate
 from nti.app.contenttypes.reports.tests import TestReportContext
 
-from nti.app.testing.application_webtest import ApplicationLayerTest
+from nti.app.testing.application_webtest import ApplicationTestLayer
 
 from nti.contenttypes.reports.interfaces import IReportAvailablePredicate
 
@@ -129,10 +129,8 @@ from nti.contenttypes.reports.tests import ITestReportContext
 from nti.dataserver.authorization import ACT_NTI_ADMIN
 
 
-class PandasReportsLayerTest(ApplicationLayerTest,
+class PandasReportsLayerTest(ApplicationTestLayer,
                              DatabaseTestMixin):
-
-    set_up_packages = ('nti.app.analytics_pandas',)
 
     utils = []
     factory = None
