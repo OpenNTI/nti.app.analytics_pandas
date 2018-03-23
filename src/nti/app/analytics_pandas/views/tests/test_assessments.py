@@ -45,6 +45,6 @@ class TestAssessmentOptions(ApplicationLayerTest):
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_assessment_report(self):
         request = DummyRequest(post={'ntiid': 'course-ntiid', })
-        view = AssessmentsTimeseriesReportView(request)
+        view = AssessmentsTimeseriesReportView(request=request)
         options = view()
         assert_that(options, is_not(none()))
