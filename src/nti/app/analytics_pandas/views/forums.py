@@ -22,6 +22,8 @@ from nti.analytics_pandas.analysis.common import reset_dataframe_
 
 from nti.app.analytics_pandas.views import MessageFactory as _
 
+from nti.app.analytics_pandas.views.commons import add_one_more_day
+from nti.app.analytics_pandas.views.commons import get_default_start_end_date
 from nti.app.analytics_pandas.views.commons import iternamedtuples
 from nti.app.analytics_pandas.views.commons import build_event_chart_data
 from nti.app.analytics_pandas.views.commons import build_event_table_data
@@ -58,6 +60,8 @@ class ForumsTimeseriesReportView(AbstractReportView):
 
     def __call__(self):
         values = self.readInput()
+        if 'start_date' and 'end_date' not in values.keys():
+            values['start_date'], values['end_date'] = get_default_start_end_date()
         if "MimeType" not in values.keys():
             values["MimeType"] = 'application/vnd.nextthought.reports.forumeventstimeseriescontext'
         self.options['ntiid'] = values['ntiid']
@@ -68,7 +72,7 @@ class ForumsTimeseriesReportView(AbstractReportView):
             self.options['course_ids'] = course_ids
             self.options['course_names'] = ", ".join(map(str, course_names or ()))
             self.options['start_date'] = values['start_date']
-            self.options['end_date'] = values['end_date']
+            self.options['end_date'] = add_one_more_day(values['end_date'])
             if 'period' in values.keys():
                 self.options['period'] = values['period']
             else:
