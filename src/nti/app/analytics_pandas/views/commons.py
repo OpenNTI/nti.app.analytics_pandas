@@ -15,6 +15,8 @@ import shutil
 import tempfile
 import numpy as np
 
+import datetime as DT
+
 from collections import Mapping
 from collections import namedtuple
 
@@ -31,6 +33,22 @@ from nti.app.analytics_pandas.charts.line_chart import TimeSeriesSimpleChart
 from nti.app.analytics_pandas.charts.line_chart import TimeSeriesGroupedChart
 
 logger = __import__('logging').getLogger(__name__)
+
+
+def get_default_start_end_date():
+    end_date  = DT.date.today()
+    start_date = end_date - DT.timedelta(days=7)
+    end_date = end_date.strftime("%Y-%m-%d")
+    start_date = end_date.strftime("%Y-%m-%d")
+    ## since the query exclude the end date then we need to add one more day to end date
+    add_one_more_day(end_date)
+    return start_date, end_date
+
+def add_one_more_day(end_date):
+    if isinstance(end_date, basestring):
+        end_date = DT.datetime.strptime(end_date,"%Y-%m-%d") + DT.timedelta(days=1)
+        end_date = end_date.strftime("%Y-%m-%d")
+    return end_date
 
 
 def get_course_names(session, courses_id):
