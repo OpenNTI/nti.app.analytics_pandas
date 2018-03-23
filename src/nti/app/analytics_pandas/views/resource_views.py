@@ -107,14 +107,14 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
                                            'Resource Viewed')
             resource_views['events_chart'] = save_chart_to_temporary_file(chart)
         else:
-            resource_views['events_chart'] = False
+            resource_views['events_chart'] = ()
         
         if resource_views['num_rows'] == 1:
             columns =dataframes['df_by_timestamp'].columns.tolist()
             resource_views['tuples'] = build_event_table_data(
                 dataframes['df_by_timestamp'], columns)
         else:
-            resource_views['tuples'] = False
+            resource_views['tuples'] = ()
         
         self.build_resources_viewed_by_type_data(rvt, resource_views)
 
@@ -155,13 +155,13 @@ class ResourceViewsTimeseriesReportView(AbstractReportView):
             chart = build_event_grouped_chart_data(df, 'resource_type')
             resource_views['by_resource_type_chart'] = save_chart_to_temporary_file(chart)
         else:
-            resource_views['by_resource_type_chart'] = False
+            resource_views['by_resource_type_chart'] = ()
             
         if resource_views['num_rows_resource_type'] == 1 or timestamp_num == 1:
             resource_views['tuples_resource_type'] = build_event_grouped_table_data(df)
             resource_views['resource_col'] = 'Resource Type'
         else:
-            resource_views['tuples_resource_type'] = False
+            resource_views['tuples_resource_type'] = ()
 
     def build_resources_viewed_by_device_type_data(self, df, resource_views):
         columns = ['timestamp_period', 'device_type',
