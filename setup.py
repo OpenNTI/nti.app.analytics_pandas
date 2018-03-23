@@ -62,6 +62,7 @@ setup(
         'pyramid',
         'pytz',
         'reportlab',
+        'six',
         'z3c.macro',
         'z3c.pagelet',
         'z3c.rml',
