@@ -1,81 +1,72 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
-# disable: accessing protected members, too many methods
-# pylint: disable=W0212,R0904
+# pylint: disable=protected-access,too-many-public-methods
 
 from hamcrest import is_
-from hamcrest import has_length
+from hamcrest import none
+from hamcrest import is_not
 from hamcrest import assert_that
-from hamcrest import greater_than
+from hamcrest import has_entries
 from hamcrest import has_property
 
-import os
-import json
+from pyramid.testing import DummyRequest
 
-from zope.cachedescriptors.property import Lazy
-
-from z3c.rml import rml2pdf
-
-from nti.app.analytics_pandas.views.highlights import HighlightsTimeseriesReportView
-from nti.app.analytics_pandas.views.highlights import HighlightsTimeseriesContext
-
-from nti.app.analytics_pandas.tests import AppAnalyticsTestBase
 from nti.app.analytics_pandas.tests import PandasReportsLayerTest
 
-from nti.app.analytics_pandas.views.tests import _build_sample_context
+from nti.app.analytics_pandas.views.highlights import HighlightsTimeseriesReportView
 
-from nti.app.pyramid_zope.z3c_zpt import ViewPageTemplateFile
+from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
-from nti.externalization.externalization import to_external_object
 
-class TestHighlightsEvents(AppAnalyticsTestBase):
+class TestHighlightsView(ApplicationLayerTest):
 
-	def setUp(self):
-		super(TestHighlightsEvents, self).setUp()
+    layer = PandasReportsLayerTest
 
-	@Lazy
-	def std_report_layout_rml(self):
-		path = os.path.join(
-                    os.path.dirname(__file__),
-                    '../../templates/std_report_layout.rml')
-		return path
-
-	def template(self, path):
-		result = ViewPageTemplateFile(path,
-                                auto_reload=(False,),
-                                debug=False)
-		return result
-
-	def test_std_report_layout_rml(self):
-		# make sure  template exists
-		path = self.std_report_layout_rml
-		assert_that(os.path.exists(path), is_(True))
-
-		# prepare view and context
-		context = HighlightsTimeseriesContext()
-		view = HighlightsTimeseriesReportView(context)
-		view._build_data('Bleach')
-		system = {'view': view, 'context': context}
-		rml = self.template(path).bind(view)(**system)
-
-		pdf_stream = rml2pdf.parseString(rml)
-		result = pdf_stream.read()
-		assert_that(result, has_length(greater_than(1)))
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_highlights_report(self):
+        response = self.testapp.post_json('/dataserver2/pandas_reports/HighlightsReport',
+                                          {
+                                              'ntiid': 'tag:nextthought.com,2011-10:NTI-CourseInfo-Spring2015_SOC_1113',
+                                              'start_date': '2015-01-01',
+                                              'end_date': '2015-05-31'
+                                          },
+                                          extra_environ=self._make_extra_environ())
+        assert_that(response,
+                    has_property('content_type', 'application/pdf'))
 
 
-class TestHightlightView(PandasReportsLayerTest):
+class TestHighlightsOptions(ApplicationLayerTest):
 
-	@WithSharedApplicationMockDS(testapp=True, users=True)
-	def test_highlight_view(self):
-		context = _build_sample_context(HighlightsTimeseriesContext)
-		params = to_external_object(context)
-		response = self.testapp.post('/dataserver2/pandas_reports/HighlightEventsReport',
-                                    json.dumps(params),
-                                    extra_environ=self._make_extra_environ())
-		assert_that(response, has_property('content_type', 'application/pdf'))
+    layer = PandasReportsLayerTest
+
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_highlights_report(self):
+        request = DummyRequest(params={'ntiid': 'tag:nextthought.com,2011-10:NTI-CourseInfo-Spring2015_SOC_1113',
+                                       'start_date': '2015-01-01',
+                                       'end_date': '2015-05-31'})
+        view = HighlightsTimeseriesReportView(request=request)
+        options = view()
+        assert_that(options, is_not(none()))
+        assert_that(options,
+                    has_entries('course_ids', is_([388]),
+                                'has_highlights_created_data', True,
+                                'has_highlights_created_per_resource_types', True,
+                                'has_highlights_created_per_enrollment_types', True))
+        assert_that(options,
+                    has_entries('data',
+                                has_entries('highlights_created', is_not(none()),
+                                            'highlights_created', 
+                                            has_entries('num_rows', 36,
+                                                        'events_chart', is_not(none()),
+                                                        'tuples', (),
+                                                        'column_name', u'Highlights Created')
+                                            )
+                                )
+                    )
