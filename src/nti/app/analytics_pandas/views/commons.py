@@ -10,7 +10,6 @@ from __future__ import absolute_import
 
 import os
 import six
-import atexit
 import shutil
 import tempfile
 import numpy as np
@@ -36,16 +35,19 @@ logger = __import__('logging').getLogger(__name__)
 
 
 def get_default_start_end_date():
-    end_date  = DT.date.today()
+    end_date = DT.date.today()
     start_date = end_date - DT.timedelta(days=7)
     end_date = end_date.strftime("%Y-%m-%d")
-    start_date = end_date.strftime("%Y-%m-%d")
+    start_date = start_date.strftime("%Y-%m-%d")
     return start_date, end_date
 
+
 def add_one_more_day(end_date):
-    ## since the query exclude the end date then we need to add one more day to end date
+    # since the query exclude the end date then we need to add one more day to
+    # end date
     if isinstance(end_date, basestring):
-        end_date = DT.datetime.strptime(end_date,"%Y-%m-%d") + DT.timedelta(days=1)
+        end_date = DT.datetime.strptime(
+            end_date, "%Y-%m-%d") + DT.timedelta(days=1)
         end_date = end_date.strftime("%Y-%m-%d")
     return end_date
 
@@ -126,6 +128,7 @@ def save_chart_to_temporary_file(chart):
         fname = temp_file.name
         return fname
 
+
 def build_timeseries_chart(df, col_name_alias):
     events = [tuple(i) for i in df.values]
     legend = [(color02, col_name_alias)]
@@ -134,8 +137,9 @@ def build_timeseries_chart(df, col_name_alias):
                                   legend_color_name_pairs=legend)
     return chart
 
+
 def build_event_chart_data(df, event_unique_col_name, col_name_alias,
-                            unused_legend_colors=three_lines_colors):
+                           unused_legend_colors=three_lines_colors):
     # Building line chart
     events_df = df[['timestamp_period', event_unique_col_name]]
     events = [tuple(i) for i in events_df.values]
@@ -197,15 +201,18 @@ def build_events_data_by_enrollment_type(df, events_dict):
     timestamp_num = len(np.unique(df['timestamp_period'].values.ravel()))
     if events_dict['num_rows_enrollment'] > 1 and timestamp_num > 1:
         chart = build_event_grouped_chart_data(df, 'enrollment_type')
-        events_dict['by_enrollment_chart'] = save_chart_to_temporary_file(chart)
+        events_dict['by_enrollment_chart'] = save_chart_to_temporary_file(
+            chart)
     else:
         events_dict['by_enrollment_chart'] = ()
-    
+
     if events_dict['num_rows_enrollment'] == 1 or timestamp_num == 1:
-        events_dict['tuples_enrollment_type'] = build_event_grouped_table_data(df)
+        events_dict['tuples_enrollment_type'] = build_event_grouped_table_data(
+            df)
         events_dict['enrollment_col'] = _(u'Enrollment Type')
     else:
         events_dict['tuples_enrollment_type'] = ()
+
 
 def build_events_data_by_resource_type(df, events_dict):
     events_dict['num_rows_resource'] = df.shape[0]
@@ -215,12 +222,13 @@ def build_events_data_by_resource_type(df, events_dict):
         events_dict['by_resource_chart'] = save_chart_to_temporary_file(chart)
     else:
         events_dict['by_resource_chart'] = ()
-    
+
     if events_dict['num_rows_resource'] == 1 or timestamp_num == 1:
         events_dict['tuples_resource_type'] = build_event_grouped_table_data(df)
         events_dict['resource_col'] = _(u'Resource Type')
     else:
         events_dict['tuples_resource_type'] = ()
+
 
 def build_events_data_by_sharing_type(df, events_dict):
     events_dict['num_rows_sharing'] = df.shape[0]
@@ -230,12 +238,13 @@ def build_events_data_by_sharing_type(df, events_dict):
         events_dict['by_sharing_chart'] = save_chart_to_temporary_file(chart)
     else:
         events_dict['by_sharing_chart'] = ()
-    
+
     if events_dict['num_rows_sharing'] == 1 or timestamp_num == 1:
         events_dict['tuples_sharing_type'] = build_event_grouped_table_data(df)
         events_dict['sharing_col'] = _(u'Sharing Type')
     else:
         events_dict['tuples_sharing_type'] = ()
+
 
 def extract_group_dataframe(df, group_col):
     """
