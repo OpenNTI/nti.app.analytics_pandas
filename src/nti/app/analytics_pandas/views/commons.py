@@ -12,12 +12,11 @@ import os
 import six
 import shutil
 import tempfile
-import numpy as np
-
 import datetime as DT
-
 from collections import Mapping
 from collections import namedtuple
+
+import numpy as np
 
 from z3c.rml import rml2pdf
 
@@ -45,9 +44,8 @@ def get_default_start_end_date():
 def add_one_more_day(end_date):
     # since the query exclude the end date then we need to add one more day to
     # end date
-    if isinstance(end_date, basestring):
-        end_date = DT.datetime.strptime(
-            end_date, "%Y-%m-%d") + DT.timedelta(days=1)
+    if isinstance(end_date, six.string_types):
+        end_date = DT.datetime.strptime(end_date, "%Y-%m-%d") + DT.timedelta(days=1)
         end_date = end_date.strftime("%Y-%m-%d")
     return end_date
 
