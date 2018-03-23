@@ -30,7 +30,7 @@ class TestEnrollmentView(ApplicationLayerTest):
     layer = PandasReportsLayerTest
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
-    def test_bookmarks_report(self):
+    def test_enrollment_report(self):
         response = self.testapp.post_json('/dataserver2/pandas_reports/EnrollmentsReport',
                                           {
                                               'ntiid': 'tag:nextthought.com,2011-10:NTI-CourseInfo-Spring2015_SOC_1113',
@@ -47,7 +47,7 @@ class TestEnrollmentOptions(ApplicationLayerTest):
     layer = PandasReportsLayerTest
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
-    def test_bookmark_report(self):
+    def test_enrollment_report(self):
         request = DummyRequest(params={'ntiid': 'tag:nextthought.com,2011-10:NTI-CourseInfo-Spring2015_SOC_1113',
                                        'start_date': '2015-01-01',
                                        'end_date': '2015-05-31'})
