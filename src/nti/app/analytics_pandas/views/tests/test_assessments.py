@@ -23,7 +23,10 @@ class TestAssessmentViews(ApplicationLayerTest):
 
     @WithSharedApplicationMockDS(testapp=True, users=True)
     def test_assessment_report(self):
-        response = self.testapp.get('/dataserver2/pandas_reports/AssessmentsReport',
-                                    extra_environ=self._make_extra_environ())
+        response = self.testapp.post_json('/dataserver2/pandas_reports/AssessmentsReport',
+										  {
+											 'ntiid': 'course-ntiid',
+										  },
+                                    	  extra_environ=self._make_extra_environ())
         assert_that(response,
                     has_property('content_type', 'application/pdf'))
