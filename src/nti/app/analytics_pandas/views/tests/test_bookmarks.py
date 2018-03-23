@@ -55,7 +55,7 @@ class TestBookmarkOptions(ApplicationLayerTest):
         options = view()
         assert_that(options, is_not(none()))
         assert_that(options,
-                    has_entries('course_ids', is_(['388']),
+                    has_entries('course_ids', is_([388]),
                                 'has_bookmarks_created_data', True,
                                 'has_bookmarks_created_per_resource_types', True,
                                 'has_bookmarks_created_per_enrollment_types', True))
@@ -63,6 +63,6 @@ class TestBookmarkOptions(ApplicationLayerTest):
                     has_entries('data',
                                 has_entries('bookmarks_created', is_not(none()),
                                             'bookmarks_created', 
-                                            has_entries('num_rows', '20',
+                                            has_entries('num_rows', 20,
                                                         'events_chart', is_not(none()),
                                                         'tuples', ()))))
