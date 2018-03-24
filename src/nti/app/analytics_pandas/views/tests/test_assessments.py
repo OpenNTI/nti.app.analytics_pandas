@@ -53,7 +53,6 @@ class TestAssessmentOptions(ApplicationLayerTest):
                                        'end_date' : '2015-02-28'})
         view = AssessmentsTimeseriesReportView(request=request)
         options = view()
-        options = view()
         assert_that(options, is_not(none()))
         assert_that(options,
                     has_entries('course_ids', is_([388]),

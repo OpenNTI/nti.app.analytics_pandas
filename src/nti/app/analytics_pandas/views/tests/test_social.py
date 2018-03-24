@@ -7,7 +7,6 @@ from __future__ import absolute_import
 
 # pylint: disable=protected-access,too-many-public-methods
 
-from hamcrest import is_
 from hamcrest import none
 from hamcrest import is_not
 from hamcrest import assert_that
