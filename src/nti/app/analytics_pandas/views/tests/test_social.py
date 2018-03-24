@@ -1,81 +1,92 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from __future__ import print_function, unicode_literals, absolute_import, division
-__docformat__ = "restructuredtext en"
+from __future__ import division
+from __future__ import print_function
+from __future__ import absolute_import
 
-# disable: accessing protected members, too many methods
-# pylint: disable=W0212,R0904
+# pylint: disable=protected-access,too-many-public-methods
 
 from hamcrest import is_
-from hamcrest import has_length
+from hamcrest import none
+from hamcrest import is_not
 from hamcrest import assert_that
-from hamcrest import greater_than
+from hamcrest import has_entries
 from hamcrest import has_property
 
-import os
-import json
+from pyramid.testing import DummyRequest
 
-from zope.cachedescriptors.property import Lazy
-
-from z3c.rml import rml2pdf
-
-from nti.app.analytics_pandas.views.social import SocialTimeseriesReportView
-from nti.app.analytics_pandas.views.social import SocialTimeseriesContext
-
-from nti.app.analytics_pandas.tests import AppAnalyticsTestBase
 from nti.app.analytics_pandas.tests import PandasReportsLayerTest
 
-from nti.app.analytics_pandas.views.tests import _build_sample_context
+from nti.app.analytics_pandas.views.social import SocialTimeseriesReportView
 
-from nti.app.pyramid_zope.z3c_zpt import ViewPageTemplateFile
+from nti.app.testing.application_webtest import ApplicationLayerTest
 
 from nti.app.testing.decorators import WithSharedApplicationMockDS
 
-from nti.externalization.externalization import to_external_object
 
-class TestHighlightsEvents(AppAnalyticsTestBase):
+class TestSocialView(ApplicationLayerTest):
 
-	def setUp(self):
-		super(TestHighlightsEvents, self).setUp()
+    layer = PandasReportsLayerTest
 
-	@Lazy
-	def std_report_layout_rml(self):
-		path = os.path.join(
-                    os.path.dirname(__file__),
-                    '../../templates/std_report_layout.rml')
-		return path
-
-	def template(self, path):
-		result = ViewPageTemplateFile(path,
-                                auto_reload=(False,),
-                                debug=False)
-		return result
-
-	def test_std_report_layout_rml(self):
-		# make sure  template exists
-		path = self.std_report_layout_rml
-		assert_that(os.path.exists(path), is_(True))
-
-		# prepare view and context
-		context = SocialTimeseriesContext()
-		view = SocialTimeseriesReportView(context)
-		view._build_data('Bleach')
-		system = {'view': view, 'context': context}
-		rml = self.template(path).bind(view)(**system)
-
-		pdf_stream = rml2pdf.parseString(rml)
-		result = pdf_stream.read()
-		assert_that(result, has_length(greater_than(1)))
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_social_report(self):
+        response = self.testapp.post_json('/dataserver2/pandas_reports/SocialReport',
+                                          {	  'start_date': '2015-01-01',
+                                              'end_date': '2015-05-31'
+                                          },
+                                          extra_environ=self._make_extra_environ())
+        assert_that(response,
+                    has_property('content_type', 'application/pdf'))
 
 
-class TestSocialViews(PandasReportsLayerTest):
+class TestSocialOptions(ApplicationLayerTest):
 
-	@WithSharedApplicationMockDS(testapp=True, users=True)
-	def test_social_view(self):
-		context = _build_sample_context(SocialTimeseriesContext)
-		params = to_external_object(context)
-		response = self.testapp.post('/dataserver2/pandas_reports/SocialRelatedEventsReport',
-                                    json.dumps(params),
-                                    extra_environ=self._make_extra_environ())
-		assert_that(response, has_property('content_type', 'application/pdf'))
+    layer = PandasReportsLayerTest
+
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_social_report(self):
+        request = DummyRequest(params={'start_date': '2015-01-01',
+                                       'end_date': '2015-05-31'})
+        view = SocialTimeseriesReportView(request=request)
+        options = view()
+        assert_that(options, is_not(none()))
+        assert_that(options,
+                    has_entries('has_chats_initiated', True,
+                                'has_chats_joined', True,
+                                'has_contacts_added', True,
+                                'has_contacts_removed', True,
+                                'has_friend_list_member_added', True,
+                                'has_profile_views', False))
+        assert_that(options,
+                    has_entries('data',
+                                has_entries('chats_initiated', is_not(none()),
+                                            'chats_initiated', 
+                                            has_entries('num_rows', 60,
+                                                        'events_chart', is_not(none()),
+                                                        'tuples', (),
+                                                        'column_name', u'Chats Initiated'),
+                                            'chats_joined', is_not(none()),
+                                            'chats_joined', 
+                                            has_entries('num_rows', 62,
+                                                        'events_chart', is_not(none()),
+                                                        'tuples', (),
+                                                        'column_name', u'Chats'),
+                                            'contacts_added', is_not(none()),
+                                            'contacts_added', 
+                                            has_entries('num_rows', 91,
+                                                        'events_chart', is_not(none()),
+                                                        'tuples', (),
+                                                        'column_name', u'Contacts Added'),
+                                            'contacts_removed', is_not(none()),
+                                            'contacts_removed', 
+                                            has_entries('num_rows', 9,
+                                                        'events_chart', is_not(none()),
+                                                        'tuples', (),
+                                                        'column_name', u'Contacts Removed'),
+                                            'friend_list', is_not(none()),
+                                            'friend_list', 
+                                            has_entries('tuples', is_not(none()))
+                                            )
+                                )
+                    )
