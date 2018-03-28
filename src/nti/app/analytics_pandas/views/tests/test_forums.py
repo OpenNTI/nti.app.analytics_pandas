@@ -76,4 +76,35 @@ class TestForumOptions(ApplicationLayerTest):
                                             )
                                 )
                     )
+    
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_forum_report_one_day(self):
+        request = DummyRequest(params={'ntiid': 'tag:nextthought.com,2011-10:NTI-CourseInfo-Spring2015_SOC_1113',
+                                       'start_date': '2015-01-12',
+                                       'end_date': '2015-01-12'})
+        view = ForumsTimeseriesReportView(request=request)
+        options = view()
+        assert_that(options, is_not(none()))
+        assert_that(options,
+                    has_entries('course_ids', is_([388]),
+                                'has_forums_created_data', True,
+                                'has_forum_comments_created_data', True,
+                                'has_forum_comments_created_per_enrollment_types', True))
+        assert_that(options,
+                    has_entries('data',
+                                has_entries('forums_created', is_not(none()),
+                                            'forums_created', 
+                                            has_entries('num_rows', 1,
+                                                        'events_chart', (),
+                                                        'tuples', is_not(none()),
+                                                        'column_name', u'Forums Created'),
+                                            'forum_comments_created', is_not(none()),
+                                            'forum_comments_created', 
+                                            has_entries('num_rows', 1,
+                                                        'events_chart', (),
+                                                        'tuples', is_not(none()),
+                                                        'column_name', u'Forum Comments')
+                                            )
+                                )
+                    )
         
