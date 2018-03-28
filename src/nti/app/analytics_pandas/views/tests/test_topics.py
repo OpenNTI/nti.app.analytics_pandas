@@ -77,3 +77,35 @@ class TestTopicOptions(ApplicationLayerTest):
                                             )
                                 )
                     )
+    
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_topic_report_one_day(self):
+        request = DummyRequest(params={'ntiid': 'tag:nextthought.com,2011-10:NTI-CourseInfo-Spring2015_SOC_1113',
+                                       'start_date': '2015-01-13',
+                                       'end_date': '2015-01-13'})
+        view = TopicsTimeseriesReportView(request=request)
+        options = view()
+        assert_that(options, is_not(none()))
+        assert_that(options,
+                    has_entries('course_ids', is_([388]),
+                                'has_topics_created_data', True,
+                                'has_topic_views_data', True,
+                                'has_topic_likes_data', False,
+                                'has_topic_favorites_data', False))
+        assert_that(options,
+                    has_entries('data',
+                                has_entries('topics_created', is_not(none()),
+                                            'topics_created', 
+                                            has_entries('num_rows', 1,
+                                                        'events_chart', is_not(none()),
+                                                        'tuples', is_not(none()),
+                                                        'column_name', u'Topics Created'),
+                                            'topics_viewed', is_not(none()),
+                                            'topics_viewed', 
+                                            has_entries('num_rows', 1,
+                                                        'events_chart', is_not(none()),
+                                                        'tuples', is_not(none()),
+                                                        'column_name', u'Topics Viewed')
+                                            )
+                                )
+                    )

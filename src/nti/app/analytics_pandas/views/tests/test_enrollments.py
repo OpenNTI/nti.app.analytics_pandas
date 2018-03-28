@@ -76,3 +76,33 @@ class TestEnrollmentOptions(ApplicationLayerTest):
                                             )
                                 )
                     )
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_enrollment_report_one_day(self):
+        request = DummyRequest(params={'ntiid': 'tag:nextthought.com,2011-10:NTI-CourseInfo-Spring2015_SOC_1113',
+                                       'start_date': '2015-01-12',
+                                       'end_date': '2015-01-12'})
+        view = EnrollmentsTimeseriesReportView(request=request)
+        options = view()
+        assert_that(options, is_not(none()))
+        assert_that(options,
+                    has_entries('course_ids', is_([388]),
+                                'has_enrollment_data', True,
+                                'has_enrollment_type_data', True,
+                                'has_catalog_views_data', True))
+        assert_that(options,
+                    has_entries('data',
+                                has_entries('enrollments', is_not(none()),
+                                            'enrollments', 
+                                            has_entries('num_rows', 1,
+                                                        'events_chart', (),
+                                                        'tuples', is_not(none()),
+                                                        'column_name', u'Enrollments'),
+                                            'catalog_views', is_not(none()),
+                                            'catalog_views', 
+                                            has_entries('num_rows', 1,
+                                                        'events_chart', (),
+                                                        'tuples', is_not(none()),
+                                                        'column_name', u'Catalog Views'),
+                                            )
+                                )
+                    )

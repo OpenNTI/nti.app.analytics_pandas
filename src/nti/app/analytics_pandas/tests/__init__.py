@@ -26,7 +26,7 @@ from nti.analytics_database.database import AnalyticsDB
 
 
 def read_sample_data(engine):
-    # run from nti.analytics_pandas directory
+    # run from nti.app.analytics_pandas directory
     path = os.path.join(os.path.dirname(__file__), "testdb")
     for source in glob.glob(os.path.join(path, "*.csv")):
         try:
