@@ -84,3 +84,41 @@ class TestAssessmentOptions(ApplicationLayerTest):
                                             )
                                 )
                     )
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_assessment_report_one_day(self):
+        request = DummyRequest(params={'ntiid': 'tag:nextthought.com,2011-10:NTI-CourseInfo-Spring2015_SOC_1113', 
+                                       'start_date' : '2015-02-02',
+                                       'end_date' : '2015-02-02'})
+        view = AssessmentsTimeseriesReportView(request=request)
+        options = view()
+        assert_that(options, is_not(none()))
+        assert_that(options,
+                    has_entries('course_ids', is_([388]),
+                                'has_assessment_event_data', True,
+                                'has_assignments_taken', True,
+                                'has_self_assessment_taken_per_enrollment_type', True,
+                                'has_self_assessment_taken', True,
+                                'has_assignments_taken_per_enrollment_type', True))
+        assert_that(options,
+                    has_entries('data',
+                                has_entries('assignments_taken', is_not(none()),
+                                            'assignments_taken', 
+                                            has_entries('num_rows', 1,
+                                                        'events_chart', (),
+                                                        'tuples', is_not(none()),
+                                                        'column_name', u'Assignments Taken'),
+                                            'self_assessment_taken', is_not(none()),
+                                            'self_assessment_taken', 
+                                            has_entries('num_rows', 1,
+                                                        'events_chart', (),
+                                                        'tuples', is_not(none()),
+                                                        'column_name', u'Self Assessments Taken'),
+                                            'assessment_events', is_not(none()),
+                                            'assessment_events', 
+                                            has_entries('num_rows', 2,
+                                                        'events_chart', (),
+                                                        'tuples', is_not(none()),
+                                                        'column_name', u'Total Events')
+                                            )
+                                )
+                    )
