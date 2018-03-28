@@ -66,3 +66,24 @@ class TestBookmarkOptions(ApplicationLayerTest):
                                             has_entries('num_rows', 20,
                                                         'events_chart', is_not(none()),
                                                         'tuples', ()))))
+
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_bookmark_report_one_day(self):
+        request = DummyRequest(params={'ntiid': 'tag:nextthought.com,2011-10:NTI-CourseInfo-Spring2015_SOC_1113',
+                                       'start_date': '2015-05-02',
+                                       'end_date': '2015-05-02'})
+        view = BookmarksTimeseriesReportView(request=request)
+        options = view()
+        assert_that(options, is_not(none()))
+        assert_that(options,
+                    has_entries('course_ids', is_([388]),
+                                'has_bookmarks_created_data', True,
+                                'has_bookmarks_created_per_resource_types', True,
+                                'has_bookmarks_created_per_enrollment_types', True))
+        assert_that(options,
+                    has_entries('data',
+                                has_entries('bookmarks_created', is_not(none()),
+                                            'bookmarks_created', 
+                                            has_entries('num_rows', 1,
+                                                        'events_chart', (),
+                                                        'tuples', is_not(none())))))
