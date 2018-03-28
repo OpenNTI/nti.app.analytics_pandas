@@ -71,3 +71,30 @@ class TestResourceViewsOptions(ApplicationLayerTest):
                                             )
                                 )
                     )
+
+    @WithSharedApplicationMockDS(testapp=True, users=True)
+    def test_resource_views_report_one_day(self):
+        request = DummyRequest(params={'ntiid': 'tag:nextthought.com,2011-10:NTI-CourseInfo-Spring2015_SOC_1113',
+                                       'start_date': '2015-04-21',
+                                       'end_date': '2015-04-21'})
+        view = ResourceViewsTimeseriesReportView(request=request)
+        options = view()
+        assert_that(options, is_not(none()))
+        assert_that(options,
+                    has_entries('course_ids', is_([388]),
+                                'has_resource_view_events', True,
+                                'has_resource_views_per_enrollment_types', True,
+                                'has_resource_views_per_device_types', True,
+                                'has_resource_views_per_resource_types', True))
+        assert_that(options,
+                    has_entries('data',
+                                has_entries('resources_viewed', is_not(none()),
+                                            'resources_viewed', 
+                                            has_entries('num_rows', 1,
+                                                        'events_chart', (),
+                                                        'tuples', is_not(none()),
+                                                        'column_name', u'Resource Viewed')
+                                            )
+                                )
+                    )
+
